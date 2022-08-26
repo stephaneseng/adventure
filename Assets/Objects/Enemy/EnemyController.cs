@@ -3,7 +3,6 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     private static float BaseSpeed = 2.0f;
-
     private static Vector2[] NextDirectionChoices = new Vector2[] {
         Vector2.up,
         Vector2.right,

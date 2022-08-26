@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour
 {
-    private static float Speed = 16.0f;
     private static float Range = 2.0f;
+    private static float Speed = 16.0f;
 
     public Vector3 fromPosition;
     public Vector2 direction;

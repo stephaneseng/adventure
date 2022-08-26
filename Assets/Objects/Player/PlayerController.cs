@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private new Rigidbody2D rigidbody2D;
 
+    private PlayerStateMachine playerStateMachine;
     private Vector2 direction;
     private float speed;
     private bool lockMove;
@@ -19,6 +20,8 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         rigidbody2D = GetComponent<Rigidbody2D>();
 
+        playerStateMachine = new PlayerStateMachine(this);
+        playerStateMachine.Start(new PlayerIdleState());
         direction = Vector2.up;
         speed = 0.0f;
         lockMove = false;
@@ -26,14 +29,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Vector2 move = playerInput.actions["Move"].ReadValue<Vector2>();
-
-        if (move.magnitude > 0 && !lockMove) {
-            direction = move;
-            speed = move.magnitude;
-        } else {
-            speed = 0.0f;
-        }
+        playerStateMachine.Update();
     }
 
     void FixedUpdate()
@@ -57,6 +53,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public Vector2 ReadInputActionMoveVector()
+    {
+        return playerInput.actions["Move"].ReadValue<Vector2>();
+    }
+
+    public void Move(Vector2 inputActionMoveVector)
+    {
+        direction = inputActionMoveVector;
+        speed = 1.0f;
+    }
+
+    public void StopMove()
+    {
+        speed = 0.0f;
+    }
+
     private void Attack()
     {
         GameObject playerBullet = (GameObject) Instantiate(bullet, transform.position, transform.rotation,
@@ -74,5 +86,10 @@ public class PlayerController : MonoBehaviour
     public void UnlockMove()
     {
         lockMove = false;
+    }
+
+    public bool IsMoveLocked()
+    {
+        return lockMove;
     }
 }
