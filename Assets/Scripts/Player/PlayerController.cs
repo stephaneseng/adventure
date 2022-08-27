@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    private static int BaseHealth = 3;
+    private static int BaseMaxHealth = 3;
     private static float BaseSpeed = 4.0f;
 
     public GameObject bullet;
@@ -11,6 +13,8 @@ public class PlayerController : MonoBehaviour
     private new Rigidbody2D rigidbody2D;
 
     private PlayerStateMachine playerStateMachine;
+    private int health;
+    private int maxHealth;
     private Vector2 direction;
     private float speed;
     private bool lockMove;
@@ -22,6 +26,8 @@ public class PlayerController : MonoBehaviour
 
         playerStateMachine = new PlayerStateMachine(this);
         playerStateMachine.Start(new PlayerIdleState());
+        health = BaseHealth;
+        maxHealth = BaseMaxHealth;
         direction = Vector2.up;
         speed = 0.0f;
         lockMove = false;
@@ -41,8 +47,14 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.CompareTag("ItemHealth")) {
+            health = Mathf.Min(health + 1, maxHealth);
+            Destroy(other.gameObject);
+        }
+
         if (other.CompareTag("EnemyAttack")) {
-            Destroy(gameObject);
+            health = Mathf.Max(0, health - 1);
+            Destroy(other.gameObject);
         }
     }
 
@@ -51,6 +63,16 @@ public class PlayerController : MonoBehaviour
         if (context.performed) {
             Attack();
         }
+    }
+
+    public int GetHealth()
+    {
+        return health;
+    }
+
+    public int GetMaxHealth()
+    {
+        return maxHealth;
     }
 
     public Vector2 ReadInputActionMoveVector()

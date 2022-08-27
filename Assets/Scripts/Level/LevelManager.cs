@@ -47,11 +47,11 @@ public class LevelManager : MonoBehaviour
     public void SwitchRoom(PlayerController playerController, Vector2 transitionDirection,
         GameObject fromRoom, GameObject toRoom)
     {
-        StartCoroutine(PlayRoomTransition(playerController, transitionDirection, fromRoom, toRoom));
+        StartCoroutine(PlayRoomTransitionAnimation(playerController, transitionDirection, fromRoom, toRoom));
     }
 
     /// Translates the player (0.5 unit) and the camera (11 units) in the specified direction.
-    private IEnumerator PlayRoomTransition(PlayerController playerController, Vector2 transitionDirection,
+    private IEnumerator PlayRoomTransitionAnimation(PlayerController playerController, Vector2 transitionDirection,
         GameObject fromRoom, GameObject toRoom)
     {
         toRoom.SetActive(true);
