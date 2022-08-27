@@ -19,11 +19,14 @@ public class PlayerController : MonoBehaviour
     private float speed;
     private bool lockMove;
 
-    void Start()
+    void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
         rigidbody2D = GetComponent<Rigidbody2D>();
+    }
 
+    void Start()
+    {
         playerStateMachine = new PlayerStateMachine(this);
         playerStateMachine.Start(new PlayerIdleState());
         health = BaseHealth;
@@ -94,7 +97,7 @@ public class PlayerController : MonoBehaviour
     private void Attack()
     {
         GameObject playerBullet = (GameObject) Instantiate(bullet, transform.position, transform.rotation,
-            gameObject.transform);
+            transform);
         playerBullet.tag = "PlayerAttack";
         playerBullet.GetComponent<BulletController>().startPosition = transform.position;
         playerBullet.GetComponent<BulletController>().direction = direction;

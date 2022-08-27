@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    private static float RoomTransitionPlayerScrollDistance = 0.5f;
+    private static float RoomTransitionPlayerScrollDistance = 1.0f;
     private static float RoomTransitionCameraScrollDistance = 11.0f;
     private static float RoomTransitionDurationInSeconds = 1.0f;
 
@@ -14,11 +14,14 @@ public class LevelManager : MonoBehaviour
     private new Camera camera;
     private GameObject player;
 
-    void Start()
+    void Awake()
     {
         camera = Camera.main;
         player = GameObject.FindWithTag("Player");
+    }
 
+    void Start()
+    {
         InitializeRooms();
         InitializeCamera();
         InitializePlayer();
@@ -32,16 +35,19 @@ public class LevelManager : MonoBehaviour
         }
 
         startRoom.SetActive(true);
+        startRoom.GetComponent<RoomController>().InitializeDoors();
     }
 
     private void InitializeCamera()
     {
-        camera.transform.position = (Vector3) cameraStartPosition + new Vector3(0, 0, camera.transform.position.z);
+        camera.transform.position = (Vector3) cameraStartPosition
+            + new Vector3(0.0f, 0.0f, camera.transform.position.z);
     }
 
     private void InitializePlayer()
     {
-        player.transform.position = (Vector3) playerStartPosition + new Vector3(0, 0, player.transform.position.z);
+        player.transform.position = (Vector3) playerStartPosition
+            + new Vector3(0.0f, 0.0f, player.transform.position.z);
     }
 
     public void SwitchRoom(PlayerController playerController, Vector2 transitionDirection,
@@ -50,7 +56,7 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(PlayRoomTransitionAnimation(playerController, transitionDirection, fromRoom, toRoom));
     }
 
-    /// Translates the player (0.5 unit) and the camera (11 units) in the specified direction.
+    /// Translates the player and the camera in the specified direction.
     private IEnumerator PlayRoomTransitionAnimation(PlayerController playerController, Vector2 transitionDirection,
         GameObject fromRoom, GameObject toRoom)
     {
@@ -76,6 +82,8 @@ public class LevelManager : MonoBehaviour
 
         playerController.transform.position = playerTargetPosition;
         camera.transform.position = cameraTargetPosition;
+
+        toRoom.GetComponent<RoomController>().InitializeDoors();
 
         fromRoom.SetActive(false);
         playerController.UnlockMove();

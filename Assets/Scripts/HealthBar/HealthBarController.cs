@@ -6,7 +6,7 @@ public class HealthBarController : MonoBehaviour
     private GameObject player;
     private Slider slider;
 
-    void Start()
+    void Awake()
     {
         player = GameObject.FindWithTag("Player");
         slider = GetComponent<Slider>();

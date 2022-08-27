@@ -20,10 +20,13 @@ public class EnemyController : MonoBehaviour
     private Vector2 direction;
     private float speed;
 
-    void Start()
+    void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
+    }
 
+    void Start()
+    {
         enemyStateMachine = new EnemyStateMachine(this);
         enemyStateMachine.Start(new EnemyIdleState());
         direction = Vector2.down;
@@ -69,7 +72,7 @@ public class EnemyController : MonoBehaviour
     public void Attack()
     {
         GameObject enemyBullet = (GameObject) Instantiate(bullet, transform.position, transform.rotation,
-            gameObject.transform);
+            transform);
         enemyBullet.tag = "EnemyAttack";
         enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;

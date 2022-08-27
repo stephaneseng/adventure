@@ -10,7 +10,7 @@ public class BulletController : MonoBehaviour
 
     private new Rigidbody2D rigidbody2D;
 
-    void Start()
+    void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
     }
