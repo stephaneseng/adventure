@@ -5,7 +5,7 @@ public class BulletController : MonoBehaviour
     private static float Range = 2.0f;
     private static float Speed = 16.0f;
 
-    public Vector3 fromPosition;
+    public Vector3 startPosition;
     public Vector2 direction;
 
     private new Rigidbody2D rigidbody2D;
@@ -17,7 +17,7 @@ public class BulletController : MonoBehaviour
 
     void Update()
     {
-        if (Vector3.Distance(transform.position, fromPosition) > Range) {
+        if (Vector3.Distance(transform.position, startPosition) > Range) {
             Destroy(gameObject);
         }
     }

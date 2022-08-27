@@ -1,23 +1,21 @@
-using System.Collections;
 using UnityEngine;
 
 public class RoomController : MonoBehaviour
 {
     private static float EnemyRoomColliderSize = 4.0f;
-    private static float TransitionPlayerScrollDistance = 0.5f;
-    private static float TransitionCameraScrollDistance = 11.0f;
-    private static float TransitionDurationInSeconds = 1.0f;
 
     public GameObject upRoom;
     public GameObject rightRoom;
     public GameObject downRoom;
     public GameObject leftRoom;
 
+    private LevelManager levelManager;
     private new Camera camera;
     private BoxCollider2D boxCollider2D;
 
     void Start()
     {
+        levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
         camera = Camera.main;
         boxCollider2D = GetComponent<BoxCollider2D>();
 
@@ -33,13 +31,13 @@ public class RoomController : MonoBehaviour
                 other.bounds.center.y - boxCollider2D.bounds.center.y);
 
             if (Vector2.Dot(contactVector, Vector2.up) > 1) {
-                StartCoroutine(RoomTransition(playerController, Vector2.up, gameObject, upRoom));
+                levelManager.SwitchRoom(playerController, Vector2.up, gameObject, upRoom);
             } else if (Vector2.Dot(contactVector, Vector2.right) > 1) {
-                StartCoroutine(RoomTransition(playerController, Vector2.right, gameObject, rightRoom));
+                levelManager.SwitchRoom(playerController, Vector2.right, gameObject, rightRoom);
             } else if (Vector2.Dot(contactVector, Vector2.down) > 1) {
-                StartCoroutine(RoomTransition(playerController, Vector2.down, gameObject, downRoom));
+                levelManager.SwitchRoom(playerController, Vector2.down, gameObject, downRoom);
             } else {
-                StartCoroutine(RoomTransition(playerController, Vector2.left, gameObject, leftRoom));
+                levelManager.SwitchRoom(playerController, Vector2.left, gameObject, leftRoom);
             }
         }
     }
@@ -62,34 +60,5 @@ public class RoomController : MonoBehaviour
             (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, -EnemyRoomColliderSize),
             (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize)
         };
-    }
-
-    /// Translates the player (0.5 unit) and the camera (11 units) in the specified direction.
-    private IEnumerator RoomTransition(PlayerController playerController, Vector2 transitionDirection, GameObject fromRoom,
-        GameObject toRoom)
-    {
-        toRoom.SetActive(true);
-        playerController.LockMove();
-
-        Vector3 playerFromPosition = playerController.transform.position;
-        Vector3 cameraFromPosition = camera.transform.position;
-
-        Vector3 playerToPosition = playerFromPosition + (Vector3) transitionDirection * TransitionPlayerScrollDistance;
-        Vector3 cameraToPosition = cameraFromPosition + (Vector3) transitionDirection * TransitionCameraScrollDistance;
-
-        for (float t = 0.0f; t < TransitionDurationInSeconds ; t += Time.deltaTime) {
-            playerController.transform.position = Vector3.Lerp(playerFromPosition, playerToPosition,
-                t / TransitionDurationInSeconds);
-            camera.transform.position = Vector3.Lerp(cameraFromPosition, cameraToPosition,
-                t / TransitionDurationInSeconds);
-
-            yield return 0;
-        }
-
-        playerController.transform.position = playerToPosition;
-        camera.transform.position = cameraToPosition;
-
-        fromRoom.SetActive(false);
-        playerController.UnlockMove();
     }
 }

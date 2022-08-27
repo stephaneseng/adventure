@@ -8,13 +8,13 @@ public class EnemyMoveState : EnemyState
     {
         base.OnEnterState(enemyStateMachine);
 
-        enemyStateMachine.enemyController.StartMove();
+        enemyStateMachine.GetEnemyController().StartMove();
     }
 
     public override void Update(EnemyStateMachine enemyStateMachine)
     {
         if (Time.time - startTime > StateDurationInSeconds) {
-            enemyStateMachine.enemyController.Attack();
+            enemyStateMachine.GetEnemyController().Attack();
 
             enemyStateMachine.SwitchState(new EnemyIdleState());
         }

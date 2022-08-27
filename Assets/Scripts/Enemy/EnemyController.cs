@@ -46,6 +46,7 @@ public class EnemyController : MonoBehaviour
     {
         if (other.CompareTag("PlayerAttack")) {
             Destroy(gameObject);
+            Destroy(other.gameObject);
         }
     }
 
@@ -70,7 +71,7 @@ public class EnemyController : MonoBehaviour
         GameObject enemyBullet = (GameObject) Instantiate(bullet, transform.position, transform.rotation,
             gameObject.transform);
         enemyBullet.tag = "EnemyAttack";
-        enemyBullet.GetComponent<BulletController>().fromPosition = transform.position;
+        enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;
     }
 }

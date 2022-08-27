@@ -2,11 +2,16 @@ public class EnemyStateMachine
 {
     private EnemyState currentState;
 
-    public EnemyController enemyController;
+    private EnemyController enemyController;
 
     public EnemyStateMachine(EnemyController enemyController)
     {
         this.enemyController = enemyController;
+    }
+
+    public EnemyController GetEnemyController()
+    {
+        return enemyController;
     }
 
     public void Start(EnemyState enemyState)

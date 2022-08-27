@@ -8,7 +8,7 @@ public class EnemyIdleState : EnemyState
     {
         base.OnEnterState(enemyStateMachine);
 
-        enemyStateMachine.enemyController.StopMove();
+        enemyStateMachine.GetEnemyController().StopMove();
     }
 
     public override void Update(EnemyStateMachine enemyStateMachine)

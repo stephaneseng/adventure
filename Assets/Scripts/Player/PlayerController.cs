@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
         GameObject playerBullet = (GameObject) Instantiate(bullet, transform.position, transform.rotation,
             gameObject.transform);
         playerBullet.tag = "PlayerAttack";
-        playerBullet.GetComponent<BulletController>().fromPosition = transform.position;
+        playerBullet.GetComponent<BulletController>().startPosition = transform.position;
         playerBullet.GetComponent<BulletController>().direction = direction;
     }
 

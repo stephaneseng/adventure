@@ -2,11 +2,16 @@ public class PlayerStateMachine
 {
     private PlayerState currentState;
 
-    public PlayerController playerController;
+    private PlayerController playerController;
 
     public PlayerStateMachine(PlayerController playerController)
     {
         this.playerController = playerController;
+    }
+
+    public PlayerController GetPlayerController()
+    {
+        return playerController;
     }
 
     public void Start(PlayerState playerState)

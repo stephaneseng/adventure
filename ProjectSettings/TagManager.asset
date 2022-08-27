@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayerAttack
   - EnemyAttack
+  - Room
   layers:
   - Default
   - TransparentFX
@@ -19,8 +20,8 @@ TagManager:
   - 
   - Player
   - Enemy
-  - Foreground
   - EnemyForeground
+  - 
   - 
   - 
   - 
