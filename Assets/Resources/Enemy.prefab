@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7675261471805162809}
   - component: {fileID: 7675261471805162807}
   - component: {fileID: 7675261471805162808}
+  - component: {fileID: 907202502}
   - component: {fileID: 2087762359412555820}
   m_Layer: 11
   m_Name: Enemy
@@ -134,6 +135,26 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.8, y: 0.8}
   m_EdgeRadius: 0
+--- !u!95 &907202502
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7675261471805162811}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: da425f3bccf405cdea261a46f173e3f7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &2087762359412555820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,3 +168,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 1070407543661715664, guid: 61f437bd4d99f2e419e03faa09d15e49, type: 3}
+  droppedItems:
+  - {fileID: 4967103446422588902, guid: 6728d5a532e03bbdabb2166c4beaba2f, type: 3}

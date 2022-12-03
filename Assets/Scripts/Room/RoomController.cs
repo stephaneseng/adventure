@@ -59,6 +59,8 @@ public class RoomController : MonoBehaviour
         if (other.CompareTag("Player")) {
             PlayerController playerController = other.GetComponent<PlayerController>();
 
+            Debug.Log("OnTriggerExit2D: " + gameObject.name);
+
             Vector2 contactVector = new Vector2(other.bounds.center.x - boxCollider2D.bounds.center.x,
                 other.bounds.center.y - boxCollider2D.bounds.center.y);
 

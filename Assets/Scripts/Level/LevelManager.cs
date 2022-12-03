@@ -53,6 +53,7 @@ public class LevelManager : MonoBehaviour
     public void SwitchRoom(PlayerController playerController, Vector2 transitionDirection,
         GameObject fromRoom, GameObject toRoom)
     {
+        Debug.Log("SwitchRoom: " + transitionDirection);
         StartCoroutine(PlayRoomTransitionAnimation(playerController, transitionDirection, fromRoom, toRoom));
     }
 
@@ -61,6 +62,7 @@ public class LevelManager : MonoBehaviour
         GameObject fromRoom, GameObject toRoom)
     {
         toRoom.SetActive(true);
+        toRoom.GetComponent<BoxCollider2D>().enabled = false;
         playerController.LockMove();
 
         Vector3 playerStartPosition = playerController.transform.position;
@@ -70,6 +72,9 @@ public class LevelManager : MonoBehaviour
             + (Vector3) transitionDirection * RoomTransitionPlayerScrollDistance;
         Vector3 cameraTargetPosition = cameraStartPosition
             + (Vector3) transitionDirection * RoomTransitionCameraScrollDistance;
+
+        Debug.Log("Player start: " + playerStartPosition + ", Player target: " + playerTargetPosition);
+        Debug.Log("Camera start: " + cameraStartPosition + ", Camera target: " + cameraTargetPosition);
 
         for (float t = 0.0f; t < RoomTransitionDurationInSeconds ; t += Time.deltaTime) {
             playerController.transform.position = Vector3.Lerp(playerStartPosition, playerTargetPosition,
@@ -83,6 +88,7 @@ public class LevelManager : MonoBehaviour
         playerController.transform.position = playerTargetPosition;
         camera.transform.position = cameraTargetPosition;
 
+        toRoom.GetComponent<BoxCollider2D>().enabled = true;
         toRoom.GetComponent<RoomController>().InitializeDoors();
 
         fromRoom.SetActive(false);
