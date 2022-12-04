@@ -30,7 +30,8 @@ public class LevelManager : MonoBehaviour
     private void InitializeRooms()
     {
         GameObject[] rooms = GameObject.FindGameObjectsWithTag("Room");
-        for (int i = 0; i < rooms.Length; i++) {
+        for (int i = 0; i < rooms.Length; i++)
+        {
             rooms[i].gameObject.SetActive(false);
         }
 
@@ -40,13 +41,13 @@ public class LevelManager : MonoBehaviour
 
     private void InitializeCamera()
     {
-        camera.transform.position = (Vector3) cameraStartPosition
+        camera.transform.position = (Vector3)cameraStartPosition
             + new Vector3(0.0f, 0.0f, camera.transform.position.z);
     }
 
     private void InitializePlayer()
     {
-        player.transform.position = (Vector3) playerStartPosition
+        player.transform.position = (Vector3)playerStartPosition
             + new Vector3(0.0f, 0.0f, player.transform.position.z);
     }
 
@@ -69,14 +70,15 @@ public class LevelManager : MonoBehaviour
         Vector3 cameraStartPosition = camera.transform.position;
 
         Vector3 playerTargetPosition = playerStartPosition
-            + (Vector3) transitionDirection * RoomTransitionPlayerScrollDistance;
+            + (Vector3)transitionDirection * RoomTransitionPlayerScrollDistance;
         Vector3 cameraTargetPosition = cameraStartPosition
-            + (Vector3) transitionDirection * RoomTransitionCameraScrollDistance;
+            + (Vector3)transitionDirection * RoomTransitionCameraScrollDistance;
 
         Debug.Log("Player start: " + playerStartPosition + ", Player target: " + playerTargetPosition);
         Debug.Log("Camera start: " + cameraStartPosition + ", Camera target: " + cameraTargetPosition);
 
-        for (float t = 0.0f; t < RoomTransitionDurationInSeconds ; t += Time.deltaTime) {
+        for (float t = 0.0f; t < RoomTransitionDurationInSeconds; t += Time.deltaTime)
+        {
             playerController.transform.position = Vector3.Lerp(playerStartPosition, playerTargetPosition,
                 t / RoomTransitionDurationInSeconds);
             camera.transform.position = Vector3.Lerp(cameraStartPosition, cameraTargetPosition,

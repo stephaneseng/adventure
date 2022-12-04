@@ -7,10 +7,13 @@ public class PlayerMoveState : PlayerState
         Vector2 inputActionMoveVector = playerStateMachine.GetPlayerController().ReadInputActionMoveVector();
 
         if (inputActionMoveVector.magnitude > 0
-            && !playerStateMachine.GetPlayerController().IsMoveLocked()) {
+            && !playerStateMachine.GetPlayerController().IsMoveLocked())
+        {
 
             playerStateMachine.GetPlayerController().Move(inputActionMoveVector);
-        } else {
+        }
+        else
+        {
             playerStateMachine.GetPlayerController().StopMove();
 
             playerStateMachine.SwitchState(new PlayerIdleState());

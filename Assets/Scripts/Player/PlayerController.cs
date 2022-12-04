@@ -14,8 +14,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     private PlayerStateMachine playerStateMachine;
-    public int health;
-    public int maxHealth;
+    private int health;
+    private int maxHealth;
     private Vector2 direction;
     private float speed;
     private bool lockMove;
@@ -52,16 +52,15 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("ItemHealth")) {
+        if (other.CompareTag("ItemHealth"))
+        {
             Destroy(other.gameObject);
-
-            Debug.Log((health+1) + " VS " + maxHealth);
             health = Mathf.Min(health + 1, maxHealth);
         }
 
-        if (other.CompareTag("EnemyAttack")) {
+        if (other.CompareTag("EnemyAttack"))
+        {
             Destroy(other.gameObject);
-
             health = Mathf.Max(0, health - 1);
             playerStateMachine.SwitchState(new PlayerDamageState());
         }
@@ -69,7 +68,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if (context.performed) {
+        if (context.performed)
+        {
             Attack();
         }
     }
@@ -89,11 +89,6 @@ public class PlayerController : MonoBehaviour
         return playerInput.actions["Move"].ReadValue<Vector2>();
     }
 
-    public void PlayAnimation(string animationName)
-    {
-        animator.Play(animationName);
-    }
-
     public void Move(Vector2 inputActionMoveVector)
     {
         direction = inputActionMoveVector;
@@ -103,15 +98,6 @@ public class PlayerController : MonoBehaviour
     public void StopMove()
     {
         speed = 0.0f;
-    }
-
-    private void Attack()
-    {
-        GameObject playerBullet = (GameObject) Instantiate(bullet, transform.position, transform.rotation,
-            transform);
-        playerBullet.tag = "PlayerAttack";
-        playerBullet.GetComponent<BulletController>().startPosition = transform.position;
-        playerBullet.GetComponent<BulletController>().direction = direction;
     }
 
     public void LockMove()
@@ -127,5 +113,19 @@ public class PlayerController : MonoBehaviour
     public bool IsMoveLocked()
     {
         return lockMove;
+    }
+
+    public void Attack()
+    {
+        GameObject playerBullet = (GameObject)Instantiate(bullet, transform.position, transform.rotation,
+            transform);
+        playerBullet.tag = "PlayerAttack";
+        playerBullet.GetComponent<BulletController>().startPosition = transform.position;
+        playerBullet.GetComponent<BulletController>().direction = direction;
+    }
+
+    public void Damage()
+    {
+        animator.Play("Damage");
     }
 }

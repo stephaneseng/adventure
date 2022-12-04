@@ -17,7 +17,8 @@ public class BulletController : MonoBehaviour
 
     void Update()
     {
-        if (Vector3.Distance(transform.position, startPosition) > Range) {
+        if (Vector3.Distance(transform.position, startPosition) > Range)
+        {
             Destroy(gameObject);
         }
     }

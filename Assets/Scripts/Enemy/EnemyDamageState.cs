@@ -4,7 +4,7 @@ public class EnemyDamageState : EnemyState
     {
         base.OnEnterState(enemyStateMachine);
 
-        enemyStateMachine.GetEnemyController().PlayAnimation("Damage");
+        enemyStateMachine.GetEnemyController().Damage();
     }
 
     public override void Update(EnemyStateMachine enemyStateMachine)

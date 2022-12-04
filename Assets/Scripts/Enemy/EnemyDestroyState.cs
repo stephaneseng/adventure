@@ -8,7 +8,7 @@ public class EnemyDestroyState : EnemyState
     {
         base.OnEnterState(enemyStateMachine);
 
-        enemyStateMachine.GetEnemyController().PlayAnimation("Destroy");
+        enemyStateMachine.GetEnemyController().Destroy();
     }
 
     public override void Update(EnemyStateMachine enemyStateMachine)

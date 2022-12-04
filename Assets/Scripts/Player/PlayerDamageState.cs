@@ -4,7 +4,7 @@ public class PlayerDamageState : PlayerState
     {
         base.OnEnterState(playerStateMachine);
 
-        playerStateMachine.GetPlayerController().PlayAnimation("Damage");
+        playerStateMachine.GetPlayerController().Damage();
     }
 
     public override void Update(PlayerStateMachine playerStateMachine)

@@ -17,7 +17,6 @@ public class EnemyController : MonoBehaviour
 
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
-    private BoxCollider2D roomBoxCollider2D;
 
     private EnemyStateMachine enemyStateMachine;
     private int health;
@@ -58,30 +57,32 @@ public class EnemyController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("PlayerAttack")) {
+        if (other.CompareTag("PlayerAttack"))
+        {
             Destroy(other.gameObject);
 
             health = Mathf.Max(0, health - 1);
-            if (health > 0) {
+            if (health > 0)
+            {
                 enemyStateMachine.SwitchState(new EnemyDamageState());
-            } else {
+            }
+            else
+            {
                 enemyStateMachine.SwitchState(new EnemyDestroyState());
             }
         }
     }
 
-    public void PlayAnimation(string animationName)
-    {
-        animator.Play(animationName);
-    }
-
     public void StartMove()
     {
         Vector2 nextDirection = NextDirectionChoices[Random.Range(0, NextDirectionChoices.Length)];
-        if (nextDirection != Vector2.zero) {
+        if (nextDirection != Vector2.zero)
+        {
             direction = nextDirection;
             speed = 1.0f;
-        } else {
+        }
+        else
+        {
             speed = 0.0f;
         }
     }
@@ -93,11 +94,21 @@ public class EnemyController : MonoBehaviour
 
     public void Attack()
     {
-        GameObject enemyBullet = (GameObject) Instantiate(bullet, transform.position, transform.rotation,
+        GameObject enemyBullet = (GameObject)Instantiate(bullet, transform.position, transform.rotation,
             transform);
         enemyBullet.tag = "EnemyAttack";
         enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;
+    }
+
+    public void Damage()
+    {
+        animator.Play("Damage");
+    }
+
+    public void Destroy()
+    {
+        animator.Play("Destroy");
     }
 
     public void DropItem()

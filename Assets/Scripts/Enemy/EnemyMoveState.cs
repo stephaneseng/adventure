@@ -13,7 +13,8 @@ public class EnemyMoveState : EnemyState
 
     public override void Update(EnemyStateMachine enemyStateMachine)
     {
-        if (Time.time - startTime > StateDurationInSeconds) {
+        if (Time.time - startTime > StateDurationInSeconds)
+        {
             enemyStateMachine.GetEnemyController().Attack();
 
             enemyStateMachine.SwitchState(new EnemyIdleState());
