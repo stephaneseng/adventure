@@ -1,41 +1,116 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class RoomController : MonoBehaviour
 {
-    private static float RoomSize = 5.5f;
+    public static float RoomSize = 11.0f;
+    public static float RoomHalfSize = RoomSize / 2.0f;
+
     private static float EnemyRoomColliderSize = 4.0f;
 
-    public GameObject upRoom;
-    public bool upRoomDoor;
-    public GameObject rightRoom;
-    public bool rightRoomDoor;
-    public GameObject downRoom;
-    public bool downRoomDoor;
-    public GameObject leftRoom;
-    public bool leftRoomDoor;
+    public RoomConfiguration roomConfiguration;
 
-    private GameObject door;
-    private LevelManager levelManager;
-    private new Camera camera;
+    private GameObject doorPrefab;
+    private LevelController levelController;
     private BoxCollider2D boxCollider2D;
+    private Tilemap tilemap;
 
-    public List<GameObject> doors;
+    private List<GameObject> doors;
 
     void Awake()
     {
-        door = Resources.Load<GameObject>("Door");
-        levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
-        camera = Camera.main;
+        doorPrefab = Resources.Load<GameObject>("Door");
+        levelController = GameObject.FindGameObjectWithTag("Level").GetComponent<LevelController>();
         boxCollider2D = GetComponent<BoxCollider2D>();
+        tilemap = GetComponentInChildren<Tilemap>();
 
         doors = new List<GameObject>();
     }
 
     void Start()
     {
+        InitializeWalls();
+        InitializeDoors();
         InitializeEnemyRoomCollider();
+    }
+
+    private void InitializeWalls()
+    {
+        if (roomConfiguration.upExit)
+        {
+            tilemap.SetTile(new Vector3Int(-1, Mathf.FloorToInt(RoomHalfSize)), null);
+            tilemap.SetTile(new Vector3Int(0, Mathf.FloorToInt(RoomHalfSize)), null);
+        }
+        if (roomConfiguration.rightExit)
+        {
+            tilemap.SetTile(new Vector3Int(Mathf.FloorToInt(RoomHalfSize), 0), null);
+            tilemap.SetTile(new Vector3Int(Mathf.FloorToInt(RoomHalfSize), -1), null);
+        }
+        if (roomConfiguration.downExit)
+        {
+            tilemap.SetTile(new Vector3Int(-1, -Mathf.FloorToInt(RoomHalfSize) - 1), null);
+            tilemap.SetTile(new Vector3Int(0, -Mathf.FloorToInt(RoomHalfSize) - 1), null);
+        }
+        if (roomConfiguration.leftExit)
+        {
+            tilemap.SetTile(new Vector3Int(-Mathf.FloorToInt(RoomHalfSize) - 1, 0), null);
+            tilemap.SetTile(new Vector3Int(-Mathf.FloorToInt(RoomHalfSize) - 1, -1), null);
+        }
+    }
+
+    /// The position of the room BoxCollider2D is used, because the position of the room itself is not relevant.
+    public void InitializeDoors()
+    {
+        if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
+        {
+            return;
+        }
+
+        Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
+
+        if (roomConfiguration.upDoor)
+        {
+            doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(0.0f, RoomHalfSize),
+                Quaternion.identity, transform));
+        }
+        if (roomConfiguration.rightDoor)
+        {
+            doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(RoomHalfSize, 0.0f),
+                Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
+        }
+        if (roomConfiguration.downDoor)
+        {
+            doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(0.0f, -RoomHalfSize),
+                Quaternion.identity, transform));
+        }
+        if (roomConfiguration.leftDoor)
+        {
+            doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(-RoomHalfSize, 0.0f),
+                Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
+        }
+    }
+
+    /// Creates a collider to avoid enemies leaving the room.
+    /// The position of the room BoxCollider2D is used, instead of the position of the room itself is not relevant.
+    private void InitializeEnemyRoomCollider()
+    {
+        GameObject enemyRoomCollider = new GameObject();
+        enemyRoomCollider.transform.SetParent(this.transform);
+        enemyRoomCollider.name = "EnemyRoomCollider";
+        enemyRoomCollider.layer = LayerMask.NameToLayer("EnemyForeground");
+
+        Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
+
+        EdgeCollider2D edgeRoomCollider = enemyRoomCollider.AddComponent<EdgeCollider2D>();
+        edgeRoomCollider.points = new Vector2[5] {
+            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize),
+            (Vector2) boxCollider2DCenter + new Vector2(EnemyRoomColliderSize, EnemyRoomColliderSize),
+            (Vector2) boxCollider2DCenter + new Vector2(EnemyRoomColliderSize, -EnemyRoomColliderSize),
+            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, -EnemyRoomColliderSize),
+            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize)
+        };
     }
 
     void Update()
@@ -43,7 +118,7 @@ public class RoomController : MonoBehaviour
         if (doors.Count() > 0)
         {
             // Destroy all doors if all enemies have been destroyed.
-            if (GetComponentsInChildren<Transform>().Where(gameObject => gameObject.CompareTag("Enemy")).Count() == 0)
+            if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
             {
                 for (int i = doors.Count() - 1; i >= 0; i--)
                 {
@@ -61,79 +136,36 @@ public class RoomController : MonoBehaviour
         {
             PlayerController playerController = other.GetComponent<PlayerController>();
 
-            Debug.Log("OnTriggerExit2D: " + gameObject.name);
-
             Vector2 contactVector = new Vector2(other.bounds.center.x - boxCollider2D.bounds.center.x,
                 other.bounds.center.y - boxCollider2D.bounds.center.y);
 
             if (Vector2.Dot(contactVector, Vector2.up) > 1)
             {
-                levelManager.SwitchRoom(playerController, Vector2.up, gameObject, upRoom);
+                levelController.SwitchRoom(playerController, Vector2.up);
             }
             else if (Vector2.Dot(contactVector, Vector2.right) > 1)
             {
-                levelManager.SwitchRoom(playerController, Vector2.right, gameObject, rightRoom);
+                levelController.SwitchRoom(playerController, Vector2.right);
             }
             else if (Vector2.Dot(contactVector, Vector2.down) > 1)
             {
-                levelManager.SwitchRoom(playerController, Vector2.down, gameObject, downRoom);
+                levelController.SwitchRoom(playerController, Vector2.down);
             }
             else
             {
-                levelManager.SwitchRoom(playerController, Vector2.left, gameObject, leftRoom);
+                levelController.SwitchRoom(playerController, Vector2.left);
             }
         }
     }
 
-    /// Creates a collider to avoid enemies leaving the room.
-    /// The position of the room BoxCollider2D is used, instead of the position of the room itself is not relevant.
-    private void InitializeEnemyRoomCollider()
+    public void StartRoomTransition()
     {
-        GameObject enemyRoomColliderGameObject = new GameObject();
-        enemyRoomColliderGameObject.transform.SetParent(this.transform);
-        enemyRoomColliderGameObject.layer = LayerMask.NameToLayer("EnemyForeground");
-
-        Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
-
-        EdgeCollider2D edgeRoomCollider = enemyRoomColliderGameObject.AddComponent<EdgeCollider2D>();
-        edgeRoomCollider.points = new Vector2[5] {
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(EnemyRoomColliderSize, EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(EnemyRoomColliderSize, -EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, -EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize)
-        };
+        boxCollider2D.enabled = false;
     }
 
-    /// The position of the room BoxCollider2D is used, instead of the position of the room itself is not relevant.
-    public void InitializeDoors()
+    public void EndRoomTransition()
     {
-        if (GetComponentsInChildren<Transform>().Where(gameObject => gameObject.CompareTag("Enemy")).Count() == 0)
-        {
-            return;
-        }
-
-        Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
-
-        if (upRoomDoor)
-        {
-            doors.Add(Instantiate(door, boxCollider2DCenter + (Vector3)new Vector2(0.0f, RoomSize),
-                Quaternion.identity, transform));
-        }
-        if (rightRoomDoor)
-        {
-            doors.Add(Instantiate(door, boxCollider2DCenter + (Vector3)new Vector2(RoomSize, 0.0f),
-                Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
-        }
-        if (downRoomDoor)
-        {
-            doors.Add(Instantiate(door, boxCollider2DCenter + (Vector3)new Vector2(0.0f, -RoomSize),
-                Quaternion.identity, transform));
-        }
-        if (leftRoomDoor)
-        {
-            doors.Add(Instantiate(door, boxCollider2DCenter + (Vector3)new Vector2(-RoomSize, 0.0f),
-                Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
-        }
+        boxCollider2D.enabled = true;
+        InitializeDoors();
     }
 }

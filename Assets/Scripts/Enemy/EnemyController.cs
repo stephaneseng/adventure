@@ -45,8 +45,8 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x,
-            direction.y, 0.0f));
+        rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
+            0.0f));
         rigidbody2D.velocity = direction * speed * BaseSpeed;
     }
 
@@ -94,8 +94,7 @@ public class EnemyController : MonoBehaviour
 
     public void Attack()
     {
-        GameObject enemyBullet = (GameObject)Instantiate(bullet, transform.position, transform.rotation,
-            transform);
+        GameObject enemyBullet = (GameObject)Instantiate(bullet, transform.position, transform.rotation, transform);
         enemyBullet.tag = "EnemyAttack";
         enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;

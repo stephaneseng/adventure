@@ -7,9 +7,10 @@ TagManager:
   - PlayerAttack
   - EnemyAttack
   - Room
-  - LevelManager
   - ItemHealth
   - Enemy
+  - Level
+  - RoomFactory
   layers:
   - Default
   - TransparentFX
