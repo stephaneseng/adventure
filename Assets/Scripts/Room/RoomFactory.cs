@@ -1,22 +1,35 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomFactory : MonoBehaviour
 {
+    private static string RoomResourcesFolder = "Room";
 
-    private GameObject roomPrefab;
+    private EnemyFactory enemyFactory;
 
     void Awake()
     {
-        roomPrefab = Resources.Load<GameObject>("Room");
+        enemyFactory = GetComponentInChildren<EnemyFactory>();
     }
 
-    public void Instantiate(RoomConfiguration roomConfiguration, Transform parent)
+    public GameObject Instantiate(RoomConfiguration roomConfiguration, Vector3 position, Transform parent)
     {
-        GameObject room = Instantiate(roomPrefab,
-            new Vector3(roomConfiguration.position.x * RoomController.RoomSize,
-            roomConfiguration.position.y * RoomController.RoomSize, 0.0f), Quaternion.identity, parent);
-        room.name = "Room(" + roomConfiguration.position.x + "," + roomConfiguration.position.y + ")";
+        GameObject room = Instantiate(
+            Resources.Load<GameObject>(RoomResourcesFolder + "/" + roomConfiguration.type.ToString()),
+            position, Quaternion.identity, parent);
         room.GetComponent<RoomController>().roomConfiguration = roomConfiguration;
-        room.SetActive(false);
+
+        InstantiateEnemies(roomConfiguration.enemyConfigurations, room);
+
+        return room;
+    }
+
+    private void InstantiateEnemies(List<EnemyConfiguration> enemyConfigurations, GameObject room)
+    {
+        for (int i = 0; i < enemyConfigurations.Count && i < room.GetComponent<RoomController>().enemySpawnPositions.Length; i++)
+        {
+            enemyFactory.Instantiate(enemyConfigurations[i],
+                room.transform.position + (Vector3)room.GetComponent<RoomController>().enemySpawnPositions[i], room);
+        }
     }
 }

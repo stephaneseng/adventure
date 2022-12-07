@@ -7,7 +7,6 @@ public class LevelController : MonoBehaviour
     public static int MapWidth = 10;
     public static int MapHeight = 10;
 
-    private static Vector2 PlayerStartPosition = new Vector2(0.0f, -3.5f);
     private static float RoomTransitionPlayerScrollDistance = 1.0f;
     private static float RoomTransitionDurationInSeconds = 1.0f;
 
@@ -49,8 +48,7 @@ public class LevelController : MonoBehaviour
             rooms[roomController.roomConfiguration.position.x, roomController.roomConfiguration.position.y] = room;
         });
 
-        rooms[levelConfiguration.startRoomPosition.x, levelConfiguration.startRoomPosition.y].SetActive(true);
-        activeRoomPosition = levelConfiguration.startRoomPosition;
+        EnterRoom(levelConfiguration.startRoomPosition);
     }
 
     private void InitializeCamera()
@@ -61,9 +59,17 @@ public class LevelController : MonoBehaviour
 
     private void InitializePlayer()
     {
-        player.transform.position = (Vector3)PlayerStartPosition
+        player.transform.position =
+            (Vector3)rooms[activeRoomPosition.x, activeRoomPosition.y].GetComponent<RoomController>().playerSpawnPosition
             + new Vector3(levelConfiguration.startRoomPosition.x * RoomController.RoomSize,
             levelConfiguration.startRoomPosition.y * RoomController.RoomSize, player.transform.position.z);
+    }
+
+    private void EnterRoom(Vector2Int roomPosition)
+    {
+        activeRoomPosition = roomPosition;
+
+        rooms[activeRoomPosition.x, activeRoomPosition.y].GetComponent<RoomController>().EnterRoom();
     }
 
     public void SwitchRoom(PlayerController playerController, Vector2 transitionDirection)
@@ -83,7 +89,7 @@ public class LevelController : MonoBehaviour
         playerController.LockMove();
 
         toRoom.SetActive(true);
-        toRoom.GetComponent<RoomController>().StartRoomTransition();
+        toRoom.GetComponent<RoomController>().StartEnterRoom();
 
         Vector3 playerStartPosition = playerController.transform.position;
         Vector3 cameraStartPosition = camera.transform.position;
@@ -106,8 +112,8 @@ public class LevelController : MonoBehaviour
         playerController.transform.position = playerTargetPosition;
         camera.transform.position = cameraTargetPosition;
 
-        toRoom.GetComponent<RoomController>().EndRoomTransition();
-        fromRoom.SetActive(false);
+        toRoom.GetComponent<RoomController>().EndEnterRoom();
+        fromRoom.GetComponent<RoomController>().ExitRoom();
 
         activeRoomPosition = targetRoomPosition;
 

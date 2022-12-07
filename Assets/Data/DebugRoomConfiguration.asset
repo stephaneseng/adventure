@@ -12,5 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6c922dc4da4d58a08f4a83d23a9b178, type: 3}
   m_Name: DebugRoomConfiguration
   m_EditorClassIdentifier: 
+  type: 0
+  position: {x: 0, y: 0}
   upExit: 1
   rightExit: 1
+  downExit: 1
+  leftExit: 1
+  upDoor: 1
+  rightDoor: 1
+  downDoor: 1
+  leftDoor: 1
+  enemyConfigurations:
+  - {fileID: 11400000, guid: 65ef6d1c0505446a996c3dcef1f2005d, type: 2}

@@ -707,15 +707,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomConfiguration: {fileID: 11400000, guid: fdbde8353cb3c00b780bf3bf2cf14248, type: 2}
-  upExit: 0
-  rightExit: 0
-  downExit: 0
-  leftExit: 0
-  upRoomDoor: 0
-  rightRoomDoor: 0
-  downRoomDoor: 0
-  leftRoomDoor: 0
-  upRoom: {fileID: 0}
-  rightRoom: {fileID: 0}
-  downRoom: {fileID: 0}
-  leftRoom: {fileID: 0}
+  playerSpawnPosition: {x: 0, y: -3.5}
+  enemySpawnPositions:
+  - {x: 0, y: 3.5}

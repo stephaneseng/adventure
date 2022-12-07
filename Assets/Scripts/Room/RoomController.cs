@@ -11,6 +11,8 @@ public class RoomController : MonoBehaviour
     private static float EnemyRoomColliderSize = 4.0f;
 
     public RoomConfiguration roomConfiguration;
+    public Vector2 playerSpawnPosition;
+    public Vector2[] enemySpawnPositions;
 
     private GameObject doorPrefab;
     private LevelController levelController;
@@ -90,6 +92,8 @@ public class RoomController : MonoBehaviour
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(-RoomHalfSize, 0.0f),
                 Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
         }
+
+        doors.ForEach(door => door.SetActive(false));
     }
 
     /// Creates a collider to avoid enemies leaving the room.
@@ -98,7 +102,6 @@ public class RoomController : MonoBehaviour
     {
         GameObject enemyRoomCollider = new GameObject();
         enemyRoomCollider.transform.SetParent(this.transform);
-        enemyRoomCollider.name = "EnemyRoomCollider";
         enemyRoomCollider.layer = LayerMask.NameToLayer("EnemyForeground");
 
         Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
@@ -134,6 +137,9 @@ public class RoomController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            // Disable the collider to avoid triggering it multiple times.
+            boxCollider2D.enabled = false;
+
             PlayerController playerController = other.GetComponent<PlayerController>();
 
             Vector2 contactVector = new Vector2(other.bounds.center.x - boxCollider2D.bounds.center.x,
@@ -158,14 +164,27 @@ public class RoomController : MonoBehaviour
         }
     }
 
-    public void StartRoomTransition()
+    public void EnterRoom()
     {
-        boxCollider2D.enabled = false;
+        StartEnterRoom();
+        EndEnterRoom();
     }
 
-    public void EndRoomTransition()
+    public void StartEnterRoom()
+    {
+        gameObject.SetActive(true);
+        boxCollider2D.enabled = false;
+        doors.ForEach(door => door.SetActive(false));
+    }
+
+    public void EndEnterRoom()
     {
         boxCollider2D.enabled = true;
-        InitializeDoors();
+        doors.ForEach(door => door.SetActive(true));
+    }
+
+    public void ExitRoom()
+    {
+        gameObject.SetActive(false);
     }
 }

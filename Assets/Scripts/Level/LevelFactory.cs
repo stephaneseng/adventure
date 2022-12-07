@@ -29,7 +29,14 @@ public class LevelFactory : MonoBehaviour
     {
         roomConfigurations.ForEach(roomConfiguration =>
         {
-            roomFactory.Instantiate(roomConfiguration, level.GetComponentInChildren<Grid>().transform);
+            GameObject room = roomFactory.Instantiate(roomConfiguration, new Vector3(
+                roomConfiguration.position.x * RoomController.RoomSize,
+                roomConfiguration.position.y * RoomController.RoomSize, 0.0f),
+                level.GetComponentInChildren<Grid>().transform);
+            room.name = "Room(" + roomConfiguration.position.x + "," + roomConfiguration.position.y + ")";
+
+            // Disable rooms at their instantiation to avoid triggering colliders too early.
+            room.SetActive(false);
         });
     }
 }

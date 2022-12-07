@@ -10,7 +10,6 @@ TagManager:
   - ItemHealth
   - Enemy
   - Level
-  - RoomFactory
   layers:
   - Default
   - TransparentFX
