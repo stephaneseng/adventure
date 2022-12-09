@@ -14,7 +14,6 @@ public class LevelController : MonoBehaviour
 
     private new Camera camera;
     private GameObject player;
-    private Grid grid;
 
     private GameObject[,] rooms;
     private Vector2Int activeRoomPosition;
@@ -23,10 +22,9 @@ public class LevelController : MonoBehaviour
     {
         camera = Camera.main;
         player = GameObject.FindWithTag("Player");
-        grid = GetComponentInChildren<Grid>();
     }
 
-    void Start()
+    public void Initialize()
     {
         InitializeRooms();
         InitializeCamera();
@@ -43,6 +41,7 @@ public class LevelController : MonoBehaviour
             GameObject room = transform.gameObject;
             RoomController roomController = room.GetComponent<RoomController>();
 
+            roomController.Initialize();
             room.SetActive(false);
 
             rooms[roomController.roomConfiguration.position.x, roomController.roomConfiguration.position.y] = room;
