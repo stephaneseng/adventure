@@ -12,16 +12,18 @@ public class LevelController : MonoBehaviour
 
     public LevelConfiguration levelConfiguration;
 
+    public GameObject[,] rooms;
+    public Vector2Int activeRoomPosition;
+
     private new Camera camera;
     private GameObject player;
-
-    private GameObject[,] rooms;
-    private Vector2Int activeRoomPosition;
+    private GameObject miniMap;
 
     void Awake()
     {
         camera = Camera.main;
-        player = GameObject.FindWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
+        miniMap = GameObject.FindGameObjectWithTag("MiniMap");
     }
 
     public void Initialize()
@@ -69,6 +71,8 @@ public class LevelController : MonoBehaviour
         activeRoomPosition = roomPosition;
 
         rooms[activeRoomPosition.x, activeRoomPosition.y].GetComponent<RoomController>().EnterRoom();
+
+        miniMap.GetComponent<MiniMapController>().UpdateMiniMap();
     }
 
     public void SwitchRoom(PlayerController playerController, Vector2 transitionDirection)
@@ -114,7 +118,7 @@ public class LevelController : MonoBehaviour
         toRoom.GetComponent<RoomController>().EndEnterRoom();
         fromRoom.GetComponent<RoomController>().ExitRoom();
 
-        activeRoomPosition = targetRoomPosition;
+        EnterRoom(targetRoomPosition);
 
         playerController.UnlockMove();
     }

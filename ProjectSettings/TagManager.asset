@@ -10,6 +10,7 @@ TagManager:
   - ItemHealth
   - Enemy
   - Level
+  - MiniMap
   layers:
   - Default
   - TransparentFX

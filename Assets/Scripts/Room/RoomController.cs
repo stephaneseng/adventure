@@ -14,6 +14,8 @@ public class RoomController : MonoBehaviour
     public Vector2 playerSpawnPosition;
     public Vector2[] enemySpawnPositions;
 
+    public bool visited;
+
     private GameObject doorPrefab;
     private LevelController levelController;
     private BoxCollider2D boxCollider2D;
@@ -164,6 +166,8 @@ public class RoomController : MonoBehaviour
 
     public void EnterRoom()
     {
+        visited = true;
+
         StartEnterRoom();
         EndEnterRoom();
     }

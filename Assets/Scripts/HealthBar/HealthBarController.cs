@@ -8,13 +8,13 @@ public class HealthBarController : MonoBehaviour
 
     void Awake()
     {
-        player = GameObject.FindWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
         slider = GetComponent<Slider>();
     }
 
     void Update()
     {
-        slider.value = player.GetComponent<PlayerController>().GetHealth();
         slider.maxValue = player.GetComponent<PlayerController>().GetMaxHealth();
+        slider.value = player.GetComponent<PlayerController>().GetHealth();
     }
 }
