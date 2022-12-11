@@ -12,21 +12,21 @@ public class LevelController : MonoBehaviour
 
     public LevelConfiguration levelConfiguration;
 
+    public GameObject[,] rooms;
+    public Vector2Int activeRoomPosition;
+
     private new Camera camera;
     private GameObject player;
-    private Grid grid;
-
-    private GameObject[,] rooms;
-    private Vector2Int activeRoomPosition;
+    private GameObject miniMap;
 
     void Awake()
     {
         camera = Camera.main;
-        player = GameObject.FindWithTag("Player");
-        grid = GetComponentInChildren<Grid>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        miniMap = GameObject.FindGameObjectWithTag("MiniMap");
     }
 
-    void Start()
+    public void Initialize()
     {
         InitializeRooms();
         InitializeCamera();
@@ -43,6 +43,7 @@ public class LevelController : MonoBehaviour
             GameObject room = transform.gameObject;
             RoomController roomController = room.GetComponent<RoomController>();
 
+            roomController.Initialize();
             room.SetActive(false);
 
             rooms[roomController.roomConfiguration.position.x, roomController.roomConfiguration.position.y] = room;
@@ -70,6 +71,8 @@ public class LevelController : MonoBehaviour
         activeRoomPosition = roomPosition;
 
         rooms[activeRoomPosition.x, activeRoomPosition.y].GetComponent<RoomController>().EnterRoom();
+
+        miniMap.GetComponent<MiniMapController>().UpdateMiniMap();
     }
 
     public void SwitchRoom(PlayerController playerController, Vector2 transitionDirection)
@@ -88,8 +91,7 @@ public class LevelController : MonoBehaviour
 
         playerController.LockMove();
 
-        toRoom.SetActive(true);
-        toRoom.GetComponent<RoomController>().StartEnterRoom();
+        toRoom.GetComponent<RoomController>().StartEnterRoomTransition();
 
         Vector3 playerStartPosition = playerController.transform.position;
         Vector3 cameraStartPosition = camera.transform.position;
@@ -112,10 +114,8 @@ public class LevelController : MonoBehaviour
         playerController.transform.position = playerTargetPosition;
         camera.transform.position = cameraTargetPosition;
 
-        toRoom.GetComponent<RoomController>().EndEnterRoom();
+        EnterRoom(targetRoomPosition);
         fromRoom.GetComponent<RoomController>().ExitRoom();
-
-        activeRoomPosition = targetRoomPosition;
 
         playerController.UnlockMove();
     }

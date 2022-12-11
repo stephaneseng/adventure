@@ -14,12 +14,14 @@ public class RoomController : MonoBehaviour
     public Vector2 playerSpawnPosition;
     public Vector2[] enemySpawnPositions;
 
+    public bool visited;
+
     private GameObject doorPrefab;
     private LevelController levelController;
     private BoxCollider2D boxCollider2D;
     private Tilemap tilemap;
 
-    private List<GameObject> doors;
+    private List<GameObject> doors = new List<GameObject>();
 
     void Awake()
     {
@@ -27,11 +29,57 @@ public class RoomController : MonoBehaviour
         levelController = GameObject.FindGameObjectWithTag("Level").GetComponent<LevelController>();
         boxCollider2D = GetComponent<BoxCollider2D>();
         tilemap = GetComponentInChildren<Tilemap>();
-
-        doors = new List<GameObject>();
     }
 
-    void Start()
+    void Update()
+    {
+        if (doors.Count() > 0)
+        {
+            // Destroy all doors if all enemies have been destroyed.
+            if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
+            {
+                for (int i = doors.Count() - 1; i >= 0; i--)
+                {
+                    Destroy(doors.ElementAt(i));
+                }
+
+                doors.Clear();
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Disable the collider to avoid triggering it multiple times.
+            boxCollider2D.enabled = false;
+
+            PlayerController playerController = other.GetComponent<PlayerController>();
+
+            Vector2 contactVector = new Vector2(other.bounds.center.x - boxCollider2D.bounds.center.x,
+                other.bounds.center.y - boxCollider2D.bounds.center.y);
+
+            if (Vector2.Dot(contactVector, Vector2.up) > 1)
+            {
+                levelController.SwitchRoom(playerController, Vector2.up);
+            }
+            else if (Vector2.Dot(contactVector, Vector2.right) > 1)
+            {
+                levelController.SwitchRoom(playerController, Vector2.right);
+            }
+            else if (Vector2.Dot(contactVector, Vector2.down) > 1)
+            {
+                levelController.SwitchRoom(playerController, Vector2.down);
+            }
+            else
+            {
+                levelController.SwitchRoom(playerController, Vector2.left);
+            }
+        }
+    }
+
+    public void Initialize()
     {
         InitializeWalls();
         InitializeDoors();
@@ -63,7 +111,7 @@ public class RoomController : MonoBehaviour
     }
 
     /// The position of the room BoxCollider2D is used, because the position of the room itself is not relevant.
-    public void InitializeDoors()
+    private void InitializeDoors()
     {
         if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
         {
@@ -116,71 +164,20 @@ public class RoomController : MonoBehaviour
         };
     }
 
-    void Update()
-    {
-        if (doors.Count() > 0)
-        {
-            // Destroy all doors if all enemies have been destroyed.
-            if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
-            {
-                for (int i = doors.Count() - 1; i >= 0; i--)
-                {
-                    Destroy(doors.ElementAt(i));
-                }
-
-                doors.Clear();
-            }
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            // Disable the collider to avoid triggering it multiple times.
-            boxCollider2D.enabled = false;
-
-            PlayerController playerController = other.GetComponent<PlayerController>();
-
-            Vector2 contactVector = new Vector2(other.bounds.center.x - boxCollider2D.bounds.center.x,
-                other.bounds.center.y - boxCollider2D.bounds.center.y);
-
-            if (Vector2.Dot(contactVector, Vector2.up) > 1)
-            {
-                levelController.SwitchRoom(playerController, Vector2.up);
-            }
-            else if (Vector2.Dot(contactVector, Vector2.right) > 1)
-            {
-                levelController.SwitchRoom(playerController, Vector2.right);
-            }
-            else if (Vector2.Dot(contactVector, Vector2.down) > 1)
-            {
-                levelController.SwitchRoom(playerController, Vector2.down);
-            }
-            else
-            {
-                levelController.SwitchRoom(playerController, Vector2.left);
-            }
-        }
-    }
-
-    public void EnterRoom()
-    {
-        StartEnterRoom();
-        EndEnterRoom();
-    }
-
-    public void StartEnterRoom()
+    public void StartEnterRoomTransition()
     {
         gameObject.SetActive(true);
         boxCollider2D.enabled = false;
         doors.ForEach(door => door.SetActive(false));
     }
 
-    public void EndEnterRoom()
+    public void EnterRoom()
     {
+        gameObject.SetActive(true);
         boxCollider2D.enabled = true;
         doors.ForEach(door => door.SetActive(true));
+
+        visited = true;
     }
 
     public void ExitRoom()
