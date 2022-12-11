@@ -91,8 +91,7 @@ public class LevelController : MonoBehaviour
 
         playerController.LockMove();
 
-        toRoom.SetActive(true);
-        toRoom.GetComponent<RoomController>().StartEnterRoom();
+        toRoom.GetComponent<RoomController>().StartEnterRoomTransition();
 
         Vector3 playerStartPosition = playerController.transform.position;
         Vector3 cameraStartPosition = camera.transform.position;
@@ -115,10 +114,8 @@ public class LevelController : MonoBehaviour
         playerController.transform.position = playerTargetPosition;
         camera.transform.position = cameraTargetPosition;
 
-        toRoom.GetComponent<RoomController>().EndEnterRoom();
-        fromRoom.GetComponent<RoomController>().ExitRoom();
-
         EnterRoom(targetRoomPosition);
+        fromRoom.GetComponent<RoomController>().ExitRoom();
 
         playerController.UnlockMove();
     }

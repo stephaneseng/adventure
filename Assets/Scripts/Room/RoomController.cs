@@ -164,25 +164,20 @@ public class RoomController : MonoBehaviour
         };
     }
 
-    public void EnterRoom()
-    {
-        visited = true;
-
-        StartEnterRoom();
-        EndEnterRoom();
-    }
-
-    public void StartEnterRoom()
+    public void StartEnterRoomTransition()
     {
         gameObject.SetActive(true);
         boxCollider2D.enabled = false;
         doors.ForEach(door => door.SetActive(false));
     }
 
-    public void EndEnterRoom()
+    public void EnterRoom()
     {
+        gameObject.SetActive(true);
         boxCollider2D.enabled = true;
         doors.ForEach(door => door.SetActive(true));
+
+        visited = true;
     }
 
     public void ExitRoom()

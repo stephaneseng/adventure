@@ -40,7 +40,7 @@ public class MiniMapController : MonoBehaviour
 
         for (int x = 0; x < rooms.GetLength(0); x++)
         {
-            for (int y = 0 ; y < rooms.GetLength(1); y++)
+            for (int y = 0; y < rooms.GetLength(1); y++)
             {
                 if (rooms[x, y] == null)
                 {
@@ -59,38 +59,36 @@ public class MiniMapController : MonoBehaviour
                 Vector3 roomPosition = new Vector3(roomConfiguration.position.x, roomConfiguration.position.y, 0.0f);
                 Vector2Int activeRoomPosition = level.GetComponent<LevelController>().activeRoomPosition;
 
-                GameObject miniMapRoom;
                 if (roomPosition.x == activeRoomPosition.x && roomPosition.y == activeRoomPosition.y)
                 {
-                    miniMapRoom = Instantiate(miniMapActiveRoomPrefab, roomPosition + transform.position,
-                        Quaternion.identity, transform);
+                    miniMapRoomAndExits.Add(Instantiate(miniMapActiveRoomPrefab, roomPosition + transform.position,
+                        Quaternion.identity, transform));
                 }
                 else
                 {
-                    miniMapRoom = Instantiate(miniMapRoomPrefab, roomPosition + transform.position,
-                        Quaternion.identity, transform);
+                    miniMapRoomAndExits.Add(Instantiate(miniMapRoomPrefab, roomPosition + transform.position,
+                        Quaternion.identity, transform));
                 }
-                miniMapRoomAndExits.Add(miniMapRoom);
 
-                if (roomConfiguration.upExit) {
-                    GameObject miniMapRoomExit = Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
-                        Quaternion.identity, transform);
-                    miniMapRoomAndExits.Add(miniMapRoomExit);
+                if (roomConfiguration.upExit)
+                {
+                    miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
+                        Quaternion.identity, transform));
                 }
-                if (roomConfiguration.rightExit) {
-                    GameObject miniMapRoomExit = Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
-                        Quaternion.Euler(0.0f, 0.0f, 270.0f), transform);
-                    miniMapRoomAndExits.Add(miniMapRoomExit);
+                if (roomConfiguration.rightExit)
+                {
+                    miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
+                        Quaternion.Euler(0.0f, 0.0f, 270.0f), transform));
                 }
-                if (roomConfiguration.downExit) {
-                    GameObject miniMapRoomExit = Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
-                        Quaternion.Euler(0.0f, 0.0f, 180.0f), transform);
-                    miniMapRoomAndExits.Add(miniMapRoomExit);
+                if (roomConfiguration.downExit)
+                {
+                    miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
+                        Quaternion.Euler(0.0f, 0.0f, 180.0f), transform));
                 }
-                if (roomConfiguration.leftExit) {
-                    GameObject miniMapRoomExit = Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
-                        Quaternion.Euler(0.0f, 0.0f, 90.0f), transform);
-                    miniMapRoomAndExits.Add(miniMapRoomExit);
+                if (roomConfiguration.leftExit)
+                {
+                    miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
+                        Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
                 }
             }
         }
