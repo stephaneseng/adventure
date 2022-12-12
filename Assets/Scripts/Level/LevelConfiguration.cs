@@ -7,4 +7,5 @@ public class LevelConfiguration : ScriptableObject
     public List<RoomConfiguration> roomConfigurations = new List<RoomConfiguration>();
 
     public Vector2Int startRoomPosition;
+    public Vector2Int endRoomPosition;
 }

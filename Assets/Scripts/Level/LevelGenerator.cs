@@ -207,6 +207,7 @@ public class LevelGenerator : MonoBehaviour
         LevelConfiguration levelConfiguration = ScriptableObject.CreateInstance<LevelConfiguration>();
         levelConfiguration.roomConfigurations = roomConfigurations;
         levelConfiguration.startRoomPosition = startRoomPosition;
+        levelConfiguration.endRoomPosition = endRoomPosition;
 
         return levelConfiguration;
     }
