@@ -11,6 +11,13 @@ public class LevelGenerator : MonoBehaviour
         Vector2Int.left
     };
 
+    private static RoomConfiguration.RoomType[] NextRoomTypeChoices = new RoomConfiguration.RoomType[] {
+        RoomConfiguration.RoomType.Room02_Empty,
+        RoomConfiguration.RoomType.Room0201_Plus
+    };
+
+    private static int MaxNumberOfEnemies = 3;
+
     private GameObject level;
     private RoomFactory roomFactory;
 
@@ -124,7 +131,7 @@ public class LevelGenerator : MonoBehaviour
     private RoomConfiguration GenerateStartAndEndRoomConfiguration(Vector2Int roomPosition)
     {
         RoomConfiguration roomConfiguration = ScriptableObject.CreateInstance<RoomConfiguration>();
-        roomConfiguration.type = RoomConfiguration.RoomType.Room;
+        roomConfiguration.type = RoomConfiguration.RoomType.Room01_Start;
         roomConfiguration.position = roomPosition;
         return roomConfiguration;
     }
@@ -153,18 +160,22 @@ public class LevelGenerator : MonoBehaviour
         if (nextRoomDirection == Vector2Int.up)
         {
             roomConfiguration.upExit = true;
+            roomConfiguration.upDoor = true;
         }
         else if (nextRoomDirection == Vector2Int.right)
         {
             roomConfiguration.rightExit = true;
+            roomConfiguration.rightDoor = true;
         }
         else if (nextRoomDirection == Vector2Int.down)
         {
             roomConfiguration.downExit = true;
+            roomConfiguration.downDoor = true;
         }
         else if (nextRoomDirection == Vector2Int.left)
         {
             roomConfiguration.leftExit = true;
+            roomConfiguration.leftDoor = true;
         }
 
         return roomConfiguration;
@@ -177,28 +188,50 @@ public class LevelGenerator : MonoBehaviour
         if (roomConfiguration == null)
         {
             roomConfiguration = ScriptableObject.CreateInstance<RoomConfiguration>();
-            roomConfiguration.type = RoomConfiguration.RoomType.Room;
+            roomConfiguration.type = NextRoomTypeChoices[Random.Range(0, NextRoomTypeChoices.Length)];
             roomConfiguration.position = nextRoomPosition;
+            roomConfiguration.enemyConfigurations = GenerateEnemyConfigurations();
         }
 
         if (nextRoomDirection == Vector2Int.up)
         {
             roomConfiguration.downExit = true;
+            roomConfiguration.downDoor = true;
         }
         else if (nextRoomDirection == Vector2Int.right)
         {
             roomConfiguration.leftExit = true;
+            roomConfiguration.leftDoor = true;
         }
         else if (nextRoomDirection == Vector2Int.down)
         {
             roomConfiguration.upExit = true;
+            roomConfiguration.upDoor = true;
         }
         else if (nextRoomDirection == Vector2Int.left)
         {
             roomConfiguration.rightExit = true;
+            roomConfiguration.rightDoor = true;
         }
 
         return roomConfiguration;
+    }
+
+    private List<EnemyConfiguration> GenerateEnemyConfigurations()
+    {
+        List<EnemyConfiguration> enemyConfigurations = new List<EnemyConfiguration>();
+
+        int numberOfEnemies = Random.Range(0, MaxNumberOfEnemies + 1);
+
+        for (int i = 0; i < numberOfEnemies; i++)
+        {
+            EnemyConfiguration enemyConfiguration = ScriptableObject.CreateInstance<EnemyConfiguration>();
+            enemyConfiguration.type = EnemyConfiguration.EnemyType.Enemy;
+
+            enemyConfigurations.Add(enemyConfiguration);
+        }
+
+        return enemyConfigurations;
     }
 
     private LevelConfiguration GenerateLevelConfiguration(Vector2Int startRoomPosition, Vector2Int endRoomPosition,

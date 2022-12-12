@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RoomFactory : MonoBehaviour
@@ -26,10 +27,13 @@ public class RoomFactory : MonoBehaviour
 
     private void InstantiateEnemies(List<EnemyConfiguration> enemyConfigurations, GameObject room)
     {
-        for (int i = 0; i < enemyConfigurations.Count && i < room.GetComponent<RoomController>().enemySpawnPositions.Length; i++)
+        List<Vector2> shuffledEnemySpawnPositions = room.GetComponent<RoomController>().enemySpawnPositions
+            .OrderBy(enemySpawnPosition => Random.value).ToList();
+
+        for (int i = 0; i < enemyConfigurations.Count && i < shuffledEnemySpawnPositions.Count; i++)
         {
             enemyFactory.Instantiate(enemyConfigurations[i],
-                room.transform.position + (Vector3)room.GetComponent<RoomController>().enemySpawnPositions[i], room);
+                room.transform.position + (Vector3)shuffledEnemySpawnPositions[i], room);
         }
     }
 }

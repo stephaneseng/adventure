@@ -6,9 +6,9 @@ public class RoomConfiguration : ScriptableObject
 {
     public enum RoomType
     {
-        Room,
-        Room1,
-        Room4
+        Room01_Start,
+        Room02_Empty,
+        Room0201_Plus
     }
 
     public RoomType type;
