@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     private static int BaseHealth = 3;
     private static int BaseMaxHealth = 3;
-    private static float BaseSpeed = 4.0f;
+    private static float BaseSpeed = 8.0f;
 
     public GameObject bullet;
 
