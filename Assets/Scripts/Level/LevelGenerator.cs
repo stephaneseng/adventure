@@ -12,8 +12,8 @@ public class LevelGenerator : MonoBehaviour
     };
 
     private static RoomConfiguration.RoomType[] NextRoomTypeChoices = new RoomConfiguration.RoomType[] {
-        RoomConfiguration.RoomType.Room02_Empty,
-        RoomConfiguration.RoomType.Room0201_Plus
+        RoomConfiguration.RoomType.Room03_Empty,
+        RoomConfiguration.RoomType.Room0301_Plus
     };
 
     private static int MaxNumberOfEnemies = 3;
@@ -69,9 +69,9 @@ public class LevelGenerator : MonoBehaviour
         HashSet<Vector2Int> endRoomCluster = new HashSet<Vector2Int>() { endRoomPosition };
 
         roomConfigurations[startRoomPosition.x, startRoomPosition.y] =
-            GenerateStartAndEndRoomConfiguration(startRoomPosition);
+            GenerateStartRoomConfiguration(startRoomPosition);
         roomConfigurations[endRoomPosition.x, endRoomPosition.y] =
-            GenerateStartAndEndRoomConfiguration(endRoomPosition);
+            GenerateEndRoomConfiguration(endRoomPosition);
 
         Vector2Int clusterRoomPosition;
         Vector2Int nextRoomDirection;
@@ -128,11 +128,19 @@ public class LevelGenerator : MonoBehaviour
         return roomConfigurationsAsList;
     }
 
-    private RoomConfiguration GenerateStartAndEndRoomConfiguration(Vector2Int roomPosition)
+    private RoomConfiguration GenerateStartRoomConfiguration(Vector2Int startRoomPosition)
     {
         RoomConfiguration roomConfiguration = ScriptableObject.CreateInstance<RoomConfiguration>();
         roomConfiguration.type = RoomConfiguration.RoomType.Room01_Start;
-        roomConfiguration.position = roomPosition;
+        roomConfiguration.position = startRoomPosition;
+        return roomConfiguration;
+    }
+
+    private RoomConfiguration GenerateEndRoomConfiguration(Vector2Int endRoomPosition)
+    {
+        RoomConfiguration roomConfiguration = ScriptableObject.CreateInstance<RoomConfiguration>();
+        roomConfiguration.type = RoomConfiguration.RoomType.Room02_End;
+        roomConfiguration.position = endRoomPosition;
         return roomConfiguration;
     }
 
