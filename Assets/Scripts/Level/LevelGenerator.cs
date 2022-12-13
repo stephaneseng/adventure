@@ -73,41 +73,29 @@ public class LevelGenerator : MonoBehaviour
         roomConfigurations[endRoomPosition.x, endRoomPosition.y] =
             GenerateEndRoomConfiguration(endRoomPosition);
 
-        Vector2Int clusterRoomPosition;
-        Vector2Int nextRoomDirection;
-        Vector2Int nextRoomPosition;
-
         do
         {
             // Generate a next room for the start room cluster.
-            clusterRoomPosition = GenerateRandomClusterRoomPosition(startRoomCluster);
-            nextRoomDirection = GenerateNextRoomDirection();
-            nextRoomPosition = GenerateNextRoomPosition(clusterRoomPosition, nextRoomDirection);
+            (RoomConfiguration clusterRoomConfiguration, RoomConfiguration nextRoomConfiguration) =
+                GenerateNextRoomConfiguration(startRoomCluster, roomConfigurations);
 
-            if (nextRoomPosition != clusterRoomPosition)
-            {
-                startRoomCluster.Add(nextRoomPosition);
+            startRoomCluster.Add(nextRoomConfiguration.position);
 
-                roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y] = UpdateClusterRoomConfiguration(
-                    roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y], nextRoomDirection);
-                roomConfigurations[nextRoomPosition.x, nextRoomPosition.y] = GenerateOrUpdateNextRoomConfiguration(
-                    roomConfigurations[nextRoomPosition.x, nextRoomPosition.y], nextRoomDirection, nextRoomPosition);
-            }
+            roomConfigurations[clusterRoomConfiguration.position.x, clusterRoomConfiguration.position.y] =
+                clusterRoomConfiguration;
+            roomConfigurations[nextRoomConfiguration.position.x, nextRoomConfiguration.position.y] =
+                nextRoomConfiguration;
 
             // Generate a next room for the end room cluster.
-            clusterRoomPosition = GenerateRandomClusterRoomPosition(endRoomCluster);
-            nextRoomDirection = GenerateNextRoomDirection();
-            nextRoomPosition = GenerateNextRoomPosition(clusterRoomPosition, nextRoomDirection);
+            (clusterRoomConfiguration, nextRoomConfiguration) =
+                GenerateNextRoomConfiguration(endRoomCluster, roomConfigurations);
 
-            if (nextRoomPosition != clusterRoomPosition)
-            {
-                endRoomCluster.Add(nextRoomPosition);
+            endRoomCluster.Add(nextRoomConfiguration.position);
 
-                roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y] = UpdateClusterRoomConfiguration(
-                    roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y], nextRoomDirection);
-                roomConfigurations[nextRoomPosition.x, nextRoomPosition.y] = GenerateOrUpdateNextRoomConfiguration(
-                    roomConfigurations[nextRoomPosition.x, nextRoomPosition.y], nextRoomDirection, nextRoomPosition);
-            }
+            roomConfigurations[clusterRoomConfiguration.position.x, clusterRoomConfiguration.position.y] =
+                clusterRoomConfiguration;
+            roomConfigurations[nextRoomConfiguration.position.x, nextRoomConfiguration.position.y] =
+                nextRoomConfiguration;
         } while (!startRoomCluster.Overlaps(endRoomCluster));
 
         List<RoomConfiguration> roomConfigurationsAsList = new List<RoomConfiguration>();
@@ -142,6 +130,31 @@ public class LevelGenerator : MonoBehaviour
         roomConfiguration.type = RoomConfiguration.RoomType.Room02_End;
         roomConfiguration.position = endRoomPosition;
         return roomConfiguration;
+    }
+
+    /// Returns the room configurations of a chosen room of the cluster and of the next room, adjacent to it
+    private (RoomConfiguration, RoomConfiguration) GenerateNextRoomConfiguration(HashSet<Vector2Int> roomCluster,
+        RoomConfiguration[,] roomConfigurations)
+    {
+        Vector2Int clusterRoomPosition = GenerateRandomClusterRoomPosition(roomCluster);
+        Vector2Int nextRoomDirection = GenerateNextRoomDirection();
+        Vector2Int nextRoomPosition = GenerateNextRoomPosition(clusterRoomPosition, nextRoomDirection);
+
+        if (nextRoomPosition != clusterRoomPosition)
+        {
+            return (
+                UpdateClusterRoomConfiguration(roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y],
+                    nextRoomDirection),
+                GenerateOrUpdateNextRoomConfiguration(roomConfigurations[nextRoomPosition.x, nextRoomPosition.y],
+                    nextRoomDirection, nextRoomPosition));
+        }
+        else
+        {
+            // No modifications.
+            return (
+                roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y],
+                roomConfigurations[nextRoomPosition.x, nextRoomPosition.y]);
+        }
     }
 
     private Vector2Int GenerateRandomClusterRoomPosition(HashSet<Vector2Int> cluster)
