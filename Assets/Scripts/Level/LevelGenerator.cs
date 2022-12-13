@@ -1,8 +1,23 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
+    private static Vector2Int[] NextRoomChoices = new Vector2Int[] {
+        Vector2Int.up,
+        Vector2Int.right,
+        Vector2Int.down,
+        Vector2Int.left
+    };
+
+    private static RoomConfiguration.RoomType[] NextRoomTypeChoices = new RoomConfiguration.RoomType[] {
+        RoomConfiguration.RoomType.Room03_Empty,
+        RoomConfiguration.RoomType.Room0301_Plus
+    };
+
+    private static int MaxNumberOfEnemies = 3;
+
     private GameObject level;
     private RoomFactory roomFactory;
 
@@ -14,61 +29,226 @@ public class LevelGenerator : MonoBehaviour
 
     public void Generate()
     {
-        LevelConfiguration levelConfiguration = GenerateLevelConfiguration();
+        Vector2Int startRoomPosition = GenerateRandomRoomPosition();
+        Vector2Int endRoomPosition = GenerateEndRoomPosition(startRoomPosition);
+
+        List<RoomConfiguration> roomConfigurations = GenerateRoomConfigurations(startRoomPosition, endRoomPosition);
+
+        LevelConfiguration levelConfiguration = GenerateLevelConfiguration(startRoomPosition, endRoomPosition,
+            roomConfigurations);
         level.GetComponent<LevelController>().levelConfiguration = levelConfiguration;
 
         InstantiateRooms(levelConfiguration.roomConfigurations, level);
     }
 
-    private LevelConfiguration GenerateLevelConfiguration()
+    private Vector2Int GenerateRandomRoomPosition()
+    {
+        return new Vector2Int(Random.Range(0, LevelController.MapWidth), Random.Range(0, LevelController.MapHeight));
+    }
+
+    private Vector2Int GenerateEndRoomPosition(Vector2Int startRoomPosition)
+    {
+        Vector2Int endRoomPosition;
+
+        do
+        {
+            endRoomPosition = GenerateRandomRoomPosition();
+        } while (endRoomPosition == startRoomPosition);
+
+        return endRoomPosition;
+    }
+
+    /// Returns a collection of room positions chosen so that a path exists between the start and the end rooms.
+    private List<RoomConfiguration> GenerateRoomConfigurations(Vector2Int startRoomPosition,
+        Vector2Int endRoomPosition)
+    {
+        RoomConfiguration[,] roomConfigurations = new RoomConfiguration[LevelController.MapWidth,
+            LevelController.MapHeight];
+
+        HashSet<Vector2Int> startRoomCluster = new HashSet<Vector2Int>() { startRoomPosition };
+        HashSet<Vector2Int> endRoomCluster = new HashSet<Vector2Int>() { endRoomPosition };
+
+        roomConfigurations[startRoomPosition.x, startRoomPosition.y] =
+            GenerateStartRoomConfiguration(startRoomPosition);
+        roomConfigurations[endRoomPosition.x, endRoomPosition.y] =
+            GenerateEndRoomConfiguration(endRoomPosition);
+
+        Vector2Int clusterRoomPosition;
+        Vector2Int nextRoomDirection;
+        Vector2Int nextRoomPosition;
+
+        do
+        {
+            // Generate a next room for the start room cluster.
+            clusterRoomPosition = GenerateRandomClusterRoomPosition(startRoomCluster);
+            nextRoomDirection = GenerateNextRoomDirection();
+            nextRoomPosition = GenerateNextRoomPosition(clusterRoomPosition, nextRoomDirection);
+
+            if (nextRoomPosition != clusterRoomPosition)
+            {
+                startRoomCluster.Add(nextRoomPosition);
+
+                roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y] = UpdateClusterRoomConfiguration(
+                    roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y], nextRoomDirection);
+                roomConfigurations[nextRoomPosition.x, nextRoomPosition.y] = GenerateOrUpdateNextRoomConfiguration(
+                    roomConfigurations[nextRoomPosition.x, nextRoomPosition.y], nextRoomDirection, nextRoomPosition);
+            }
+
+            // Generate a next room for the end room cluster.
+            clusterRoomPosition = GenerateRandomClusterRoomPosition(endRoomCluster);
+            nextRoomDirection = GenerateNextRoomDirection();
+            nextRoomPosition = GenerateNextRoomPosition(clusterRoomPosition, nextRoomDirection);
+
+            if (nextRoomPosition != clusterRoomPosition)
+            {
+                endRoomCluster.Add(nextRoomPosition);
+
+                roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y] = UpdateClusterRoomConfiguration(
+                    roomConfigurations[clusterRoomPosition.x, clusterRoomPosition.y], nextRoomDirection);
+                roomConfigurations[nextRoomPosition.x, nextRoomPosition.y] = GenerateOrUpdateNextRoomConfiguration(
+                    roomConfigurations[nextRoomPosition.x, nextRoomPosition.y], nextRoomDirection, nextRoomPosition);
+            }
+        } while (!startRoomCluster.Overlaps(endRoomCluster));
+
+        List<RoomConfiguration> roomConfigurationsAsList = new List<RoomConfiguration>();
+
+        for (int x = 0; x < roomConfigurations.GetLength(0); x++)
+        {
+            for (int y = 0; y < roomConfigurations.GetLength(1); y++)
+            {
+                if (roomConfigurations[x, y] == null)
+                {
+                    continue;
+                }
+
+                roomConfigurationsAsList.Add(roomConfigurations[x, y]);
+            }
+        }
+
+        return roomConfigurationsAsList;
+    }
+
+    private RoomConfiguration GenerateStartRoomConfiguration(Vector2Int startRoomPosition)
+    {
+        RoomConfiguration roomConfiguration = ScriptableObject.CreateInstance<RoomConfiguration>();
+        roomConfiguration.type = RoomConfiguration.RoomType.Room01_Start;
+        roomConfiguration.position = startRoomPosition;
+        return roomConfiguration;
+    }
+
+    private RoomConfiguration GenerateEndRoomConfiguration(Vector2Int endRoomPosition)
+    {
+        RoomConfiguration roomConfiguration = ScriptableObject.CreateInstance<RoomConfiguration>();
+        roomConfiguration.type = RoomConfiguration.RoomType.Room02_End;
+        roomConfiguration.position = endRoomPosition;
+        return roomConfiguration;
+    }
+
+    private Vector2Int GenerateRandomClusterRoomPosition(HashSet<Vector2Int> cluster)
+    {
+        return cluster.ElementAt(Random.Range(0, cluster.Count));
+    }
+
+    private Vector2Int GenerateNextRoomDirection()
+    {
+        return NextRoomChoices[Random.Range(0, NextRoomChoices.Length)];
+    }
+
+    private Vector2Int GenerateNextRoomPosition(Vector2Int roomPosition, Vector2Int nextRoomDirection)
+    {
+        return new Vector2Int(
+            Mathf.Min(Mathf.Max(0, roomPosition.x + nextRoomDirection.x), LevelController.MapWidth - 1),
+            Mathf.Min(Mathf.Max(0, roomPosition.y + nextRoomDirection.y), LevelController.MapHeight - 1));
+    }
+
+    /// Updates the existing room to ensure it has an exit leading to the next room.
+    private RoomConfiguration UpdateClusterRoomConfiguration(RoomConfiguration roomConfiguration,
+        Vector2Int nextRoomDirection)
+    {
+        if (nextRoomDirection == Vector2Int.up)
+        {
+            roomConfiguration.upExit = true;
+            roomConfiguration.upDoor = true;
+        }
+        else if (nextRoomDirection == Vector2Int.right)
+        {
+            roomConfiguration.rightExit = true;
+            roomConfiguration.rightDoor = true;
+        }
+        else if (nextRoomDirection == Vector2Int.down)
+        {
+            roomConfiguration.downExit = true;
+            roomConfiguration.downDoor = true;
+        }
+        else if (nextRoomDirection == Vector2Int.left)
+        {
+            roomConfiguration.leftExit = true;
+            roomConfiguration.leftDoor = true;
+        }
+
+        return roomConfiguration;
+    }
+
+    /// Creates or updates the next room and ensures it has an exit leading to the existing room.
+    private RoomConfiguration GenerateOrUpdateNextRoomConfiguration(RoomConfiguration roomConfiguration,
+        Vector2Int nextRoomDirection, Vector2Int nextRoomPosition)
+    {
+        if (roomConfiguration == null)
+        {
+            roomConfiguration = ScriptableObject.CreateInstance<RoomConfiguration>();
+            roomConfiguration.type = NextRoomTypeChoices[Random.Range(0, NextRoomTypeChoices.Length)];
+            roomConfiguration.position = nextRoomPosition;
+            roomConfiguration.enemyConfigurations = GenerateEnemyConfigurations();
+        }
+
+        if (nextRoomDirection == Vector2Int.up)
+        {
+            roomConfiguration.downExit = true;
+            roomConfiguration.downDoor = true;
+        }
+        else if (nextRoomDirection == Vector2Int.right)
+        {
+            roomConfiguration.leftExit = true;
+            roomConfiguration.leftDoor = true;
+        }
+        else if (nextRoomDirection == Vector2Int.down)
+        {
+            roomConfiguration.upExit = true;
+            roomConfiguration.upDoor = true;
+        }
+        else if (nextRoomDirection == Vector2Int.left)
+        {
+            roomConfiguration.rightExit = true;
+            roomConfiguration.rightDoor = true;
+        }
+
+        return roomConfiguration;
+    }
+
+    private List<EnemyConfiguration> GenerateEnemyConfigurations()
+    {
+        List<EnemyConfiguration> enemyConfigurations = new List<EnemyConfiguration>();
+
+        int numberOfEnemies = Random.Range(0, MaxNumberOfEnemies + 1);
+
+        for (int i = 0; i < numberOfEnemies; i++)
+        {
+            EnemyConfiguration enemyConfiguration = ScriptableObject.CreateInstance<EnemyConfiguration>();
+            enemyConfiguration.type = EnemyConfiguration.EnemyType.Enemy;
+
+            enemyConfigurations.Add(enemyConfiguration);
+        }
+
+        return enemyConfigurations;
+    }
+
+    private LevelConfiguration GenerateLevelConfiguration(Vector2Int startRoomPosition, Vector2Int endRoomPosition,
+        List<RoomConfiguration> roomConfigurations)
     {
         LevelConfiguration levelConfiguration = ScriptableObject.CreateInstance<LevelConfiguration>();
-
-        RoomConfiguration roomConfiguration10 = ScriptableObject.CreateInstance<RoomConfiguration>();
-        roomConfiguration10.type = RoomConfiguration.RoomType.Room;
-        roomConfiguration10.position = new Vector2Int(1, 0);
-        roomConfiguration10.upExit = true;
-        levelConfiguration.roomConfigurations.Add(roomConfiguration10);
-
-        RoomConfiguration roomConfiguration11 = ScriptableObject.CreateInstance<RoomConfiguration>();
-        roomConfiguration11.type = RoomConfiguration.RoomType.Room1;
-        roomConfiguration11.position = new Vector2Int(1, 1);
-        roomConfiguration11.rightExit = true;
-        roomConfiguration11.downExit = true;
-        roomConfiguration11.leftExit = true;
-        roomConfiguration11.rightDoor = true;
-        roomConfiguration11.leftDoor = true;
-        EnemyConfiguration enemyConfiguration111 = ScriptableObject.CreateInstance<EnemyConfiguration>();
-        enemyConfiguration111.type = EnemyConfiguration.EnemyType.Enemy;
-        roomConfiguration11.enemyConfigurations.Add(enemyConfiguration111);
-        levelConfiguration.roomConfigurations.Add(roomConfiguration11);
-
-        RoomConfiguration roomConfiguration01 = ScriptableObject.CreateInstance<RoomConfiguration>();
-        roomConfiguration01.type = RoomConfiguration.RoomType.Room4;
-        roomConfiguration01.position = new Vector2Int(0, 1);
-        roomConfiguration01.rightExit = true;
-        roomConfiguration01.rightDoor = true;
-        EnemyConfiguration enemyConfiguration011 = ScriptableObject.CreateInstance<EnemyConfiguration>();
-        enemyConfiguration011.type = EnemyConfiguration.EnemyType.Enemy;
-        roomConfiguration01.enemyConfigurations.Add(enemyConfiguration011);
-        EnemyConfiguration enemyConfiguration012 = ScriptableObject.CreateInstance<EnemyConfiguration>();
-        enemyConfiguration012.type = EnemyConfiguration.EnemyType.Enemy;
-        roomConfiguration01.enemyConfigurations.Add(enemyConfiguration012);
-        EnemyConfiguration enemyConfiguration013 = ScriptableObject.CreateInstance<EnemyConfiguration>();
-        enemyConfiguration013.type = EnemyConfiguration.EnemyType.Enemy;
-        roomConfiguration01.enemyConfigurations.Add(enemyConfiguration013);
-        EnemyConfiguration enemyConfiguration014 = ScriptableObject.CreateInstance<EnemyConfiguration>();
-        enemyConfiguration014.type = EnemyConfiguration.EnemyType.Enemy;
-        roomConfiguration01.enemyConfigurations.Add(enemyConfiguration014);
-        levelConfiguration.roomConfigurations.Add(roomConfiguration01);
-
-        RoomConfiguration roomConfiguration21 = ScriptableObject.CreateInstance<RoomConfiguration>();
-        roomConfiguration21.type = RoomConfiguration.RoomType.Room4;
-        roomConfiguration21.position = new Vector2Int(2, 1);
-        roomConfiguration21.leftExit = true;
-        levelConfiguration.roomConfigurations.Add(roomConfiguration21);
-
-        levelConfiguration.startRoomPosition = new Vector2Int(1, 0);
+        levelConfiguration.roomConfigurations = roomConfigurations;
+        levelConfiguration.startRoomPosition = startRoomPosition;
+        levelConfiguration.endRoomPosition = endRoomPosition;
 
         return levelConfiguration;
     }
@@ -82,9 +262,6 @@ public class LevelGenerator : MonoBehaviour
                 roomConfiguration.position.y * RoomController.RoomSize, 0.0f),
                 level.transform);
             room.name = "Room(" + roomConfiguration.position.x + "," + roomConfiguration.position.y + ")";
-
-            // Disable rooms at their instantiation to avoid triggering colliders too early.
-            room.SetActive(false);
         });
     }
 }
