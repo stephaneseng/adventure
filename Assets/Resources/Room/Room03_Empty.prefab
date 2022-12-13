@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 533490627245618821, guid: 36c44d38b0226b49bbfafdf7ab0f3972, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 533490628092291329, guid: 36c44d38b0226b49bbfafdf7ab0f3972, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -53,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 533490628092291330, guid: 36c44d38b0226b49bbfafdf7ab0f3972, type: 3}
       propertyPath: m_Name
-      value: Room02_Empty
+      value: Room03_Empty
       objectReference: {fileID: 0}
     - target: {fileID: 533490628092291339, guid: 36c44d38b0226b49bbfafdf7ab0f3972, type: 3}
       propertyPath: enemySpawnPositions.Array.size

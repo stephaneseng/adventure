@@ -8,8 +8,6 @@ public class RoomController : MonoBehaviour
     public static float RoomSize = 11.0f;
     public static float RoomHalfSize = RoomSize / 2.0f;
 
-    private static float EnemyRoomColliderSize = 4.0f;
-
     public RoomConfiguration roomConfiguration;
     public Vector2 playerSpawnPosition;
     public Vector2[] enemySpawnPositions;
@@ -83,7 +81,6 @@ public class RoomController : MonoBehaviour
     {
         InitializeWalls();
         InitializeDoors();
-        InitializeEnemyRoomCollider();
     }
 
     private void InitializeWalls()
@@ -142,26 +139,6 @@ public class RoomController : MonoBehaviour
         }
 
         doors.ForEach(door => door.SetActive(false));
-    }
-
-    /// Creates a collider to avoid enemies leaving the room.
-    /// The position of the room BoxCollider2D is used, instead of the position of the room itself is not relevant.
-    private void InitializeEnemyRoomCollider()
-    {
-        GameObject enemyRoomCollider = new GameObject();
-        enemyRoomCollider.transform.SetParent(this.transform);
-        enemyRoomCollider.layer = LayerMask.NameToLayer("EnemyForeground");
-
-        Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
-
-        EdgeCollider2D edgeRoomCollider = enemyRoomCollider.AddComponent<EdgeCollider2D>();
-        edgeRoomCollider.points = new Vector2[5] {
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(EnemyRoomColliderSize, EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(EnemyRoomColliderSize, -EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, -EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize)
-        };
     }
 
     public void StartEnterRoomTransition()
