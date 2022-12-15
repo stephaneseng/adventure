@@ -20,20 +20,20 @@ public class RoomFactory : MonoBehaviour
             position, Quaternion.identity, parent);
         room.GetComponent<RoomController>().roomConfiguration = roomConfiguration;
 
-        InstantiateEnemies(roomConfiguration.enemyConfigurations, room);
+        InstantiateEnemies(roomConfiguration.enemyTypes, room);
 
         return room;
     }
 
-    private void InstantiateEnemies(List<EnemyConfiguration> enemyConfigurations, GameObject room)
+    private void InstantiateEnemies(List<EnemyType> enemyTypes, GameObject room)
     {
         List<Vector2> shuffledEnemySpawnPositions = room.GetComponent<RoomController>().enemySpawnPositions
             .OrderBy(enemySpawnPosition => Random.value).ToList();
 
-        for (int i = 0; i < enemyConfigurations.Count && i < shuffledEnemySpawnPositions.Count; i++)
+        for (int i = 0; i < enemyTypes.Count && i < shuffledEnemySpawnPositions.Count; i++)
         {
-            enemyFactory.Instantiate(enemyConfigurations[i],
-                room.transform.position + (Vector3)shuffledEnemySpawnPositions[i], room);
+            enemyFactory.Instantiate(enemyTypes[i], room.transform.position + (Vector3)shuffledEnemySpawnPositions[i],
+                room);
         }
     }
 }

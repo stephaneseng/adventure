@@ -10,6 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 340f4de95bd3d6ecf914aab1e1cf3c7a, type: 3}
-  m_Name: DebugEnemyConfiguration
+  m_Name: EnemyConfiguration
   m_EditorClassIdentifier: 
-  type: 0
+  health: 2
+  speed: 2
+  bullet: {fileID: 1070407543661715664, guid: 61f437bd4d99f2e419e03faa09d15e49, type: 3}
+  droppedItems:
+  - {fileID: 4967103446422588902, guid: 6728d5a532e03bbdabb2166c4beaba2f, type: 3}

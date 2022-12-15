@@ -18,6 +18,10 @@ public class LevelGenerator : MonoBehaviour
 
     private static int MaxNumberOfEnemies = 3;
 
+    private static EnemyType[] EnemyTypeChoices = new EnemyType[] {
+        EnemyType.Enemy
+    };
+
     private GameObject level;
     private RoomFactory roomFactory;
 
@@ -211,7 +215,7 @@ public class LevelGenerator : MonoBehaviour
             roomConfiguration = ScriptableObject.CreateInstance<RoomConfiguration>();
             roomConfiguration.type = NextRoomTypeChoices[Random.Range(0, NextRoomTypeChoices.Length)];
             roomConfiguration.position = nextRoomPosition;
-            roomConfiguration.enemyConfigurations = GenerateEnemyConfigurations();
+            roomConfiguration.enemyTypes = GenerateEnemyTypes();
         }
 
         if (nextRoomDirection == Vector2Int.up)
@@ -238,21 +242,18 @@ public class LevelGenerator : MonoBehaviour
         return roomConfiguration;
     }
 
-    private List<EnemyConfiguration> GenerateEnemyConfigurations()
+    private List<EnemyType> GenerateEnemyTypes()
     {
-        List<EnemyConfiguration> enemyConfigurations = new List<EnemyConfiguration>();
+        List<EnemyType> enemyTypes = new List<EnemyType>();
 
         int numberOfEnemies = Random.Range(0, MaxNumberOfEnemies + 1);
 
         for (int i = 0; i < numberOfEnemies; i++)
         {
-            EnemyConfiguration enemyConfiguration = ScriptableObject.CreateInstance<EnemyConfiguration>();
-            enemyConfiguration.type = EnemyConfiguration.EnemyType.Enemy;
-
-            enemyConfigurations.Add(enemyConfiguration);
+            enemyTypes.Add(EnemyTypeChoices[Random.Range(0, EnemyTypeChoices.Length)]);
         }
 
-        return enemyConfigurations;
+        return enemyTypes;
     }
 
     private LevelConfiguration GenerateLevelConfiguration(Vector2Int startRoomPosition, Vector2Int endRoomPosition,

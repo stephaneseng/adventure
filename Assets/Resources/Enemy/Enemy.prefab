@@ -167,6 +167,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8924f211e69e9d385beb0f90684e5ebf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 1070407543661715664, guid: 61f437bd4d99f2e419e03faa09d15e49, type: 3}
-  droppedItems:
-  - {fileID: 4967103446422588902, guid: 6728d5a532e03bbdabb2166c4beaba2f, type: 3}
+  enemyConfiguration: {fileID: 11400000, guid: 65ef6d1c0505446a996c3dcef1f2005d, type: 2}

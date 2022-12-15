@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    private static int BaseHealth = 2;
-    private static float BaseSpeed = 2.0f;
     private static Vector2[] NextDirectionChoices = new Vector2[] {
         Vector2.up,
         Vector2.right,
@@ -12,8 +10,7 @@ public class EnemyController : MonoBehaviour
         Vector2.zero
     };
 
-    public GameObject bullet;
-    public GameObject[] droppedItems;
+    public EnemyConfiguration enemyConfiguration;
 
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
@@ -33,7 +30,7 @@ public class EnemyController : MonoBehaviour
     {
         enemyStateMachine = new EnemyStateMachine(this);
         enemyStateMachine.Start(new EnemyIdleState());
-        health = BaseHealth;
+        health = enemyConfiguration.health;
         direction = Vector2.down;
         speed = 0.0f;
     }
@@ -47,7 +44,7 @@ public class EnemyController : MonoBehaviour
     {
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
-        rigidbody2D.velocity = direction * speed * BaseSpeed;
+        rigidbody2D.velocity = direction * speed * enemyConfiguration.speed;
     }
 
     void OnDestroy()
@@ -94,7 +91,8 @@ public class EnemyController : MonoBehaviour
 
     public void Attack()
     {
-        GameObject enemyBullet = (GameObject)Instantiate(bullet, transform.position, transform.rotation, transform);
+        GameObject enemyBullet = (GameObject)Instantiate(enemyConfiguration.bullet, transform.position,
+            transform.rotation, transform);
         enemyBullet.tag = "EnemyAttack";
         enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;
@@ -112,7 +110,7 @@ public class EnemyController : MonoBehaviour
 
     public void DropItem()
     {
-        Instantiate(droppedItems[Random.Range(0, droppedItems.Length)], transform.position, Quaternion.identity,
-            transform.parent);
+        Instantiate(enemyConfiguration.droppedItems[Random.Range(0, enemyConfiguration.droppedItems.Length)],
+            transform.position, Quaternion.identity, transform.parent);
     }
 }

@@ -3,10 +3,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyConfiguration", menuName = "ScriptableObjects/EnemyConfiguration")]
 public class EnemyConfiguration : ScriptableObject
 {
-    public enum EnemyType
-    {
-        Enemy
-    };
+    public int health;
 
-    public EnemyConfiguration.EnemyType type;
+    public float speed;
+
+    public GameObject bullet;
+
+    public GameObject[] droppedItems;
 }

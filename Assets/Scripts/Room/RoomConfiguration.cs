@@ -28,5 +28,5 @@ public class RoomConfiguration : ScriptableObject
     public bool downDoor;
     public bool leftDoor;
 
-    public List<EnemyConfiguration> enemyConfigurations = new List<EnemyConfiguration>();
+    public List<EnemyType> enemyTypes = new List<EnemyType>();
 }
