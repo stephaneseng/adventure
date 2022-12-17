@@ -10,14 +10,14 @@ public class LevelController : MonoBehaviour
     private static float RoomTransitionPlayerScrollDistance = 1.0f;
     private static float RoomTransitionDurationInSeconds = 1.0f;
 
-    public LevelConfiguration levelConfiguration;
-
-    public GameObject[,] rooms;
-    public Vector2Int activeRoomPosition;
+    public LevelData levelData;
 
     private new Camera camera;
     private GameObject player;
     private GameObject miniMap;
+
+    public GameObject[,] rooms;
+    public Vector2Int activeRoomPosition;
 
     void Awake()
     {
@@ -46,24 +46,24 @@ public class LevelController : MonoBehaviour
             roomController.Initialize();
             room.SetActive(false);
 
-            rooms[roomController.roomConfiguration.position.x, roomController.roomConfiguration.position.y] = room;
+            rooms[roomController.roomData.position.x, roomController.roomData.position.y] = room;
         });
 
-        EnterRoom(levelConfiguration.startRoomPosition);
+        EnterRoom(levelData.startRoomPosition);
     }
 
     private void InitializeCamera()
     {
-        camera.transform.position = new Vector3(levelConfiguration.startRoomPosition.x * RoomController.RoomSize,
-            levelConfiguration.startRoomPosition.y * RoomController.RoomSize, camera.transform.position.z);
+        camera.transform.position = new Vector3(levelData.startRoomPosition.x * RoomController.RoomSize,
+            levelData.startRoomPosition.y * RoomController.RoomSize, camera.transform.position.z);
     }
 
     private void InitializePlayer()
     {
         player.transform.position =
             (Vector3)rooms[activeRoomPosition.x, activeRoomPosition.y].GetComponent<RoomController>().playerSpawnPosition
-            + new Vector3(levelConfiguration.startRoomPosition.x * RoomController.RoomSize,
-            levelConfiguration.startRoomPosition.y * RoomController.RoomSize, player.transform.position.z);
+            + new Vector3(levelData.startRoomPosition.x * RoomController.RoomSize,
+            levelData.startRoomPosition.y * RoomController.RoomSize, player.transform.position.z);
     }
 
     private void EnterRoom(Vector2Int roomPosition)

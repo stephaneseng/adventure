@@ -9,10 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4f439e5c5e8de642a8aff7267c78c96, type: 3}
-  m_Name: DebugLevelConfiguration
+  m_Script: {fileID: 11500000, guid: 5a7af6044148bb8b6b0e06bc195e67c8, type: 3}
+  m_Name: DebugRoomData
   m_EditorClassIdentifier: 
-  roomConfigurations:
-  - {fileID: 11400000, guid: fdbde8353cb3c00b780bf3bf2cf14248, type: 2}
-  startRoomPosition: {x: 0, y: 0}
-  endRoomPosition: {x: 9, y: 9}
+  position: {x: 0, y: 0}
+  upExit: 1
+  rightExit: 1
+  downExit: 1
+  leftExit: 1
+  upDoor: 1
+  rightDoor: 1
+  downDoor: 1
+  leftDoor: 1

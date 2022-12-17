@@ -8,7 +8,7 @@ public class RoomController : MonoBehaviour
     public static float RoomSize = 11.0f;
     public static float RoomHalfSize = RoomSize / 2.0f;
 
-    public RoomConfiguration roomConfiguration;
+    public RoomData roomData;
     public Vector2 playerSpawnPosition;
     public Vector2[] enemySpawnPositions;
 
@@ -85,22 +85,22 @@ public class RoomController : MonoBehaviour
 
     private void InitializeWalls()
     {
-        if (roomConfiguration.upExit)
+        if (roomData.upExit)
         {
             tilemap.SetTile(new Vector3Int(-1, Mathf.FloorToInt(RoomHalfSize)), null);
             tilemap.SetTile(new Vector3Int(0, Mathf.FloorToInt(RoomHalfSize)), null);
         }
-        if (roomConfiguration.rightExit)
+        if (roomData.rightExit)
         {
             tilemap.SetTile(new Vector3Int(Mathf.FloorToInt(RoomHalfSize), 0), null);
             tilemap.SetTile(new Vector3Int(Mathf.FloorToInt(RoomHalfSize), -1), null);
         }
-        if (roomConfiguration.downExit)
+        if (roomData.downExit)
         {
             tilemap.SetTile(new Vector3Int(-1, -Mathf.FloorToInt(RoomHalfSize) - 1), null);
             tilemap.SetTile(new Vector3Int(0, -Mathf.FloorToInt(RoomHalfSize) - 1), null);
         }
-        if (roomConfiguration.leftExit)
+        if (roomData.leftExit)
         {
             tilemap.SetTile(new Vector3Int(-Mathf.FloorToInt(RoomHalfSize) - 1, 0), null);
             tilemap.SetTile(new Vector3Int(-Mathf.FloorToInt(RoomHalfSize) - 1, -1), null);
@@ -117,22 +117,22 @@ public class RoomController : MonoBehaviour
 
         Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
 
-        if (roomConfiguration.upDoor)
+        if (roomData.upDoor)
         {
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(0.0f, RoomHalfSize),
                 Quaternion.identity, transform));
         }
-        if (roomConfiguration.rightDoor)
+        if (roomData.rightDoor)
         {
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(RoomHalfSize, 0.0f),
                 Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
         }
-        if (roomConfiguration.downDoor)
+        if (roomData.downDoor)
         {
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(0.0f, -RoomHalfSize),
                 Quaternion.identity, transform));
         }
-        if (roomConfiguration.leftDoor)
+        if (roomData.leftDoor)
         {
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(-RoomHalfSize, 0.0f),
                 Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));

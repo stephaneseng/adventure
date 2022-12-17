@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour
         Vector2.zero
     };
 
-    public EnemyConfiguration enemyConfiguration;
+    public EnemyData enemyData;
 
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
@@ -30,7 +30,7 @@ public class EnemyController : MonoBehaviour
     {
         enemyStateMachine = new EnemyStateMachine(this);
         enemyStateMachine.Start(new EnemyIdleState());
-        health = enemyConfiguration.health;
+        health = enemyData.health;
         direction = Vector2.down;
         speed = 0.0f;
     }
@@ -44,7 +44,7 @@ public class EnemyController : MonoBehaviour
     {
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
-        rigidbody2D.velocity = direction * speed * enemyConfiguration.speed;
+        rigidbody2D.velocity = direction * speed * enemyData.speed;
     }
 
     void OnDestroy()
@@ -91,8 +91,8 @@ public class EnemyController : MonoBehaviour
 
     public void Attack()
     {
-        GameObject enemyBullet = (GameObject)Instantiate(enemyConfiguration.bullet, transform.position,
-            transform.rotation, transform);
+        GameObject enemyBullet = (GameObject)Instantiate(enemyData.bullet, transform.position, transform.rotation,
+            transform);
         enemyBullet.tag = "EnemyAttack";
         enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;
@@ -110,7 +110,7 @@ public class EnemyController : MonoBehaviour
 
     public void DropItem()
     {
-        Instantiate(enemyConfiguration.droppedItems[Random.Range(0, enemyConfiguration.droppedItems.Length)],
-            transform.position, Quaternion.identity, transform.parent);
+        Instantiate(enemyData.droppedItems[Random.Range(0, enemyData.droppedItems.Length)], transform.position,
+            Quaternion.identity, transform.parent);
     }
 }
