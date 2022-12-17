@@ -17,7 +17,7 @@ public class LevelController : MonoBehaviour
     private GameObject miniMap;
 
     public GameObject[,] rooms;
-    public Vector2Int activeRoomPosition;
+    public Vector2Int currentRoomPosition;
 
     void Awake()
     {
@@ -31,6 +31,8 @@ public class LevelController : MonoBehaviour
         InitializeRooms();
         InitializeCamera();
         InitializePlayer();
+
+        EnterRoom(levelData.startRoomPosition);
     }
 
     private void InitializeRooms()
@@ -43,13 +45,11 @@ public class LevelController : MonoBehaviour
             GameObject room = transform.gameObject;
             RoomController roomController = room.GetComponent<RoomController>();
 
+            rooms[roomController.roomData.position.x, roomController.roomData.position.y] = room;
+
             roomController.Initialize();
             room.SetActive(false);
-
-            rooms[roomController.roomData.position.x, roomController.roomData.position.y] = room;
         });
-
-        EnterRoom(levelData.startRoomPosition);
     }
 
     private void InitializeCamera()
@@ -60,19 +60,22 @@ public class LevelController : MonoBehaviour
 
     private void InitializePlayer()
     {
-        player.transform.position =
-            (Vector3)rooms[activeRoomPosition.x, activeRoomPosition.y].GetComponent<RoomController>().playerSpawnPosition
-            + new Vector3(levelData.startRoomPosition.x * RoomController.RoomSize,
+        player.transform.position = new Vector3(levelData.startRoomPosition.x * RoomController.RoomSize,
             levelData.startRoomPosition.y * RoomController.RoomSize, player.transform.position.z);
     }
 
     private void EnterRoom(Vector2Int roomPosition)
     {
-        activeRoomPosition = roomPosition;
+        currentRoomPosition = roomPosition;
 
-        rooms[activeRoomPosition.x, activeRoomPosition.y].GetComponent<RoomController>().EnterRoom();
+        rooms[roomPosition.x, roomPosition.y].GetComponent<RoomController>().EnterRoom();
 
         miniMap.GetComponent<MiniMapController>().UpdateMiniMap();
+    }
+
+    private void ExitRoom(Vector2Int roomPosition)
+    {
+        rooms[roomPosition.x, roomPosition.y].GetComponent<RoomController>().ExitRoom();
     }
 
     public void SwitchRoom(PlayerController playerController, Vector2 transitionDirection)
@@ -83,10 +86,10 @@ public class LevelController : MonoBehaviour
     /// Translates the player and the camera in the specified direction.
     private IEnumerator PlayRoomTransitionAnimation(PlayerController playerController, Vector2 transitionDirection)
     {
-        Vector2Int targetRoomPosition = activeRoomPosition + new Vector2Int(Mathf.FloorToInt(transitionDirection.x),
+        Vector2Int targetRoomPosition = currentRoomPosition + new Vector2Int(Mathf.FloorToInt(transitionDirection.x),
             Mathf.FloorToInt(transitionDirection.y));
 
-        GameObject fromRoom = rooms[activeRoomPosition.x, activeRoomPosition.y];
+        GameObject fromRoom = rooms[currentRoomPosition.x, currentRoomPosition.y];
         GameObject toRoom = rooms[targetRoomPosition.x, targetRoomPosition.y];
 
         playerController.LockMove();
@@ -114,8 +117,8 @@ public class LevelController : MonoBehaviour
         playerController.transform.position = playerTargetPosition;
         camera.transform.position = cameraTargetPosition;
 
+        ExitRoom(currentRoomPosition);
         EnterRoom(targetRoomPosition);
-        fromRoom.GetComponent<RoomController>().ExitRoom();
 
         playerController.UnlockMove();
     }

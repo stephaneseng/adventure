@@ -706,7 +706,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae8a4f883b5a7a09f0e6693db31c34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomData: {fileID: 0}
+  roomData: {fileID: 11400000, guid: 5a4ea17fddc5865fa9143e8b3f50001e, type: 2}
   playerSpawnPosition: {x: 0, y: 0}
   enemySpawnPositions: []
   visited: 0

@@ -9,15 +9,13 @@ public class RoomController : MonoBehaviour
     public static float RoomHalfSize = RoomSize / 2.0f;
 
     public RoomData roomData;
-    public Vector2 playerSpawnPosition;
-    public Vector2[] enemySpawnPositions;
-
-    public bool visited;
 
     private GameObject doorPrefab;
     private LevelController levelController;
     private BoxCollider2D boxCollider2D;
     private Tilemap tilemap;
+
+    public bool visited;
 
     private List<GameObject> doors = new List<GameObject>();
 

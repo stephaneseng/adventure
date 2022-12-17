@@ -44,7 +44,7 @@ public class MiniMapController : MonoBehaviour
     {
         Vector2Int startRoomPosition = level.GetComponent<LevelController>().levelData.startRoomPosition;
         Vector2Int endRoomPosition = level.GetComponent<LevelController>().levelData.endRoomPosition;
-        Vector2Int activeRoomPosition = level.GetComponent<LevelController>().activeRoomPosition;
+        Vector2Int currentRoomPosition = level.GetComponent<LevelController>().currentRoomPosition;
 
         GameObject[,] rooms = level.GetComponent<LevelController>().rooms;
 
@@ -111,7 +111,7 @@ public class MiniMapController : MonoBehaviour
 
         // Add the current room indicator.
         miniMapRoomAndExits.Add(Instantiate(miniMapActiveRoomMaskPrefab,
-            new Vector3(activeRoomPosition.x, activeRoomPosition.y, 0.0f) + transform.position, Quaternion.identity,
+            new Vector3(currentRoomPosition.x, currentRoomPosition.y, 0.0f) + transform.position, Quaternion.identity,
             transform));
     }
 }

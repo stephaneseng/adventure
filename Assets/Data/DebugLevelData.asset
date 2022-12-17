@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: DebugLevelData
   m_EditorClassIdentifier: 
   startRoomPosition: {x: 0, y: 0}
-  endRoomPosition: {x: 0, y: 0}
+  endRoomPosition: {x: 9, y: 9}

@@ -1914,6 +1914,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level
       objectReference: {fileID: 0}
+    - target: {fileID: 4420378341464158918, guid: 9fabd338cfc6dde2b8789de719f28b19, type: 3}
+      propertyPath: levelData
+      value: 
+      objectReference: {fileID: 11400000, guid: 95b8db8719c2a0041a7fe474b0b3f688, type: 2}
     - target: {fileID: 4641326811696601647, guid: 9fabd338cfc6dde2b8789de719f28b19, type: 3}
       propertyPath: m_RootOrder
       value: 0

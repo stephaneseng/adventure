@@ -11,10 +11,11 @@ public class LevelGenerator : MonoBehaviour
         Vector2Int.left
     };
 
-    private static int MaxNumberOfEnemies = 10;
+    private static int SpawnAreaWidthHeight = 8;
 
-    private static Vector2Int MinEnemySpawnPosition = new Vector2Int(2, 2);
-    private static Vector2Int MaxEnemySpawnPosition = new Vector2Int(10, 10);
+    private static int SpawnAreaWidthHeightOffset = 2;
+
+    private static int MaxNumberOfEnemies = 10;
 
     private static EnemyType[] EnemyTypeChoices = new EnemyType[] {
         EnemyType.Enemy
@@ -221,14 +222,26 @@ public class LevelGenerator : MonoBehaviour
         for (int i = 0; i < numberOfEnemies; i++)
         {
             EnemyDefinition enemyDefinition = new EnemyDefinition();
-            enemyDefinition.position = new Vector2Int(Random.Range(MinEnemySpawnPosition.x, MaxEnemySpawnPosition.x),
-                Random.Range(MinEnemySpawnPosition.y, MaxEnemySpawnPosition.y));
+            enemyDefinition.position = GenerateSpawnPosition(enemyDefinitions);
             enemyDefinition.enemyType = EnemyTypeChoices[Random.Range(0, EnemyTypeChoices.Length)];
 
             enemyDefinitions.Add(enemyDefinition);
         }
 
         return enemyDefinitions;
+    }
+
+    private Vector2Int GenerateSpawnPosition(List<EnemyDefinition> enemyDefinitions)
+    {
+        Vector2Int spawnPosition;
+
+        do
+        {
+            spawnPosition = new Vector2Int(Random.Range(SpawnAreaWidthHeightOffset, SpawnAreaWidthHeight),
+                Random.Range(SpawnAreaWidthHeightOffset, SpawnAreaWidthHeight));
+        } while (enemyDefinitions.Any(enemyDefinition => enemyDefinition.position == spawnPosition));
+
+        return spawnPosition;
     }
 
     private LevelDefinition GenerateLevelDefinition(Vector2Int startRoomPosition, Vector2Int endRoomPosition,
