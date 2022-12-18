@@ -15,7 +15,9 @@ public class LevelGenerator : MonoBehaviour
 
     private static int SpawnAreaWidthHeightOffset = 2;
 
-    private static int MaxNumberOfEnemies = 10;
+    private static int MaxNumberOfBlocks = 3;
+
+    private static int MaxNumberOfEnemies = 3;
 
     private static EnemyType[] EnemyTypeChoices = new EnemyType[] {
         EnemyType.Enemy
@@ -27,6 +29,7 @@ public class LevelGenerator : MonoBehaviour
         Vector2Int endRoomPosition = GenerateEndRoomPosition(startRoomPosition);
 
         List<RoomDefinition> roomDefinitions = GenerateRoomDefinitions(startRoomPosition, endRoomPosition);
+
         return GenerateLevelDefinition(startRoomPosition, endRoomPosition, roomDefinitions);
     }
 
@@ -48,8 +51,7 @@ public class LevelGenerator : MonoBehaviour
     }
 
     /// Returns a collection of rooms chosen so that a path exists between the start and the end rooms.
-    private List<RoomDefinition> GenerateRoomDefinitions(Vector2Int startRoomPosition,
-        Vector2Int endRoomPosition)
+    private List<RoomDefinition> GenerateRoomDefinitions(Vector2Int startRoomPosition, Vector2Int endRoomPosition)
     {
         RoomDefinition[,] roomDefinitions = new RoomDefinition[LevelController.MapWidth, LevelController.MapHeight];
 
@@ -78,10 +80,8 @@ public class LevelGenerator : MonoBehaviour
 
             endRoomCluster.Add(nextRoomDefinition.position);
 
-            roomDefinitions[clusterRoomDefinition.position.x, clusterRoomDefinition.position.y] =
-                clusterRoomDefinition;
-            roomDefinitions[nextRoomDefinition.position.x, nextRoomDefinition.position.y] =
-                nextRoomDefinition;
+            roomDefinitions[clusterRoomDefinition.position.x, clusterRoomDefinition.position.y] = clusterRoomDefinition;
+            roomDefinitions[nextRoomDefinition.position.x, nextRoomDefinition.position.y] = nextRoomDefinition;
         } while (!startRoomCluster.Overlaps(endRoomCluster));
 
         List<RoomDefinition> roomDefinitionsAsList = new List<RoomDefinition>();
@@ -109,7 +109,7 @@ public class LevelGenerator : MonoBehaviour
         return roomDefinition;
     }
 
-    /// Returns the room definitions of a chosen room of the cluster and of the next room, adjacent to it
+    /// Returns the room definitions of a chosen room of the cluster and of the next room, adjacent to it.
     private (RoomDefinition, RoomDefinition) GenerateNextRoomDefinition(HashSet<Vector2Int> roomCluster,
         RoomDefinition[,] roomDefinitions)
     {
@@ -186,7 +186,8 @@ public class LevelGenerator : MonoBehaviour
         {
             roomDefinition = new RoomDefinition();
             roomDefinition.position = nextRoomPosition;
-            roomDefinition.enemyDefinitions = GenerateEnemyDefinitions();
+            roomDefinition.blockDefinitions = GenerateBlockDefinitions();
+            roomDefinition.enemyDefinitions = GenerateEnemyDefinitions(roomDefinition.blockDefinitions);
         }
 
         if (nextRoomDirection == Vector2Int.up)
@@ -213,7 +214,38 @@ public class LevelGenerator : MonoBehaviour
         return roomDefinition;
     }
 
-    private List<EnemyDefinition> GenerateEnemyDefinitions()
+    private List<BlockDefinition> GenerateBlockDefinitions()
+    {
+        List<BlockDefinition> blockDefinitions = new List<BlockDefinition>();
+
+        int numberOfBlocks = Random.Range(0, MaxNumberOfBlocks + 1);
+
+        for (int i = 0; i < numberOfBlocks; i++)
+        {
+            BlockDefinition blockDefinition = new BlockDefinition();
+            blockDefinition.position = GenerateSpawnPosition(blockDefinitions);
+
+            blockDefinitions.Add(blockDefinition);
+        }
+
+        return blockDefinitions;
+    }
+
+    private Vector2Int GenerateSpawnPosition(IEnumerable<SpawnDefinition> spawnDefinitions)
+    {
+        Vector2Int spawnPosition;
+
+        do
+        {
+            spawnPosition = new Vector2Int(
+                Random.Range(SpawnAreaWidthHeightOffset, SpawnAreaWidthHeightOffset + SpawnAreaWidthHeight),
+                Random.Range(SpawnAreaWidthHeightOffset, SpawnAreaWidthHeightOffset + SpawnAreaWidthHeight));
+        } while (spawnDefinitions.Any(spawnDefinition => spawnDefinition.position == spawnPosition));
+
+        return spawnPosition;
+    }
+
+    private List<EnemyDefinition> GenerateEnemyDefinitions(IEnumerable<SpawnDefinition> spawnDefinitions)
     {
         List<EnemyDefinition> enemyDefinitions = new List<EnemyDefinition>();
 
@@ -222,26 +254,13 @@ public class LevelGenerator : MonoBehaviour
         for (int i = 0; i < numberOfEnemies; i++)
         {
             EnemyDefinition enemyDefinition = new EnemyDefinition();
-            enemyDefinition.position = GenerateSpawnPosition(enemyDefinitions);
+            enemyDefinition.position = GenerateSpawnPosition(spawnDefinitions.Union(enemyDefinitions).ToList());
             enemyDefinition.enemyType = EnemyTypeChoices[Random.Range(0, EnemyTypeChoices.Length)];
 
             enemyDefinitions.Add(enemyDefinition);
         }
 
         return enemyDefinitions;
-    }
-
-    private Vector2Int GenerateSpawnPosition(List<EnemyDefinition> enemyDefinitions)
-    {
-        Vector2Int spawnPosition;
-
-        do
-        {
-            spawnPosition = new Vector2Int(Random.Range(SpawnAreaWidthHeightOffset, SpawnAreaWidthHeight),
-                Random.Range(SpawnAreaWidthHeightOffset, SpawnAreaWidthHeight));
-        } while (enemyDefinitions.Any(enemyDefinition => enemyDefinition.position == spawnPosition));
-
-        return spawnPosition;
     }
 
     private LevelDefinition GenerateLevelDefinition(Vector2Int startRoomPosition, Vector2Int endRoomPosition,

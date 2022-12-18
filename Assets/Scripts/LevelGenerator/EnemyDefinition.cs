@@ -1,8 +1,4 @@
-using UnityEngine;
-
-public class EnemyDefinition
+public class EnemyDefinition : SpawnDefinition
 {
-    public Vector2Int position;
-
     public EnemyType enemyType;
 }

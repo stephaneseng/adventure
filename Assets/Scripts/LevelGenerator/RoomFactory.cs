@@ -5,10 +5,12 @@ public class RoomFactory : MonoBehaviour
 {
     private static string RoomResourcesFolder = "Room";
 
+    private BlockFactory blockFactory;
     private EnemyFactory enemyFactory;
 
     void Awake()
     {
+        blockFactory = GetComponentInChildren<BlockFactory>();
         enemyFactory = GetComponentInChildren<EnemyFactory>();
     }
 
@@ -38,6 +40,8 @@ public class RoomFactory : MonoBehaviour
         roomData.downDoor = roomDefinition.downDoor;
         roomData.leftDoor = roomDefinition.leftDoor;
         room.GetComponent<RoomController>().roomData = roomData;
+
+        blockFactory.InstantiateBlocks(roomDefinition.blockDefinitions, room);
 
         enemyFactory.InstantiateEnemies(roomDefinition.enemyDefinitions, room);
 

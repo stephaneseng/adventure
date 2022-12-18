@@ -4,5 +4,6 @@ using UnityEngine;
 public class LevelData : ScriptableObject
 {
     public Vector2Int startRoomPosition;
+
     public Vector2Int endRoomPosition;
 }

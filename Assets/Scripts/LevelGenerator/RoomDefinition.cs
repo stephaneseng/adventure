@@ -15,5 +15,7 @@ public class RoomDefinition
     public bool downDoor;
     public bool leftDoor;
 
+    public List<BlockDefinition> blockDefinitions = new List<BlockDefinition>();
+
     public List<EnemyDefinition> enemyDefinitions = new List<EnemyDefinition>();
 }
