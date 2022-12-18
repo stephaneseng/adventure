@@ -15,9 +15,11 @@ public class LevelGenerator : MonoBehaviour
 
     private static int SpawnAreaWidthHeightOffset = 2;
 
-    private static int MaxNumberOfBlocks = 3;
+    private static int MinNumberOfBlocks = 5;
 
-    private static int MaxNumberOfEnemies = 3;
+    private static int MaxNumberOfBlocks = 10;
+
+    private static int MaxNumberOfEnemies = 10;
 
     private static EnemyType[] EnemyTypeChoices = new EnemyType[] {
         EnemyType.Enemy
@@ -218,7 +220,7 @@ public class LevelGenerator : MonoBehaviour
     {
         List<BlockDefinition> blockDefinitions = new List<BlockDefinition>();
 
-        int numberOfBlocks = Random.Range(0, MaxNumberOfBlocks + 1);
+        int numberOfBlocks = Random.Range(MinNumberOfBlocks, MaxNumberOfBlocks + 1);
 
         for (int i = 0; i < numberOfBlocks; i++)
         {
