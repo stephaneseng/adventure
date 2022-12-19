@@ -68,21 +68,21 @@ public class LevelGenerator : MonoBehaviour
         do
         {
             // Generate a next room for the start room cluster.
-            (RoomDefinition clusterRoomDefinition, RoomDefinition nextRoomDefinition) =
-                GenerateNextRoomDefinition(startRoomCluster, roomDefinitions);
+            (RoomDefinition roomInClusterDefinition, RoomDefinition nextRoomDefinition) =
+                GenerateNextRoomDefinition(startRoomCluster, roomDefinitions, endRoomPosition);
 
             startRoomCluster.Add(nextRoomDefinition.position);
 
-            roomDefinitions[clusterRoomDefinition.position.x, clusterRoomDefinition.position.y] = clusterRoomDefinition;
+            roomDefinitions[roomInClusterDefinition.position.x, roomInClusterDefinition.position.y] = roomInClusterDefinition;
             roomDefinitions[nextRoomDefinition.position.x, nextRoomDefinition.position.y] = nextRoomDefinition;
 
             // Generate a next room for the end room cluster.
-            (clusterRoomDefinition, nextRoomDefinition) =
-                GenerateNextRoomDefinition(endRoomCluster, roomDefinitions);
+            (roomInClusterDefinition, nextRoomDefinition) =
+                GenerateNextRoomDefinition(endRoomCluster, roomDefinitions, endRoomPosition);
 
             endRoomCluster.Add(nextRoomDefinition.position);
 
-            roomDefinitions[clusterRoomDefinition.position.x, clusterRoomDefinition.position.y] = clusterRoomDefinition;
+            roomDefinitions[roomInClusterDefinition.position.x, roomInClusterDefinition.position.y] = roomInClusterDefinition;
             roomDefinitions[nextRoomDefinition.position.x, nextRoomDefinition.position.y] = nextRoomDefinition;
         } while (!startRoomCluster.Overlaps(endRoomCluster));
 
@@ -113,26 +113,26 @@ public class LevelGenerator : MonoBehaviour
 
     /// Returns the room definitions of a chosen room of the cluster and of the next room, adjacent to it.
     private (RoomDefinition, RoomDefinition) GenerateNextRoomDefinition(HashSet<Vector2Int> roomCluster,
-        RoomDefinition[,] roomDefinitions)
+        RoomDefinition[,] roomDefinitions, Vector2Int endRoomPosition)
     {
-        Vector2Int clusterRoomPosition = GenerateRandomClusterRoomPosition(roomCluster);
+        Vector2Int roomInClusterPosition = GenerateRandomClusterRoomPosition(roomCluster);
         Vector2Int nextRoomDirection = GenerateNextRoomDirection();
-        Vector2Int nextRoomPosition = GenerateNextRoomPosition(clusterRoomPosition, nextRoomDirection);
+        Vector2Int nextRoomPosition = GenerateNextRoomPosition(roomInClusterPosition, nextRoomDirection);
 
-        if (nextRoomPosition != clusterRoomPosition)
+        if (nextRoomPosition != roomInClusterPosition
+            && ((roomInClusterPosition != endRoomPosition && nextRoomPosition != endRoomPosition) || CheckIfEndRoomHasNoExit(roomDefinitions, endRoomPosition)))
         {
             return (
-                UpdateClusterRoomDefinition(roomDefinitions[clusterRoomPosition.x, clusterRoomPosition.y],
+                UpdateClusterRoomDefinition(roomDefinitions[roomInClusterPosition.x, roomInClusterPosition.y],
                     nextRoomDirection),
                 GenerateOrUpdateNextRoomDefinition(roomDefinitions[nextRoomPosition.x, nextRoomPosition.y],
                     nextRoomDirection, nextRoomPosition));
         }
         else
         {
-            // No modifications.
-            return (
-                roomDefinitions[clusterRoomPosition.x, clusterRoomPosition.y],
-                roomDefinitions[nextRoomPosition.x, nextRoomPosition.y]);
+            // No modifications so return the room definition of the room in the cluster twice as we are sure it exists.
+            return (roomDefinitions[roomInClusterPosition.x, roomInClusterPosition.y],
+                roomDefinitions[roomInClusterPosition.x, roomInClusterPosition.y]);
         }
     }
 
@@ -151,6 +151,14 @@ public class LevelGenerator : MonoBehaviour
         return new Vector2Int(
             Mathf.Min(Mathf.Max(0, roomPosition.x + nextRoomDirection.x), LevelController.MapWidth - 1),
             Mathf.Min(Mathf.Max(0, roomPosition.y + nextRoomDirection.y), LevelController.MapHeight - 1));
+    }
+
+    private bool CheckIfEndRoomHasNoExit(RoomDefinition[,] roomDefinitions, Vector2Int endRoomPosition)
+    {
+        RoomDefinition endRoomDefinition = roomDefinitions[endRoomPosition.x, endRoomPosition.y];
+
+        return !endRoomDefinition.upExit && !endRoomDefinition.rightExit && !endRoomDefinition.downExit
+            && !endRoomDefinition.leftExit;
     }
 
     /// Updates the existing room to ensure it has an exit leading to the next room.
