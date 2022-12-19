@@ -22,7 +22,7 @@ public class LevelGenerator : MonoBehaviour
     private static int MaxNumberOfEnemies = 10;
 
     private static EnemyType[] EnemyTypeChoices = new EnemyType[] {
-        EnemyType.Enemy
+        EnemyType.PlusEnemy
     };
 
     public LevelDefinition Generate()

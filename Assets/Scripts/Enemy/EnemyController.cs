@@ -2,23 +2,16 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    private static Vector2[] NextDirectionChoices = new Vector2[] {
-        Vector2.up,
-        Vector2.right,
-        Vector2.down,
-        Vector2.left,
-        Vector2.zero
-    };
-
     public EnemyData enemyData;
 
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
 
-    private EnemyStateMachine enemyStateMachine;
+    public EnemyStateMachine enemyStateMachine;
+
     private int health;
-    private Vector2 direction;
-    private float speed;
+    public Vector2 direction;
+    public float speed;
 
     void Awake()
     {
@@ -29,10 +22,12 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         enemyStateMachine = new EnemyStateMachine(this);
-        enemyStateMachine.Start(new EnemyIdleState());
+
         health = enemyData.health;
         direction = Vector2.down;
         speed = 0.0f;
+
+        enemyStateMachine.Initialize(new EnemyIdleState());
     }
 
     void Update()
@@ -45,11 +40,6 @@ public class EnemyController : MonoBehaviour
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
         rigidbody2D.velocity = direction * speed * enemyData.speed;
-    }
-
-    void OnDestroy()
-    {
-        DropItem();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -72,16 +62,7 @@ public class EnemyController : MonoBehaviour
 
     public void StartMove()
     {
-        Vector2 nextDirection = NextDirectionChoices[Random.Range(0, NextDirectionChoices.Length)];
-        if (nextDirection != Vector2.zero)
-        {
-            direction = nextDirection;
-            speed = 1.0f;
-        }
-        else
-        {
-            speed = 0.0f;
-        }
+        speed = 1.0f;
     }
 
     public void StopMove()
@@ -106,6 +87,7 @@ public class EnemyController : MonoBehaviour
     public void Destroy()
     {
         animator.Play("Destroy");
+        DropItem();
     }
 
     public void DropItem()
