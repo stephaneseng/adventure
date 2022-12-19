@@ -6,7 +6,7 @@ public class EnemyStateMachine
 
     public float startTime;
 
-    public EnemyState currentState;
+    private EnemyState currentState;
 
     public EnemyStateMachine(EnemyController enemyController)
     {

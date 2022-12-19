@@ -218,4 +218,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfd918f138fef90caadca942b39a57e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 1070407543661715664, guid: 61f437bd4d99f2e419e03faa09d15e49, type: 3}
+  playerData: {fileID: 11400000, guid: 8adc0620c8e365264bb10dd425373e3c, type: 2}

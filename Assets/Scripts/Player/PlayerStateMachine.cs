@@ -1,34 +1,36 @@
+using UnityEngine;
+
 public class PlayerStateMachine
 {
-    private PlayerState currentState;
+    public PlayerController playerController;
 
-    private PlayerController playerController;
+    public float startTime;
+
+    private PlayerState currentState;
 
     public PlayerStateMachine(PlayerController playerController)
     {
         this.playerController = playerController;
     }
 
-    public PlayerController GetPlayerController()
+    public void Initialize(PlayerState playerState)
     {
-        return playerController;
-    }
-
-    public void Start(PlayerState playerState)
-    {
+        startTime = Time.time;
         currentState = playerState;
-        currentState.OnEnterState(this);
+        currentState.OnEnter(playerController);
     }
 
     public void Update()
     {
-        currentState.Update(this);
+        currentState.OnUpdate(playerController);
     }
 
     public void SwitchState(PlayerState playerState)
     {
-        currentState.OnExitState(this);
+        currentState.OnExit(playerController);
+
+        startTime = Time.time;
         currentState = playerState;
-        currentState.OnEnterState(this);
+        currentState.OnEnter(playerController);
     }
 }

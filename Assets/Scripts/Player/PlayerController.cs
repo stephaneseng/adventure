@@ -3,17 +3,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    private static int BaseHealth = 3;
-    private static int BaseMaxHealth = 3;
-    private static float BaseSpeed = 4.0f;
-
-    public GameObject bullet;
+    public PlayerData playerData;
 
     private PlayerInput playerInput;
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
 
-    private PlayerStateMachine playerStateMachine;
+    public PlayerStateMachine playerStateMachine;
+
     private int health;
     private int maxHealth;
     private Vector2 direction;
@@ -30,12 +27,13 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         playerStateMachine = new PlayerStateMachine(this);
-        playerStateMachine.Start(new PlayerIdleState());
-        health = BaseHealth;
-        maxHealth = BaseMaxHealth;
+        health = playerData.health;
+        maxHealth = playerData.health;
         direction = Vector2.up;
         speed = 0.0f;
         lockMove = false;
+
+        playerStateMachine.Initialize(new PlayerIdleState());
     }
 
     void Update()
@@ -47,7 +45,7 @@ public class PlayerController : MonoBehaviour
     {
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
-        rigidbody2D.velocity = direction * speed * BaseSpeed;
+        rigidbody2D.velocity = direction * speed * playerData.speed;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -117,7 +115,8 @@ public class PlayerController : MonoBehaviour
 
     public void Attack()
     {
-        GameObject playerBullet = (GameObject)Instantiate(bullet, transform.position, transform.rotation, transform);
+        GameObject playerBullet = (GameObject)Instantiate(playerData.bullet, transform.position, transform.rotation,
+            transform);
         playerBullet.tag = "PlayerAttack";
         playerBullet.GetComponent<BulletController>().startPosition = transform.position;
         playerBullet.GetComponent<BulletController>().direction = direction;
