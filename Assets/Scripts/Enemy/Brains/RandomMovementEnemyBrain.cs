@@ -1,16 +1,8 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "OrthographicMovementEnemyBrain", menuName = "ScriptableObjects/OrthographicMovementEnemyBrain")]
-public class OrthographicMovementEnemyBrain : EnemyBrain
+[CreateAssetMenu(fileName = "RandomMovementEnemyBrain", menuName = "ScriptableObjects/RandomMovementEnemyBrain")]
+public class RandomMovementEnemyBrain : EnemyBrain
 {
-    private static Vector2[] NextDirectionChoices = new Vector2[] {
-        Vector2.up,
-        Vector2.right,
-        Vector2.down,
-        Vector2.left,
-        Vector2.zero
-    };
-
     public float idleStateDurationInSeconds = 0.5f;
 
     public float moveStateDurationInSeconds = 1.0f;
@@ -32,16 +24,8 @@ public class OrthographicMovementEnemyBrain : EnemyBrain
     public override void OnEnter(EnemyMoveState state, EnemyController enemyController)
     {
         // Choose a random direction.
-        Vector2 nextDirection = NextDirectionChoices[Random.Range(0, NextDirectionChoices.Length)];
-        if (nextDirection != Vector2.zero)
-        {
-            enemyController.direction = nextDirection;
-            enemyController.StartMove();
-        }
-        else
-        {
-            enemyController.StopMove();
-        }
+        enemyController.direction = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
+        enemyController.StartMove();
     }
 
     public override void OnUpdate(EnemyMoveState state, EnemyController enemyController)
