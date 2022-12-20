@@ -147,6 +147,12 @@ public class RoomController : MonoBehaviour
         gameObject.SetActive(true);
         boxCollider2D.enabled = false;
         doors.ForEach(door => door.SetActive(false));
+
+        GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).ToList()
+            .ForEach(transform =>
+            {
+                transform.gameObject.GetComponent<EnemyController>().Freeze();
+            });
     }
 
     public void EnterRoom()
@@ -154,6 +160,12 @@ public class RoomController : MonoBehaviour
         gameObject.SetActive(true);
         boxCollider2D.enabled = true;
         doors.ForEach(door => door.SetActive(true));
+
+        GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).ToList()
+            .ForEach(transform =>
+            {
+                transform.gameObject.GetComponent<EnemyController>().StopFreeze();
+            });
 
         visited = true;
     }

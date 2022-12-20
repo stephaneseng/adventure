@@ -92,7 +92,7 @@ public class LevelController : MonoBehaviour
         GameObject fromRoom = rooms[currentRoomPosition.x, currentRoomPosition.y];
         GameObject toRoom = rooms[targetRoomPosition.x, targetRoomPosition.y];
 
-        playerController.LockMove();
+        playerController.Freeze();
 
         toRoom.GetComponent<RoomController>().StartEnterRoomTransition();
 
@@ -120,6 +120,6 @@ public class LevelController : MonoBehaviour
         ExitRoom(currentRoomPosition);
         EnterRoom(targetRoomPosition);
 
-        playerController.UnlockMove();
+        playerController.StopFreeze();
     }
 }

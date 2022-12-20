@@ -9,21 +9,18 @@ public class EnemyController : MonoBehaviour
 
     public EnemyStateMachine enemyStateMachine;
     public Vector2 direction;
-    public float speed;
     private int health;
+    private bool move;
 
     void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-    }
 
-    void Start()
-    {
         enemyStateMachine = new EnemyStateMachine(this);
         direction = Vector2.down;
-        speed = 0.0f;
         health = enemyData.health;
+        move = false;
 
         enemyStateMachine.Initialize(new EnemyIdleState());
     }
@@ -37,7 +34,7 @@ public class EnemyController : MonoBehaviour
     {
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
-        rigidbody2D.velocity = direction * speed * enemyData.speed;
+        rigidbody2D.velocity = (float)(move ? 1.0 : 0.0f) * enemyData.speed * direction;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -58,14 +55,24 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void StartMove()
+    public void Move()
     {
-        speed = 1.0f;
+        move = true;
     }
 
     public void StopMove()
     {
-        speed = 0.0f;
+        move = false;
+    }
+
+    public void Freeze()
+    {
+        enemyStateMachine.SwitchState(new EnemyFreezeState());
+    }
+
+    public void StopFreeze()
+    {
+        enemyStateMachine.SwitchState(new EnemyIdleState());
     }
 
     public void Attack()

@@ -13,24 +13,19 @@ public class PlayerController : MonoBehaviour
     public int health;
     public int maxHealth;
     private Vector2 direction;
-    private float speed;
-    private bool lockMove;
+    private bool move;
 
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-    }
 
-    void Start()
-    {
         playerStateMachine = new PlayerStateMachine(this);
         health = playerData.health;
         maxHealth = playerData.health;
         direction = Vector2.up;
-        speed = 0.0f;
-        lockMove = false;
+        move = false;
 
         playerStateMachine.Initialize(new PlayerIdleState());
     }
@@ -44,7 +39,7 @@ public class PlayerController : MonoBehaviour
     {
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
-        rigidbody2D.velocity = direction * speed * playerData.speed;
+        rigidbody2D.velocity = (float)(move ? 1.0f : 0.0f) * playerData.speed * direction;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -79,27 +74,22 @@ public class PlayerController : MonoBehaviour
     public void Move(Vector2 inputActionMoveVector)
     {
         direction = inputActionMoveVector;
-        speed = 1.0f;
+        move = true;
     }
 
     public void StopMove()
     {
-        speed = 0.0f;
+        move = false;
     }
 
-    public void LockMove()
+    public void Freeze()
     {
-        lockMove = true;
+        playerStateMachine.SwitchState(new PlayerFreezeState());
     }
 
-    public void UnlockMove()
+    public void StopFreeze()
     {
-        lockMove = false;
-    }
-
-    public bool IsMoveLocked()
-    {
-        return lockMove;
+        playerStateMachine.SwitchState(new PlayerIdleState());
     }
 
     public void Attack()
