@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a7af6044148bb8b6b0e06bc195e67c8, type: 3}
+  m_Name: DebugRoomData
+  m_EditorClassIdentifier: 
+  position: {x: 0, y: 0}
+  upExit: 1
+  rightExit: 1
+  downExit: 1
+  leftExit: 1
+  upDoor: 1
+  rightDoor: 1
+  downDoor: 1
+  leftDoor: 1

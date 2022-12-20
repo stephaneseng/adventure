@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b60d81dbd0806aa6af8bf9485db4aec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelConfiguration: {fileID: 11400000, guid: 4efd339dcb7c343cca02bc750f169c84, type: 2}
+  levelData: {fileID: 11400000, guid: 95b8db8719c2a0041a7fe474b0b3f688, type: 2}
+  currentRoomPosition: {x: 0, y: 0}

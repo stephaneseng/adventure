@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0448fd9790cde48819131ad20527e046, type: 3}
+  m_Name: TriangleEnemyData
+  m_EditorClassIdentifier: 
+  enemyBrain: {fileID: 11400000, guid: 30e5b6f5976c0ca2093d97bd8c6e558a, type: 2}
+  health: 2
+  speed: 2
+  bullet: {fileID: 1070407543661715664, guid: 61f437bd4d99f2e419e03faa09d15e49, type: 3}
+  droppedItems:
+  - {fileID: 4967103446422588902, guid: 6728d5a532e03bbdabb2166c4beaba2f, type: 3}

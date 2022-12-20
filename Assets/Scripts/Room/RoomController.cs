@@ -8,24 +8,22 @@ public class RoomController : MonoBehaviour
     public static float RoomSize = 11.0f;
     public static float RoomHalfSize = RoomSize / 2.0f;
 
-    private static float EnemyRoomColliderSize = 4.0f;
+    private static string DoorResourcesFolder = "Room";
 
-    public RoomConfiguration roomConfiguration;
-    public Vector2 playerSpawnPosition;
-    public Vector2[] enemySpawnPositions;
-
-    public bool visited;
+    public RoomData roomData;
 
     private GameObject doorPrefab;
     private LevelController levelController;
     private BoxCollider2D boxCollider2D;
     private Tilemap tilemap;
 
+    public bool visited;
+
     private List<GameObject> doors = new List<GameObject>();
 
     void Awake()
     {
-        doorPrefab = Resources.Load<GameObject>("Door");
+        doorPrefab = Resources.Load<GameObject>(DoorResourcesFolder + "/Door");
         levelController = GameObject.FindGameObjectWithTag("Level").GetComponent<LevelController>();
         boxCollider2D = GetComponent<BoxCollider2D>();
         tilemap = GetComponentInChildren<Tilemap>();
@@ -83,27 +81,26 @@ public class RoomController : MonoBehaviour
     {
         InitializeWalls();
         InitializeDoors();
-        InitializeEnemyRoomCollider();
     }
 
     private void InitializeWalls()
     {
-        if (roomConfiguration.upExit)
+        if (roomData.upExit)
         {
             tilemap.SetTile(new Vector3Int(-1, Mathf.FloorToInt(RoomHalfSize)), null);
             tilemap.SetTile(new Vector3Int(0, Mathf.FloorToInt(RoomHalfSize)), null);
         }
-        if (roomConfiguration.rightExit)
+        if (roomData.rightExit)
         {
             tilemap.SetTile(new Vector3Int(Mathf.FloorToInt(RoomHalfSize), 0), null);
             tilemap.SetTile(new Vector3Int(Mathf.FloorToInt(RoomHalfSize), -1), null);
         }
-        if (roomConfiguration.downExit)
+        if (roomData.downExit)
         {
             tilemap.SetTile(new Vector3Int(-1, -Mathf.FloorToInt(RoomHalfSize) - 1), null);
             tilemap.SetTile(new Vector3Int(0, -Mathf.FloorToInt(RoomHalfSize) - 1), null);
         }
-        if (roomConfiguration.leftExit)
+        if (roomData.leftExit)
         {
             tilemap.SetTile(new Vector3Int(-Mathf.FloorToInt(RoomHalfSize) - 1, 0), null);
             tilemap.SetTile(new Vector3Int(-Mathf.FloorToInt(RoomHalfSize) - 1, -1), null);
@@ -120,48 +117,28 @@ public class RoomController : MonoBehaviour
 
         Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
 
-        if (roomConfiguration.upDoor)
+        if (roomData.upDoor)
         {
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(0.0f, RoomHalfSize),
                 Quaternion.identity, transform));
         }
-        if (roomConfiguration.rightDoor)
+        if (roomData.rightDoor)
         {
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(RoomHalfSize, 0.0f),
                 Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
         }
-        if (roomConfiguration.downDoor)
+        if (roomData.downDoor)
         {
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(0.0f, -RoomHalfSize),
                 Quaternion.identity, transform));
         }
-        if (roomConfiguration.leftDoor)
+        if (roomData.leftDoor)
         {
             doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(-RoomHalfSize, 0.0f),
                 Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
         }
 
         doors.ForEach(door => door.SetActive(false));
-    }
-
-    /// Creates a collider to avoid enemies leaving the room.
-    /// The position of the room BoxCollider2D is used, instead of the position of the room itself is not relevant.
-    private void InitializeEnemyRoomCollider()
-    {
-        GameObject enemyRoomCollider = new GameObject();
-        enemyRoomCollider.transform.SetParent(this.transform);
-        enemyRoomCollider.layer = LayerMask.NameToLayer("EnemyForeground");
-
-        Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
-
-        EdgeCollider2D edgeRoomCollider = enemyRoomCollider.AddComponent<EdgeCollider2D>();
-        edgeRoomCollider.points = new Vector2[5] {
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(EnemyRoomColliderSize, EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(EnemyRoomColliderSize, -EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, -EnemyRoomColliderSize),
-            (Vector2) boxCollider2DCenter + new Vector2(-EnemyRoomColliderSize, EnemyRoomColliderSize)
-        };
     }
 
     public void StartEnterRoomTransition()

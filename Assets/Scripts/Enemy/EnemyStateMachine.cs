@@ -1,34 +1,36 @@
+using UnityEngine;
+
 public class EnemyStateMachine
 {
-    private EnemyState currentState;
+    public EnemyController enemyController;
 
-    private EnemyController enemyController;
+    public float startTime;
+
+    private EnemyState currentState;
 
     public EnemyStateMachine(EnemyController enemyController)
     {
         this.enemyController = enemyController;
     }
 
-    public EnemyController GetEnemyController()
+    public void Initialize(EnemyState enemyState)
     {
-        return enemyController;
-    }
-
-    public void Start(EnemyState enemyState)
-    {
+        startTime = Time.time;
         currentState = enemyState;
-        currentState.OnEnterState(this);
+        currentState.OnEnter(enemyController);
     }
 
     public void Update()
     {
-        currentState.Update(this);
+        currentState.OnUpdate(enemyController);
     }
 
     public void SwitchState(EnemyState enemyState)
     {
-        currentState.OnExitState(this);
+        currentState.OnExit(enemyController);
+
+        startTime = Time.time;
         currentState = enemyState;
-        currentState.OnEnterState(this);
+        currentState.OnEnter(enemyController);
     }
 }
