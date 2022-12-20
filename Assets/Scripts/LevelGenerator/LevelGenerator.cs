@@ -59,10 +59,8 @@ public class LevelGenerator : MonoBehaviour
         HashSet<Vector2Int> startRoomCluster = new HashSet<Vector2Int>() { startRoomPosition };
         HashSet<Vector2Int> endRoomCluster = new HashSet<Vector2Int>() { endRoomPosition };
 
-        roomDefinitions[startRoomPosition.x, startRoomPosition.y] =
-            GenerateStartAndEndRoomDefinition(startRoomPosition);
-        roomDefinitions[endRoomPosition.x, endRoomPosition.y] =
-            GenerateStartAndEndRoomDefinition(endRoomPosition);
+        roomDefinitions[startRoomPosition.x, startRoomPosition.y] = GenerateStartAndEndRoomDefinition(startRoomPosition);
+        roomDefinitions[endRoomPosition.x, endRoomPosition.y] = GenerateStartAndEndRoomDefinition(endRoomPosition);
 
         do
         {

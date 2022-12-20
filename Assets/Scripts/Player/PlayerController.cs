@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
 
     public PlayerStateMachine playerStateMachine;
     public int health;
-    public int maxHealth;
     private Vector2 direction;
     private bool move;
 
@@ -23,7 +22,6 @@ public class PlayerController : MonoBehaviour
 
         playerStateMachine = new PlayerStateMachine(this);
         health = playerData.health;
-        maxHealth = playerData.health;
         direction = Vector2.up;
         move = false;
 
@@ -42,19 +40,28 @@ public class PlayerController : MonoBehaviour
         rigidbody2D.velocity = (float)(move ? 1.0f : 0.0f) * playerData.speed * direction;
     }
 
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            RemoveHealth(1);
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("ItemHealth"))
         {
             Destroy(other.gameObject);
-            health = Mathf.Min(health + 1, maxHealth);
+
+            AddHealth(1);
         }
 
         if (other.CompareTag("EnemyAttack"))
         {
             Destroy(other.gameObject);
-            health = Mathf.Max(0, health - 1);
-            playerStateMachine.SwitchState(new PlayerDamageState());
+
+            RemoveHealth(1);
         }
     }
 
@@ -92,13 +99,25 @@ public class PlayerController : MonoBehaviour
         playerStateMachine.SwitchState(new PlayerIdleState());
     }
 
-    public void Attack()
+    private void Attack()
     {
         GameObject playerBullet = (GameObject)Instantiate(playerData.bullet, transform.position, transform.rotation,
             transform);
         playerBullet.tag = "PlayerAttack";
         playerBullet.GetComponent<BulletController>().startPosition = transform.position;
         playerBullet.GetComponent<BulletController>().direction = direction;
+    }
+
+    private void AddHealth(int delta)
+    {
+        health = Mathf.Min(health + delta, playerData.health);
+    }
+
+    private void RemoveHealth(int delta)
+    {
+        health = Mathf.Max(0, health - delta);
+
+        playerStateMachine.SwitchState(new PlayerDamageState());
     }
 
     public void Damage()

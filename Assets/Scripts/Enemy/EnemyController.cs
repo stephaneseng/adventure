@@ -43,15 +43,7 @@ public class EnemyController : MonoBehaviour
         {
             Destroy(other.gameObject);
 
-            health = Mathf.Max(0, health - 1);
-            if (health > 0)
-            {
-                enemyStateMachine.SwitchState(new EnemyDamageState());
-            }
-            else
-            {
-                enemyStateMachine.SwitchState(new EnemyDestroyState());
-            }
+            RemoveHealth(1);
         }
     }
 
@@ -82,6 +74,20 @@ public class EnemyController : MonoBehaviour
         enemyBullet.tag = "EnemyAttack";
         enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;
+    }
+
+    private void RemoveHealth(int delta)
+    {
+        health = Mathf.Max(0, health - delta);
+
+        if (health > 0)
+        {
+            enemyStateMachine.SwitchState(new EnemyDamageState());
+        }
+        else
+        {
+            enemyStateMachine.SwitchState(new EnemyDestroyState());
+        }
     }
 
     public void Damage()
