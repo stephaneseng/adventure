@@ -2,7 +2,6 @@ using UnityEngine;
 
 public abstract class EnemyBrain : ScriptableObject
 {
-
     /* EnemyIdleState */
 
     public virtual void OnEnter(EnemyIdleState state, EnemyController enemyController)

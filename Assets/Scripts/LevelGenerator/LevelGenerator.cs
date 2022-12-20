@@ -12,11 +12,9 @@ public class LevelGenerator : MonoBehaviour
     };
 
     private static int SpawnAreaWidthHeight = 8;
-
     private static int SpawnAreaWidthHeightOffset = 2;
 
     private static int MinNumberOfBlocks = 5;
-
     private static int MaxNumberOfBlocks = 10;
 
     private static int MaxNumberOfEnemies = 10;

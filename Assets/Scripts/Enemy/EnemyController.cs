@@ -8,10 +8,9 @@ public class EnemyController : MonoBehaviour
     private Animator animator;
 
     public EnemyStateMachine enemyStateMachine;
-
-    private int health;
     public Vector2 direction;
     public float speed;
+    private int health;
 
     void Awake()
     {
@@ -22,10 +21,9 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         enemyStateMachine = new EnemyStateMachine(this);
-
-        health = enemyData.health;
         direction = Vector2.down;
         speed = 0.0f;
+        health = enemyData.health;
 
         enemyStateMachine.Initialize(new EnemyIdleState());
     }

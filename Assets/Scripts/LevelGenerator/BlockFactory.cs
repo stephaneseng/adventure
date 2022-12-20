@@ -4,6 +4,7 @@ using UnityEngine;
 public class BlockFactory : MonoBehaviour
 {
     private static string BlockResourcesFolder = "Room";
+    private static string BlockResourceName = "Block";
 
     public void InstantiateBlocks(List<BlockDefinition> blockDefinitions, GameObject room)
     {
@@ -15,7 +16,7 @@ public class BlockFactory : MonoBehaviour
 
     private void InstantiateBlock(BlockDefinition blockDefinition, GameObject room)
     {
-        Instantiate(Resources.Load<GameObject>(BlockResourcesFolder + "/Block"),
+        Instantiate(Resources.Load<GameObject>(BlockResourcesFolder + "/" + BlockResourceName),
             room.transform.position - new Vector3(RoomController.RoomHalfSize, RoomController.RoomHalfSize, 0.0f)
             + new Vector3(blockDefinition.position.x, blockDefinition.position.y, 0.0f),
             Quaternion.identity, room.transform);

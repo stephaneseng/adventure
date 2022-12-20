@@ -4,6 +4,7 @@ using UnityEngine;
 public class RoomFactory : MonoBehaviour
 {
     private static string RoomResourcesFolder = "Room";
+    private static string RoomResourceName = "Room";
 
     private BlockFactory blockFactory;
     private EnemyFactory enemyFactory;
@@ -25,7 +26,7 @@ public class RoomFactory : MonoBehaviour
 
     private GameObject InstantiateRoom(RoomDefinition roomDefinition, GameObject level)
     {
-        GameObject room = Instantiate(Resources.Load<GameObject>(RoomResourcesFolder + "/Room"),
+        GameObject room = Instantiate(Resources.Load<GameObject>(RoomResourcesFolder + "/" + RoomResourceName),
             new Vector3(roomDefinition.position.x * RoomController.RoomSize,
             roomDefinition.position.y * RoomController.RoomSize, 0.0f), Quaternion.identity, level.transform);
 

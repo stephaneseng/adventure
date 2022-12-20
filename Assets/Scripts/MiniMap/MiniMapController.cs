@@ -4,25 +4,35 @@ using UnityEngine;
 public class MiniMapController : MonoBehaviour
 {
     private static string MiniMapResourcesFolder = "MiniMap";
+    private static string MiniMapRoomResourceName = "MiniMapRoom";
+    private static string MiniMapUnvisitedRoomResourceName = "MiniMapUnvisitedRoom";
+    private static string MiniMapRoomExitResourceName = "MiniMapRoomExit";
+    private static string MiniMapStartRoomMaskResourceName = "MiniMapStartRoomMask";
+    private static string MiniMapEndRoomMaskResourceName = "MiniMapEndRoomMask";
+    private static string MiniMapCurrentRoomMaskResourceName = "MiniMapCurrentRoomMask";
 
     private GameObject miniMapRoomPrefab;
     private GameObject miniMapUnvisitedRoomPrefab;
     private GameObject miniMapRoomExitPrefab;
     private GameObject miniMapStartRoomMaskPrefab;
     private GameObject miniMapEndRoomMaskPrefab;
-    private GameObject miniMapActiveRoomMaskPrefab;
+    private GameObject miniMapCurrentRoomMaskPrefab;
     private GameObject level;
 
     private List<GameObject> miniMapRoomAndExits = new List<GameObject>();
 
     void Awake()
     {
-        miniMapRoomPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/MiniMapRoom");
-        miniMapUnvisitedRoomPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/MiniMapUnvisitedRoom");
-        miniMapRoomExitPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/MiniMapRoomExit");
-        miniMapStartRoomMaskPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/MiniMapStartRoomMask");
-        miniMapEndRoomMaskPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/MiniMapEndRoomMask");
-        miniMapActiveRoomMaskPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/MiniMapActiveRoomMask");
+        miniMapRoomPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/" + MiniMapRoomResourceName);
+        miniMapUnvisitedRoomPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/"
+            + MiniMapUnvisitedRoomResourceName);
+        miniMapRoomExitPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/" + MiniMapRoomExitResourceName);
+        miniMapStartRoomMaskPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/"
+            + MiniMapStartRoomMaskResourceName);
+        miniMapEndRoomMaskPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/"
+            + MiniMapEndRoomMaskResourceName);
+        miniMapCurrentRoomMaskPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/"
+            + MiniMapCurrentRoomMaskResourceName);
         level = GameObject.FindGameObjectWithTag("Level");
     }
 
@@ -110,7 +120,7 @@ public class MiniMapController : MonoBehaviour
             transform));
 
         // Add the current room indicator.
-        miniMapRoomAndExits.Add(Instantiate(miniMapActiveRoomMaskPrefab,
+        miniMapRoomAndExits.Add(Instantiate(miniMapCurrentRoomMaskPrefab,
             new Vector3(currentRoomPosition.x, currentRoomPosition.y, 0.0f) + transform.position, Quaternion.identity,
             transform));
     }

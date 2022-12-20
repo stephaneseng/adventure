@@ -9,6 +9,7 @@ public class RoomController : MonoBehaviour
     public static float RoomHalfSize = RoomSize / 2.0f;
 
     private static string DoorResourcesFolder = "Room";
+    private static string DoorResourceName = "Door";
 
     public RoomData roomData;
 
@@ -23,7 +24,7 @@ public class RoomController : MonoBehaviour
 
     void Awake()
     {
-        doorPrefab = Resources.Load<GameObject>(DoorResourcesFolder + "/Door");
+        doorPrefab = Resources.Load<GameObject>(DoorResourcesFolder + "/" + DoorResourceName);
         levelController = GameObject.FindGameObjectWithTag("Level").GetComponent<LevelController>();
         boxCollider2D = GetComponent<BoxCollider2D>();
         tilemap = GetComponentInChildren<Tilemap>();

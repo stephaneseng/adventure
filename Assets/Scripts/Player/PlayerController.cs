@@ -10,9 +10,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     public PlayerStateMachine playerStateMachine;
-
-    private int health;
-    private int maxHealth;
+    public int health;
+    public int maxHealth;
     private Vector2 direction;
     private float speed;
     private bool lockMove;
@@ -70,16 +69,6 @@ public class PlayerController : MonoBehaviour
         {
             Attack();
         }
-    }
-
-    public int GetHealth()
-    {
-        return health;
-    }
-
-    public int GetMaxHealth()
-    {
-        return maxHealth;
     }
 
     public Vector2 ReadInputActionMoveVector()
