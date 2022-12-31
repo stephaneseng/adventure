@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyFactory : MonoBehaviour
@@ -24,8 +23,7 @@ public class EnemyFactory : MonoBehaviour
     private void InstantiateEnemy(Enemy enemy, GameObject room)
     {
         Instantiate(Resources.Load<GameObject>(EnemyResourcesFolder + "/" + enemy.enemyType.ToString()),
-            room.transform.position - new Vector3(RoomController.RoomHalfSize, RoomController.RoomHalfSize, 0.0f)
-            + new Vector3(1.0f, 1.0f, 0.0f)
+            room.GetComponent<RoomController>().spawnableOrigin.position
             + new Vector3(enemy.position.x, enemy.position.y, 0.0f),
             Quaternion.identity, room.transform);
     }

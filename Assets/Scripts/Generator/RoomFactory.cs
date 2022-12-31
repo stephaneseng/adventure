@@ -36,7 +36,10 @@ public class RoomFactory : MonoBehaviour
     private GameObject InstantiateRoom(Room room, GameObject levelGameObject)
     {
         GameObject roomGameObject = Instantiate(Resources.Load<GameObject>(RoomResourcesFolder + "/" + RoomResourceName),
-            new Vector3(room.position.x * RoomController.RoomSize, room.position.y * RoomController.RoomSize, 0.0f),
+            new Vector3(
+                room.position.x * (room.spawnables.GetLength(0) + 2),
+                room.position.y * (room.spawnables.GetLength(1) + 2),
+                0.0f),
             Quaternion.identity, levelGameObject.transform);
 
         RoomData roomData = ScriptableObject.CreateInstance<RoomData>();

@@ -5,18 +5,16 @@ using UnityEngine.Tilemaps;
 
 public class RoomController : MonoBehaviour
 {
-    public static float RoomSize = 11.0f;
-    public static float RoomHalfSize = RoomSize / 2.0f;
-
-    private static string DoorResourcesFolder = "Room";
-    private static string DoorResourceName = "Door";
-
     public RoomData roomData;
 
-    private GameObject doorPrefab;
     private LevelController levelController;
     private BoxCollider2D boxCollider2D;
     private Tilemap tilemap;
+    public Transform spawnableOrigin;
+    private GameObject upDoor;
+    private GameObject rightDoor;
+    private GameObject downDoor;
+    private GameObject leftDoor;
 
     public bool visited;
 
@@ -24,10 +22,14 @@ public class RoomController : MonoBehaviour
 
     void Awake()
     {
-        doorPrefab = Resources.Load<GameObject>(DoorResourcesFolder + "/" + DoorResourceName);
         levelController = GameObject.FindGameObjectWithTag("Level").GetComponent<LevelController>();
         boxCollider2D = GetComponent<BoxCollider2D>();
         tilemap = GetComponentInChildren<Tilemap>();
+        spawnableOrigin = transform.Find("SpawnableOrigin");
+        upDoor = transform.Find("Door/UpDoor").gameObject;
+        rightDoor = transform.Find("Door/RightDoor").gameObject;
+        downDoor = transform.Find("Door/DownDoor").gameObject;
+        leftDoor = transform.Find("Door/LeftDoor").gameObject;
     }
 
     void Update()
@@ -61,19 +63,19 @@ public class RoomController : MonoBehaviour
 
             if (Vector2.Dot(contactVector, Vector2.up) > 1)
             {
-                levelController.SwitchRoom(playerController, Vector2.up);
+                levelController.SwitchRoom(playerController, Vector2Int.up);
             }
             else if (Vector2.Dot(contactVector, Vector2.right) > 1)
             {
-                levelController.SwitchRoom(playerController, Vector2.right);
+                levelController.SwitchRoom(playerController, Vector2Int.right);
             }
             else if (Vector2.Dot(contactVector, Vector2.down) > 1)
             {
-                levelController.SwitchRoom(playerController, Vector2.down);
+                levelController.SwitchRoom(playerController, Vector2Int.down);
             }
             else
             {
-                levelController.SwitchRoom(playerController, Vector2.left);
+                levelController.SwitchRoom(playerController, Vector2Int.left);
             }
         }
     }
@@ -86,57 +88,67 @@ public class RoomController : MonoBehaviour
 
     private void InitializeWalls()
     {
+        int roomHalfWidthHeight = Mathf.FloorToInt(roomData.roomWidthHeight / 2.0f);
+
         if (roomData.exits.Contains(Vector2Int.up))
         {
-            tilemap.SetTile(new Vector3Int(-1, Mathf.FloorToInt(RoomHalfSize)), null);
-            tilemap.SetTile(new Vector3Int(0, Mathf.FloorToInt(RoomHalfSize)), null);
+            tilemap.SetTile(new Vector3Int(-1, roomHalfWidthHeight), null);
+            tilemap.SetTile(new Vector3Int(0, roomHalfWidthHeight), null);
         }
         if (roomData.exits.Contains(Vector2Int.right))
         {
-            tilemap.SetTile(new Vector3Int(Mathf.FloorToInt(RoomHalfSize), 0), null);
-            tilemap.SetTile(new Vector3Int(Mathf.FloorToInt(RoomHalfSize), -1), null);
+            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -1), null);
+            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 0), null);
         }
         if (roomData.exits.Contains(Vector2Int.down))
         {
-            tilemap.SetTile(new Vector3Int(-1, -Mathf.FloorToInt(RoomHalfSize) - 1), null);
-            tilemap.SetTile(new Vector3Int(0, -Mathf.FloorToInt(RoomHalfSize) - 1), null);
+            tilemap.SetTile(new Vector3Int(-1, -roomHalfWidthHeight - 1), null);
+            tilemap.SetTile(new Vector3Int(0, -roomHalfWidthHeight - 1), null);
         }
         if (roomData.exits.Contains(Vector2Int.left))
         {
-            tilemap.SetTile(new Vector3Int(-Mathf.FloorToInt(RoomHalfSize) - 1, 0), null);
-            tilemap.SetTile(new Vector3Int(-Mathf.FloorToInt(RoomHalfSize) - 1, -1), null);
+            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -1), null);
+            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 0), null);
         }
     }
 
     /// The position of the room BoxCollider2D is used, because the position of the room itself is not relevant.
     private void InitializeDoors()
     {
-        if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
-        {
-            return;
-        }
-
-        Vector3 boxCollider2DCenter = boxCollider2D.transform.position + (Vector3)boxCollider2D.offset;
-
         if (roomData.doors.Contains(Vector2Int.up))
         {
-            doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(0.0f, RoomHalfSize),
-                Quaternion.identity, transform));
+            doors.Add(upDoor);
         }
+        else
+        {
+            Destroy(upDoor);
+        }
+
         if (roomData.doors.Contains(Vector2Int.right))
         {
-            doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(RoomHalfSize, 0.0f),
-                Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
+            doors.Add(rightDoor);
         }
+        else
+        {
+            Destroy(rightDoor);
+        }
+
         if (roomData.doors.Contains(Vector2Int.down))
         {
-            doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(0.0f, -RoomHalfSize),
-                Quaternion.identity, transform));
+            doors.Add(downDoor);
         }
+        else
+        {
+            Destroy(downDoor);
+        }
+
         if (roomData.doors.Contains(Vector2Int.left))
         {
-            doors.Add(Instantiate(doorPrefab, boxCollider2DCenter + (Vector3)new Vector2(-RoomHalfSize, 0.0f),
-                Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
+            doors.Add(leftDoor);
+        }
+        else
+        {
+            Destroy(leftDoor);
         }
 
         doors.ForEach(door => door.SetActive(false));

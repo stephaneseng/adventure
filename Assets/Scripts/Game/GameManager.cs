@@ -60,5 +60,7 @@ public class GameManager : MonoBehaviour
         }
 
         levelGameObject.GetComponent<LevelController>().Initialize();
+
+        levelGameObject.GetComponent<LevelController>().EnterStartRoom();
     }
 }
