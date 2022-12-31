@@ -7,9 +7,9 @@ public class RoomGenerator : MonoBehaviour
         EnemyType.TriangleEnemy
     };
 
-    public Room GenerateStartRoom(Vector2Int position, int roomWidthHeight)
+    public Room GenerateStartRoom(Vector2Int position, GeneratorConfiguration configuration)
     {
-        Room startRoom = new Room(roomWidthHeight);
+        Room startRoom = new Room(configuration.roomWidthHeight);
 
         startRoom.position = position;
         startRoom.section = 0;
@@ -17,9 +17,9 @@ public class RoomGenerator : MonoBehaviour
         return startRoom;
     }
 
-    public Room GenerateEndRoom(Vector2Int position, int section, int roomWidthHeight)
+    public Room GenerateEndRoom(Vector2Int position, int section, GeneratorConfiguration configuration)
     {
-        Room endRoom = new Room(roomWidthHeight);
+        Room endRoom = new Room(configuration.roomWidthHeight);
 
         endRoom.position = position;
         endRoom.section = section;
@@ -27,44 +27,42 @@ public class RoomGenerator : MonoBehaviour
         return endRoom;
     }
 
-    public Room Generate(Vector2Int position, int section, int roomWidthHeight, int blockSpawnMargin,
-        int minNumberOfBlocks, int maxNumberOfBlocks, int enemySpawnMargin, int minNumberOfEnemies,
-        int maxNumberOfEnemies)
+    public Room Generate(Vector2Int position, int section, GeneratorConfiguration configuration)
     {
-        Room room = new Room(roomWidthHeight);
+        Room room = new Room(configuration.roomWidthHeight);
 
         room.position = position;
         room.section = section;
 
-        GenerateBlocks(room, roomWidthHeight, blockSpawnMargin, minNumberOfBlocks, maxNumberOfBlocks);
-        GenerateEnemies(room, roomWidthHeight, enemySpawnMargin, minNumberOfEnemies, maxNumberOfEnemies);
+        GenerateBlocks(room, configuration);
+        GenerateEnemies(room, configuration);
 
         return room;
     }
 
-    private void GenerateBlocks(Room room, int roomWidthHeight, int blockSpawnMargin, int minNumberOfBlocks,
-        int maxNumberOfBlocks)
+    private void GenerateBlocks(Room room, GeneratorConfiguration configuration)
     {
-        int numberOfBlocks = Random.Range(minNumberOfBlocks, maxNumberOfBlocks + 1);
+        int numberOfBlocks = Random.Range(configuration.minNumberOfBlocks, configuration.maxNumberOfBlocks + 1);
 
         for (int i = 0; i < numberOfBlocks; i++)
         {
             Block block = new Block();
-            block.position = GenerateSpawnPosition(room, roomWidthHeight, blockSpawnMargin, true);
+            block.position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
+                true);
 
             room.AddSpawnable(block);
         }
     }
 
-    private void GenerateEnemies(Room room, int roomWidthHeight, int enemySpawnMargin, int minNumberOfEnemies,
-        int maxNumberOfEnemies)
+    private void GenerateEnemies(Room room, GeneratorConfiguration configuration)
     {
-        int numberOfEnemies = Random.Range(minNumberOfEnemies, maxNumberOfEnemies + 1);
+        int numberOfEnemies = Random.Range(configuration.minNumberOfEnemies, configuration.maxNumberOfEnemies + 1);
 
         for (int i = 0; i < numberOfEnemies; i++)
         {
             Enemy enemy = new Enemy();
-            enemy.position = GenerateSpawnPosition(room, roomWidthHeight, enemySpawnMargin, false);
+            enemy.position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.enemySpawnMargin,
+                false);
             enemy.enemyType = EnemyTypeChoices[Random.Range(0, EnemyTypeChoices.Length)];
 
             room.AddSpawnable(enemy);

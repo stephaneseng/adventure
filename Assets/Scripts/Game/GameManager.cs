@@ -32,16 +32,18 @@ public class GameManager : MonoBehaviour
         // To simplify room mechanics debugging, the level generator is not called if a room is already in the scene.
         if (!GameObject.FindGameObjectWithTag("Room"))
         {
+            GeneratorConfiguration configuration = new GeneratorConfiguration(MapWidthHeight, StartRoomMargin,
+                NumberOfRoomsInSectionLowThreshold, NumberOfRoomsInSectionHighThreshold,
+                NumberOfRoomsInSectionThresholdRatio, RoomWidthHeight, BlockSpawnMargin, MinNumberOfBlocks,
+                MaxNumberOfBlocks, EnemySpawnMargin, MinNumberOfEnemies, MaxNumberOfEnemies);
+
             Level level;
 
             do
             {
                 try
                 {
-                    level = levelGenerator.Generate(MapWidthHeight, StartRoomMargin,
-                        NumberOfRoomsInSectionLowThreshold, NumberOfRoomsInSectionHighThreshold,
-                        NumberOfRoomsInSectionThresholdRatio, RoomWidthHeight, BlockSpawnMargin, MinNumberOfBlocks,
-                        MaxNumberOfBlocks, EnemySpawnMargin, MinNumberOfEnemies, MaxNumberOfEnemies);
+                    level = levelGenerator.Generate(configuration);
                 }
                 catch (GeneratorException)
                 {

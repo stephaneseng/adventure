@@ -18,16 +18,13 @@ public class LevelGenerator : MonoBehaviour
         roomGenerator = GetComponentInChildren<RoomGenerator>();
     }
 
-    public Level Generate(int mapWidthHeight, int startRoomMargin, int numberOfRoomsInSectionLowThreshold,
-        int numberOfRoomsInSectionHighThreshold, float numberOfRoomsInSectionThresholdRatio, int roomWidthHeight,
-        int blockSpawnMargin, int minNumberOfBlocks, int maxNumberOfBlocks, int enemySpawnMargin,
-        int minNumberOfEnemies, int maxNumberOfEnemies)
+    public Level Generate(GeneratorConfiguration configuration)
     {
-        Level level = new Level(mapWidthHeight);
+        Level level = new Level(configuration.mapWidthHeight);
 
         // Create the start room.
-        Vector2Int startRoomPosition = GenerateStartRoomPosition(level, startRoomMargin);
-        Room startRoom = roomGenerator.GenerateStartRoom(startRoomPosition, roomWidthHeight);
+        Vector2Int startRoomPosition = GenerateStartRoomPosition(level, configuration);
+        Room startRoom = roomGenerator.GenerateStartRoom(startRoomPosition, configuration);
         level.AddStartRoom(startRoom);
 
         // Initialize the agent.
@@ -41,8 +38,7 @@ public class LevelGenerator : MonoBehaviour
             Vector2Int currentRoomPosition = roomPositionsToVisit.Pop();
             Room currentRoom = level.GetRoom(currentRoomPosition);
 
-            HashSet<Vector2Int> nextRoomDirections = GenerateNextRoomDirections(level, currentRoom,
-                numberOfRoomsInSectionLowThreshold, numberOfRoomsInSectionHighThreshold);
+            HashSet<Vector2Int> nextRoomDirections = GenerateNextRoomDirections(level, currentRoom, configuration);
 
             nextRoomDirections.ToList().ForEach(nextRoomDirection =>
             {
@@ -60,10 +56,7 @@ public class LevelGenerator : MonoBehaviour
 
                 if (existingRoom == null)
                 {
-                    Room nextRoom = GenerateNextRoom(level, currentRoom, nextRoomPosition,
-                        numberOfRoomsInSectionHighThreshold, numberOfRoomsInSectionThresholdRatio, roomWidthHeight,
-                        blockSpawnMargin, minNumberOfBlocks, maxNumberOfBlocks, enemySpawnMargin, minNumberOfEnemies,
-                        maxNumberOfEnemies);
+                    Room nextRoom = GenerateNextRoom(level, currentRoom, nextRoomPosition, configuration);
 
                     AddExitToCurrentRoom(currentRoom, nextRoomDirection);
                     AddExitToNextRoom(nextRoom, nextRoomDirection);
@@ -95,7 +88,7 @@ public class LevelGenerator : MonoBehaviour
 
         // Create the end room if possible.
         (Vector2Int endRoomPosition, Room parentToEndRoom, Vector2Int parentToEndRoomDirection) = GenerateEndRoomPosition(level);
-        Room endRoom = roomGenerator.GenerateEndRoom(endRoomPosition, level.GetHigherSection(), roomWidthHeight);
+        Room endRoom = roomGenerator.GenerateEndRoom(endRoomPosition, level.GetHigherSection(), configuration);
         level.AddEndRoom(endRoom);
 
         AddExitToCurrentRoom(parentToEndRoom, parentToEndRoomDirection);
@@ -106,14 +99,15 @@ public class LevelGenerator : MonoBehaviour
         return level;
     }
 
-    private Vector2Int GenerateStartRoomPosition(Level level, int startRoomMargin)
+    private Vector2Int GenerateStartRoomPosition(Level level, GeneratorConfiguration configuration)
     {
-        return new Vector2Int(Random.Range(startRoomMargin, level.rooms.GetLength(0) - startRoomMargin),
-            Random.Range(startRoomMargin, level.rooms.GetLength(1) - startRoomMargin));
+        return new Vector2Int(
+            Random.Range(configuration.startRoomMargin, level.rooms.GetLength(0) - configuration.startRoomMargin),
+            Random.Range(configuration.startRoomMargin, level.rooms.GetLength(1) - configuration.startRoomMargin));
     }
 
     private HashSet<Vector2Int> GenerateNextRoomDirections(Level level, Room currentRoom,
-        int numberOfRoomsInSectionLowThreshold, int numberOfRoomsInSectionHighThreshold)
+        GeneratorConfiguration configuration)
     {
         int minNumberOfNextRoomDirections;
         int maxNumberOfNextRoomDirections;
@@ -129,13 +123,13 @@ public class LevelGenerator : MonoBehaviour
             int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.section);
 
             // If there are not enough rooms in the current section, ensure that there will be at least 1 next room. 
-            if (numberOfRoomsInSection <= numberOfRoomsInSectionLowThreshold)
+            if (numberOfRoomsInSection <= configuration.numberOfRoomsInSectionLowThreshold)
             {
                 minNumberOfNextRoomDirections = 1;
                 maxNumberOfNextRoomDirections = 4;
             }
             // If there are too many rooms in the current section, reduce the probability of having a high number of next rooms.
-            else if (numberOfRoomsInSection >= numberOfRoomsInSectionHighThreshold)
+            else if (numberOfRoomsInSection >= configuration.numberOfRoomsInSectionHighThreshold)
             {
                 minNumberOfNextRoomDirections = 0;
                 maxNumberOfNextRoomDirections = 1;
@@ -159,24 +153,19 @@ public class LevelGenerator : MonoBehaviour
     }
 
     private Room GenerateNextRoom(Level level, Room currentRoom, Vector2Int nextRoomPosition,
-        int numberOfRoomsInSectionHighThreshold, float numberOfRoomsInSectionThresholdRatio, int roomWidthHeight,
-        int blockSpawnMargin, int minNumberOfBlocks, int maxNumberOfBlocks, int enemySpawnMargin,
-        int minNumberOfEnemies, int maxNumberOfEnemies)
+        GeneratorConfiguration configuration)
     {
-        int nextRoomSection = GenerateNextRoomSection(level, currentRoom, numberOfRoomsInSectionHighThreshold,
-            numberOfRoomsInSectionThresholdRatio);
+        int nextRoomSection = GenerateNextRoomSection(level, currentRoom, configuration);
 
-        return roomGenerator.Generate(nextRoomPosition, nextRoomSection, roomWidthHeight, blockSpawnMargin,
-            minNumberOfBlocks, maxNumberOfBlocks, enemySpawnMargin, minNumberOfEnemies, maxNumberOfEnemies);
+        return roomGenerator.Generate(nextRoomPosition, nextRoomSection, configuration);
     }
 
-    private int GenerateNextRoomSection(Level level, Room currentRoom, int numberOfRoomsInSectionHighThreshold,
-        float numberOfRoomsInSectionThresholdRatio)
+    private int GenerateNextRoomSection(Level level, Room currentRoom, GeneratorConfiguration configuration)
     {
         int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.section);
 
         // If there are not enough rooms in the current section, do not change section.
-        if (numberOfRoomsInSection < numberOfRoomsInSectionHighThreshold * numberOfRoomsInSectionThresholdRatio)
+        if (numberOfRoomsInSection < configuration.numberOfRoomsInSectionHighThreshold * configuration.numberOfRoomsInSectionThresholdRatio)
         {
             return currentRoom.section;
         }
