@@ -103,7 +103,7 @@ public class EnemyController : MonoBehaviour
 
     public void DropItem()
     {
-        Instantiate(enemyData.droppedItems[Random.Range(0, enemyData.droppedItems.Length)], transform.position,
+        Instantiate(enemyData.droppedItems[Random.Range(0, enemyData.droppedItems.Count)], transform.position,
             Quaternion.identity, transform.parent);
     }
 }

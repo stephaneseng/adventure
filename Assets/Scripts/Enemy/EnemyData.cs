@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EnemyData", menuName = "ScriptableObjects/EnemyData")]
@@ -11,5 +12,10 @@ public class EnemyData : ScriptableObject
 
     public GameObject bullet;
 
-    public GameObject[] droppedItems;
+    public List<GameObject> droppedItems;
+
+    public EnemyData()
+    {
+        droppedItems = new List<GameObject>();
+    }
 }

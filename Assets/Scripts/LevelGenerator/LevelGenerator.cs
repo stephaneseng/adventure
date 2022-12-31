@@ -4,280 +4,244 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    private static Vector2Int[] NextRoomChoices = new Vector2Int[] {
+    private static Vector2Int[] NextRoomDirectionChoices = new Vector2Int[] {
         Vector2Int.up,
         Vector2Int.right,
         Vector2Int.down,
         Vector2Int.left
     };
 
-    private static int SpawnAreaWidthHeight = 8;
-    private static int SpawnAreaWidthHeightOffset = 2;
+    private RoomGenerator roomGenerator;
 
-    private static int MinNumberOfBlocks = 5;
-    private static int MaxNumberOfBlocks = 10;
-
-    private static int MaxNumberOfEnemies = 10;
-
-    private static EnemyType[] EnemyTypeChoices = new EnemyType[] {
-        EnemyType.PlusEnemy,
-        EnemyType.TriangleEnemy
-    };
-
-    public LevelDefinition Generate()
+    void Awake()
     {
-        Vector2Int startRoomPosition = GenerateRandomRoomPosition();
-        Vector2Int endRoomPosition = GenerateEndRoomPosition(startRoomPosition);
-
-        List<RoomDefinition> roomDefinitions = GenerateRoomDefinitions(startRoomPosition, endRoomPosition);
-
-        return GenerateLevelDefinition(startRoomPosition, endRoomPosition, roomDefinitions);
+        roomGenerator = GetComponentInChildren<RoomGenerator>();
     }
 
-    private Vector2Int GenerateRandomRoomPosition()
+    public Level Generate(int mapWidthHeight, int startRoomMargin, int numberOfRoomsInSectionLowThreshold,
+        int numberOfRoomsInSectionHighThreshold, float numberOfRoomsInSectionThresholdRatio, int roomWidthHeight,
+        int blockSpawnMargin, int minNumberOfBlocks, int maxNumberOfBlocks, int enemySpawnMargin,
+        int minNumberOfEnemies, int maxNumberOfEnemies)
     {
-        return new Vector2Int(Random.Range(0, LevelController.MapWidth), Random.Range(0, LevelController.MapHeight));
-    }
+        Level level = new Level(mapWidthHeight);
 
-    private Vector2Int GenerateEndRoomPosition(Vector2Int startRoomPosition)
-    {
-        Vector2Int endRoomPosition;
+        // Create the start room.
+        Vector2Int startRoomPosition = GenerateStartRoomPosition(level, startRoomMargin);
+        Room startRoom = roomGenerator.GenerateStartRoom(startRoomPosition, roomWidthHeight);
+        level.AddStartRoom(startRoom);
 
-        do
+        // Initialize the agent.
+        Stack<Vector2Int> roomPositionsToVisit = new Stack<Vector2Int>();
+        HashSet<Vector2Int> roomPositionsVisited = new HashSet<Vector2Int>();
+        roomPositionsToVisit.Push(level.startRoomPosition);
+
+        // Run the agent which will create the next rooms.
+        while (roomPositionsToVisit.Count != 0)
         {
-            endRoomPosition = GenerateRandomRoomPosition();
-        } while (endRoomPosition == startRoomPosition);
+            Vector2Int currentRoomPosition = roomPositionsToVisit.Pop();
+            Room currentRoom = level.GetRoom(currentRoomPosition);
 
-        return endRoomPosition;
-    }
+            HashSet<Vector2Int> nextRoomDirections = GenerateNextRoomDirections(level, currentRoom,
+                numberOfRoomsInSectionLowThreshold, numberOfRoomsInSectionHighThreshold);
 
-    /// Returns a collection of rooms chosen so that a path exists between the start and the end rooms.
-    private List<RoomDefinition> GenerateRoomDefinitions(Vector2Int startRoomPosition, Vector2Int endRoomPosition)
-    {
-        RoomDefinition[,] roomDefinitions = new RoomDefinition[LevelController.MapWidth, LevelController.MapHeight];
-
-        HashSet<Vector2Int> startRoomCluster = new HashSet<Vector2Int>() { startRoomPosition };
-        HashSet<Vector2Int> endRoomCluster = new HashSet<Vector2Int>() { endRoomPosition };
-
-        roomDefinitions[startRoomPosition.x, startRoomPosition.y] = GenerateStartAndEndRoomDefinition(startRoomPosition);
-        roomDefinitions[endRoomPosition.x, endRoomPosition.y] = GenerateStartAndEndRoomDefinition(endRoomPosition);
-
-        do
-        {
-            // Generate a next room for the start room cluster.
-            (RoomDefinition roomInClusterDefinition, RoomDefinition nextRoomDefinition) =
-                GenerateNextRoomDefinition(startRoomCluster, roomDefinitions, endRoomPosition);
-
-            startRoomCluster.Add(nextRoomDefinition.position);
-
-            roomDefinitions[roomInClusterDefinition.position.x, roomInClusterDefinition.position.y] = roomInClusterDefinition;
-            roomDefinitions[nextRoomDefinition.position.x, nextRoomDefinition.position.y] = nextRoomDefinition;
-
-            // Generate a next room for the end room cluster.
-            (roomInClusterDefinition, nextRoomDefinition) =
-                GenerateNextRoomDefinition(endRoomCluster, roomDefinitions, endRoomPosition);
-
-            endRoomCluster.Add(nextRoomDefinition.position);
-
-            roomDefinitions[roomInClusterDefinition.position.x, roomInClusterDefinition.position.y] = roomInClusterDefinition;
-            roomDefinitions[nextRoomDefinition.position.x, nextRoomDefinition.position.y] = nextRoomDefinition;
-        } while (!startRoomCluster.Overlaps(endRoomCluster));
-
-        List<RoomDefinition> roomDefinitionsAsList = new List<RoomDefinition>();
-
-        for (int x = 0; x < roomDefinitions.GetLength(0); x++)
-        {
-            for (int y = 0; y < roomDefinitions.GetLength(1); y++)
+            nextRoomDirections.ToList().ForEach(nextRoomDirection =>
             {
-                if (roomDefinitions[x, y] == null)
+                Vector2Int nextRoomPosition = new Vector2Int(
+                    Mathf.Max(0, Mathf.Min(currentRoom.position.x + nextRoomDirection.x, level.rooms.GetLength(0) - 1)),
+                    Mathf.Max(0, Mathf.Min(currentRoom.position.y + nextRoomDirection.y, level.rooms.GetLength(1) - 1)));
+
+                // Ignore next rooms with the same position than the current one.
+                if (nextRoomPosition == currentRoom.position)
                 {
-                    continue;
+                    return;
                 }
 
-                roomDefinitionsAsList.Add(roomDefinitions[x, y]);
-            }
+                Room existingRoom = level.GetRoom(nextRoomPosition);
+
+                if (existingRoom == null)
+                {
+                    Room nextRoom = GenerateNextRoom(level, currentRoom, nextRoomPosition,
+                        numberOfRoomsInSectionHighThreshold, numberOfRoomsInSectionThresholdRatio, roomWidthHeight,
+                        blockSpawnMargin, minNumberOfBlocks, maxNumberOfBlocks, enemySpawnMargin, minNumberOfEnemies,
+                        maxNumberOfEnemies);
+
+                    AddExitToCurrentRoom(currentRoom, nextRoomDirection);
+                    AddExitToNextRoom(nextRoom, nextRoomDirection);
+                    level.UpdateRoom(currentRoom);
+                    level.AddRoom(nextRoom);
+
+                    // Add the next room to the stack of rooms to visit, if it has not been visited yet.
+                    roomPositionsVisited.Add(currentRoomPosition);
+                    if (!roomPositionsVisited.Contains(nextRoom.position))
+                    {
+                        roomPositionsToVisit.Push(nextRoom.position);
+                    }
+                }
+                else
+                {
+                    // Ignore next rooms already existing with a different section than the current one.
+                    if (existingRoom.section != currentRoom.section)
+                    {
+                        return;
+                    }
+
+                    AddExitToCurrentRoom(currentRoom, nextRoomDirection);
+                    AddExitToNextRoom(existingRoom, nextRoomDirection);
+                    level.UpdateRoom(currentRoom);
+                    level.UpdateRoom(existingRoom);
+                }
+            });
         }
 
-        return roomDefinitionsAsList;
+        // Create the end room if possible.
+        (Vector2Int endRoomPosition, Room parentToEndRoom, Vector2Int parentToEndRoomDirection) = GenerateEndRoomPosition(level);
+        Room endRoom = roomGenerator.GenerateEndRoom(endRoomPosition, level.GetHigherSection(), roomWidthHeight);
+        level.AddEndRoom(endRoom);
+
+        AddExitToCurrentRoom(parentToEndRoom, parentToEndRoomDirection);
+        AddExitToNextRoom(endRoom, parentToEndRoomDirection);
+        level.UpdateRoom(parentToEndRoom);
+        level.UpdateRoom(endRoom);
+
+        return level;
     }
 
-    private RoomDefinition GenerateStartAndEndRoomDefinition(Vector2Int startRoomPosition)
+    private Vector2Int GenerateStartRoomPosition(Level level, int startRoomMargin)
     {
-        RoomDefinition roomDefinition = new RoomDefinition();
-        roomDefinition.position = startRoomPosition;
-        return roomDefinition;
+        return new Vector2Int(Random.Range(startRoomMargin, level.rooms.GetLength(0) - startRoomMargin),
+            Random.Range(startRoomMargin, level.rooms.GetLength(1) - startRoomMargin));
     }
 
-    /// Returns the room definitions of a chosen room of the cluster and of the next room, adjacent to it.
-    private (RoomDefinition, RoomDefinition) GenerateNextRoomDefinition(HashSet<Vector2Int> roomCluster,
-        RoomDefinition[,] roomDefinitions, Vector2Int endRoomPosition)
+    private HashSet<Vector2Int> GenerateNextRoomDirections(Level level, Room currentRoom,
+        int numberOfRoomsInSectionLowThreshold, int numberOfRoomsInSectionHighThreshold)
     {
-        Vector2Int roomInClusterPosition = GenerateRandomClusterRoomPosition(roomCluster);
-        Vector2Int nextRoomDirection = GenerateNextRoomDirection();
-        Vector2Int nextRoomPosition = GenerateNextRoomPosition(roomInClusterPosition, nextRoomDirection);
+        int minNumberOfNextRoomDirections;
+        int maxNumberOfNextRoomDirections;
 
-        if (nextRoomPosition != roomInClusterPosition
-            && ((roomInClusterPosition != endRoomPosition && nextRoomPosition != endRoomPosition) || CheckIfEndRoomHasNoExit(roomDefinitions, endRoomPosition)))
+        // For the start room, ensure that we will have exactly 1 next room.
+        if (currentRoom.position == level.startRoomPosition)
         {
-            return (
-                UpdateClusterRoomDefinition(roomDefinitions[roomInClusterPosition.x, roomInClusterPosition.y],
-                    nextRoomDirection),
-                GenerateOrUpdateNextRoomDefinition(roomDefinitions[nextRoomPosition.x, nextRoomPosition.y],
-                    nextRoomDirection, nextRoomPosition));
+            minNumberOfNextRoomDirections = 1;
+            maxNumberOfNextRoomDirections = 1;
         }
         else
         {
-            // No modifications so return the room definition of the room in the cluster twice as we are sure it exists.
-            return (roomDefinitions[roomInClusterPosition.x, roomInClusterPosition.y],
-                roomDefinitions[roomInClusterPosition.x, roomInClusterPosition.y]);
+            int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.section);
+
+            // If there are not enough rooms in the current section, ensure that there will be at least 1 next room. 
+            if (numberOfRoomsInSection <= numberOfRoomsInSectionLowThreshold)
+            {
+                minNumberOfNextRoomDirections = 1;
+                maxNumberOfNextRoomDirections = 4;
+            }
+            // If there are too many rooms in the current section, reduce the probability of having a high number of next rooms.
+            else if (numberOfRoomsInSection >= numberOfRoomsInSectionHighThreshold)
+            {
+                minNumberOfNextRoomDirections = 0;
+                maxNumberOfNextRoomDirections = 1;
+            }
+            else
+            {
+                minNumberOfNextRoomDirections = 0;
+                maxNumberOfNextRoomDirections = 4;
+            }
+        }
+
+        int numberOfNextRoomDirections = Random.Range(minNumberOfNextRoomDirections, maxNumberOfNextRoomDirections + 1);
+
+        HashSet<Vector2Int> nextRoomDirections = new HashSet<Vector2Int>();
+        while (nextRoomDirections.Count != numberOfNextRoomDirections)
+        {
+            nextRoomDirections.Add(NextRoomDirectionChoices[Random.Range(0, NextRoomDirectionChoices.Length)]);
+        }
+
+        return nextRoomDirections;
+    }
+
+    private Room GenerateNextRoom(Level level, Room currentRoom, Vector2Int nextRoomPosition,
+        int numberOfRoomsInSectionHighThreshold, float numberOfRoomsInSectionThresholdRatio, int roomWidthHeight,
+        int blockSpawnMargin, int minNumberOfBlocks, int maxNumberOfBlocks, int enemySpawnMargin,
+        int minNumberOfEnemies, int maxNumberOfEnemies)
+    {
+        int nextRoomSection = GenerateNextRoomSection(level, currentRoom, numberOfRoomsInSectionHighThreshold,
+            numberOfRoomsInSectionThresholdRatio);
+
+        return roomGenerator.Generate(nextRoomPosition, nextRoomSection, roomWidthHeight, blockSpawnMargin,
+            minNumberOfBlocks, maxNumberOfBlocks, enemySpawnMargin, minNumberOfEnemies, maxNumberOfEnemies);
+    }
+
+    private int GenerateNextRoomSection(Level level, Room currentRoom, int numberOfRoomsInSectionHighThreshold,
+        float numberOfRoomsInSectionThresholdRatio)
+    {
+        int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.section);
+
+        // If there are not enough rooms in the current section, do not change section.
+        if (numberOfRoomsInSection < numberOfRoomsInSectionHighThreshold * numberOfRoomsInSectionThresholdRatio)
+        {
+            return currentRoom.section;
+        }
+
+        if (Random.Range(0, 1 + 1) == 1)
+        {
+            return level.GetHigherSection() + 1;
+        }
+        else
+        {
+            return currentRoom.section;
         }
     }
 
-    private Vector2Int GenerateRandomClusterRoomPosition(HashSet<Vector2Int> cluster)
+    private void AddExitToCurrentRoom(Room currentRoom, Vector2Int nextRoomDirection)
     {
-        return cluster.ElementAt(Random.Range(0, cluster.Count));
+        currentRoom.exits.Add(nextRoomDirection);
     }
 
-    private Vector2Int GenerateNextRoomDirection()
+    private void AddExitToNextRoom(Room nextRoom, Vector2Int nextRoomDirection)
     {
-        return NextRoomChoices[Random.Range(0, NextRoomChoices.Length)];
+        nextRoom.exits.Add(-nextRoomDirection);
     }
 
-    private Vector2Int GenerateNextRoomPosition(Vector2Int roomPosition, Vector2Int nextRoomDirection)
+    private (Vector2Int, Room, Vector2Int) GenerateEndRoomPosition(Level level)
     {
-        return new Vector2Int(
-            Mathf.Min(Mathf.Max(0, roomPosition.x + nextRoomDirection.x), LevelController.MapWidth - 1),
-            Mathf.Min(Mathf.Max(0, roomPosition.y + nextRoomDirection.y), LevelController.MapHeight - 1));
-    }
+        int higherSection = level.GetHigherSection();
 
-    private bool CheckIfEndRoomHasNoExit(RoomDefinition[,] roomDefinitions, Vector2Int endRoomPosition)
-    {
-        RoomDefinition endRoomDefinition = roomDefinitions[endRoomPosition.x, endRoomPosition.y];
-
-        return !endRoomDefinition.upExit && !endRoomDefinition.rightExit && !endRoomDefinition.downExit
-            && !endRoomDefinition.leftExit;
-    }
-
-    /// Updates the existing room to ensure it has an exit leading to the next room.
-    private RoomDefinition UpdateClusterRoomDefinition(RoomDefinition roomDefinition, Vector2Int nextRoomDirection)
-    {
-        if (nextRoomDirection == Vector2Int.up)
+        // Extract all rooms of the higher section.
+        List<Room> higherSectionRooms = new List<Room>();
+        for (int x = 0; x < level.rooms.GetLength(0); x++)
         {
-            roomDefinition.upExit = true;
-            roomDefinition.upDoor = true;
-        }
-        else if (nextRoomDirection == Vector2Int.right)
-        {
-            roomDefinition.rightExit = true;
-            roomDefinition.rightDoor = true;
-        }
-        else if (nextRoomDirection == Vector2Int.down)
-        {
-            roomDefinition.downExit = true;
-            roomDefinition.downDoor = true;
-        }
-        else if (nextRoomDirection == Vector2Int.left)
-        {
-            roomDefinition.leftExit = true;
-            roomDefinition.leftDoor = true;
+            for (int y = 0; y < level.rooms.GetLength(1); y++)
+            {
+                if (level.rooms[x, y] != null && level.rooms[x, y].section == higherSection)
+                {
+                    higherSectionRooms.Add(level.rooms[x, y]);
+                }
+            }
         }
 
-        return roomDefinition;
-    }
-
-    /// Creates or updates the next room and ensures it has an exit leading to the existing room.
-    private RoomDefinition GenerateOrUpdateNextRoomDefinition(RoomDefinition roomDefinition,
-        Vector2Int nextRoomDirection, Vector2Int nextRoomPosition)
-    {
-        if (roomDefinition == null)
+        // Choose the first room with an available exit.
+        for (int i = 0; i < higherSectionRooms.Count; i++)
         {
-            roomDefinition = new RoomDefinition();
-            roomDefinition.position = nextRoomPosition;
-            roomDefinition.blockDefinitions = GenerateBlockDefinitions();
-            roomDefinition.enemyDefinitions = GenerateEnemyDefinitions(roomDefinition.blockDefinitions);
+            Room room = higherSectionRooms[i];
+
+            if (!room.exits.Contains(Vector2Int.up) && level.rooms[room.position.x, Mathf.Min(room.position.y + 1, level.rooms.GetLength(1) - 1)] == null)
+            {
+                return (new Vector2Int(room.position.x, Mathf.Min(room.position.y + 1, level.rooms.GetLength(1) - 1)), room, Vector2Int.up);
+            }
+            if (!room.exits.Contains(Vector2Int.right) && level.rooms[Mathf.Min(room.position.x + 1, level.rooms.GetLength(0) - 1), room.position.y] == null)
+            {
+                return (new Vector2Int(Mathf.Min(room.position.x + 1, level.rooms.GetLength(0) - 1), room.position.y), room, Vector2Int.right);
+            }
+            if (!room.exits.Contains(Vector2Int.down) && level.rooms[room.position.x, Mathf.Max(0, room.position.y - 1)] == null)
+            {
+                return (new Vector2Int(room.position.x, Mathf.Max(0, room.position.y - 1)), room, Vector2Int.down);
+            }
+            if (!room.exits.Contains(Vector2Int.left) && level.rooms[Mathf.Max(0, room.position.x - 1), room.position.y] == null)
+            {
+                return (new Vector2Int(Mathf.Max(0, room.position.x - 1), room.position.y), room, Vector2Int.left);
+            }
         }
 
-        if (nextRoomDirection == Vector2Int.up)
-        {
-            roomDefinition.downExit = true;
-            roomDefinition.downDoor = true;
-        }
-        else if (nextRoomDirection == Vector2Int.right)
-        {
-            roomDefinition.leftExit = true;
-            roomDefinition.leftDoor = true;
-        }
-        else if (nextRoomDirection == Vector2Int.down)
-        {
-            roomDefinition.upExit = true;
-            roomDefinition.upDoor = true;
-        }
-        else if (nextRoomDirection == Vector2Int.left)
-        {
-            roomDefinition.rightExit = true;
-            roomDefinition.rightDoor = true;
-        }
-
-        return roomDefinition;
-    }
-
-    private List<BlockDefinition> GenerateBlockDefinitions()
-    {
-        List<BlockDefinition> blockDefinitions = new List<BlockDefinition>();
-
-        int numberOfBlocks = Random.Range(MinNumberOfBlocks, MaxNumberOfBlocks + 1);
-
-        for (int i = 0; i < numberOfBlocks; i++)
-        {
-            BlockDefinition blockDefinition = new BlockDefinition();
-            blockDefinition.position = GenerateSpawnPosition(blockDefinitions);
-
-            blockDefinitions.Add(blockDefinition);
-        }
-
-        return blockDefinitions;
-    }
-
-    private Vector2Int GenerateSpawnPosition(IEnumerable<SpawnDefinition> spawnDefinitions)
-    {
-        Vector2Int spawnPosition;
-
-        do
-        {
-            spawnPosition = new Vector2Int(
-                Random.Range(SpawnAreaWidthHeightOffset, SpawnAreaWidthHeightOffset + SpawnAreaWidthHeight),
-                Random.Range(SpawnAreaWidthHeightOffset, SpawnAreaWidthHeightOffset + SpawnAreaWidthHeight));
-        } while (spawnDefinitions.Any(spawnDefinition => spawnDefinition.position == spawnPosition));
-
-        return spawnPosition;
-    }
-
-    private List<EnemyDefinition> GenerateEnemyDefinitions(IEnumerable<SpawnDefinition> spawnDefinitions)
-    {
-        List<EnemyDefinition> enemyDefinitions = new List<EnemyDefinition>();
-
-        int numberOfEnemies = Random.Range(0, MaxNumberOfEnemies + 1);
-
-        for (int i = 0; i < numberOfEnemies; i++)
-        {
-            EnemyDefinition enemyDefinition = new EnemyDefinition();
-            enemyDefinition.position = GenerateSpawnPosition(spawnDefinitions.Union(enemyDefinitions).ToList());
-            enemyDefinition.enemyType = EnemyTypeChoices[Random.Range(0, EnemyTypeChoices.Length)];
-
-            enemyDefinitions.Add(enemyDefinition);
-        }
-
-        return enemyDefinitions;
-    }
-
-    private LevelDefinition GenerateLevelDefinition(Vector2Int startRoomPosition, Vector2Int endRoomPosition,
-        List<RoomDefinition> roomDefinitions)
-    {
-        LevelDefinition levelDefinition = new LevelDefinition();
-        levelDefinition.roomDefinitions = roomDefinitions;
-        levelDefinition.startRoomPosition = startRoomPosition;
-        levelDefinition.endRoomPosition = endRoomPosition;
-
-        return levelDefinition;
+        // Throw an exception if no appropriate room has been found.
+        throw new GeneratorException("Cannot generate end room position");
     }
 }

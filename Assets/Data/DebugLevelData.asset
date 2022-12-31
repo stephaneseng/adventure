@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39c2ea9519fbe828aa17e856b2544bf5, type: 3}
   m_Name: DebugLevelData
   m_EditorClassIdentifier: 
+  mapWidthHeight: 10
   startRoomPosition: {x: 0, y: 0}
   endRoomPosition: {x: 9, y: 9}

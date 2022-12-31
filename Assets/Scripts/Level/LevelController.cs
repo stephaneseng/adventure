@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class LevelController : MonoBehaviour
 {
-    public static int MapWidth = 10;
-    public static int MapHeight = 10;
-
     private static float RoomTransitionPlayerScrollDistance = 1.0f;
     private static float RoomTransitionDurationInSeconds = 1.0f;
 
@@ -37,7 +34,7 @@ public class LevelController : MonoBehaviour
 
     private void InitializeRooms()
     {
-        rooms = new GameObject[LevelController.MapWidth, LevelController.MapHeight];
+        rooms = new GameObject[levelData.mapWidthHeight, levelData.mapWidthHeight];
 
         GetComponentsInChildren<Transform>(true).Where(transform => transform.CompareTag("Room")).ToList()
             .ForEach(transform =>
@@ -62,6 +59,11 @@ public class LevelController : MonoBehaviour
     {
         player.transform.position = new Vector3(levelData.startRoomPosition.x * RoomController.RoomSize,
             levelData.startRoomPosition.y * RoomController.RoomSize, player.transform.position.z);
+    }
+
+    private void StartEnterRoomTransition(Vector2Int roomPosition)
+    {
+        rooms[roomPosition.x, roomPosition.y].GetComponent<RoomController>().StartEnterRoomTransition();
     }
 
     private void EnterRoom(Vector2Int roomPosition)
@@ -89,12 +91,9 @@ public class LevelController : MonoBehaviour
         Vector2Int targetRoomPosition = currentRoomPosition + new Vector2Int(Mathf.FloorToInt(transitionDirection.x),
             Mathf.FloorToInt(transitionDirection.y));
 
-        GameObject fromRoom = rooms[currentRoomPosition.x, currentRoomPosition.y];
-        GameObject toRoom = rooms[targetRoomPosition.x, targetRoomPosition.y];
-
         playerController.Freeze();
 
-        toRoom.GetComponent<RoomController>().StartEnterRoomTransition();
+        StartEnterRoomTransition(targetRoomPosition);
 
         Vector3 playerStartPosition = playerController.transform.position;
         Vector3 cameraStartPosition = camera.transform.position;

@@ -87,22 +87,22 @@ public class MiniMapController : MonoBehaviour
                 // Add the exits to the mini-map, if visited.
                 if (roomController.visited)
                 {
-                    if (roomData.upExit)
+                    if (roomData.exits.Contains(Vector2Int.up))
                     {
                         miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
                             Quaternion.identity, transform));
                     }
-                    if (roomData.rightExit)
+                    if (roomData.exits.Contains(Vector2Int.right))
                     {
                         miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
                             Quaternion.Euler(0.0f, 0.0f, 270.0f), transform));
                     }
-                    if (roomData.downExit)
+                    if (roomData.exits.Contains(Vector2Int.down))
                     {
                         miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
                             Quaternion.Euler(0.0f, 0.0f, 180.0f), transform));
                     }
-                    if (roomData.leftExit)
+                    if (roomData.exits.Contains(Vector2Int.left))
                     {
                         miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
                             Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));
