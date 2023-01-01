@@ -77,6 +77,12 @@ public class EnemyController : MonoBehaviour
 
     private void RemoveHealth(int delta)
     {
+        // Prevent switching multiple times to the destroy state. 
+        if (health == 0)
+        {
+            return;
+        }
+
         health = Mathf.Max(0, health - delta);
 
         if (health > 0)

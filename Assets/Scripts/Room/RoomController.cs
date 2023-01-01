@@ -5,11 +5,29 @@ using UnityEngine.Tilemaps;
 
 public class RoomController : MonoBehaviour
 {
+    private static string TileResourcesFolder = "Tiles";
+    private static string WallUpTileResourceName = "WallUp";
+    private static string WallUpRightTileResourceName = "WallUpRight";
+    private static string WallRightResourceName = "WallRight";
+    private static string WallDownRightTileResourceName = "WallDownRight";
+    private static string WallDownTileResourceName = "WallDown";
+    private static string WallDownLeftTileResourceName = "WallDownLeft";
+    private static string WallLeftTileResourceName = "WallLeft";
+    private static string WallUpLeftTileResourceName = "WallUpLeft";
+
     public RoomData roomData;
 
     private LevelController levelController;
     private BoxCollider2D boxCollider2D;
     private Tilemap tilemap;
+    private Tile wallUpTile;
+    private Tile wallUpRightTile;
+    private Tile wallRightTile;
+    private Tile wallDownRightTile;
+    private Tile wallDownTile;
+    private Tile wallDownLeftTile;
+    private Tile wallLeftTile;
+    private Tile wallUpLeftTile;
     public Transform spawnableOrigin;
 
     private Dictionary<Vector2Int, GameObject> doors = new Dictionary<Vector2Int, GameObject>();
@@ -21,6 +39,14 @@ public class RoomController : MonoBehaviour
         levelController = GameObject.FindGameObjectWithTag("Level").GetComponent<LevelController>();
         boxCollider2D = GetComponent<BoxCollider2D>();
         tilemap = GetComponentInChildren<Tilemap>();
+        wallUpTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpTileResourceName);
+        wallUpRightTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpRightTileResourceName);
+        wallRightTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallRightResourceName);
+        wallDownRightTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownRightTileResourceName);
+        wallDownTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownTileResourceName);
+        wallDownLeftTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownLeftTileResourceName);
+        wallLeftTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallLeftTileResourceName);
+        wallUpLeftTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpLeftTileResourceName);
         spawnableOrigin = transform.Find("SpawnableOrigin");
     }
 
@@ -85,23 +111,31 @@ public class RoomController : MonoBehaviour
 
         if (roomData.exits.Contains(Vector2Int.up))
         {
+            tilemap.SetTile(new Vector3Int(-2, roomHalfWidthHeight), wallDownRightTile);
             tilemap.SetTile(new Vector3Int(-1, roomHalfWidthHeight), null);
             tilemap.SetTile(new Vector3Int(0, roomHalfWidthHeight), null);
+            tilemap.SetTile(new Vector3Int(1, roomHalfWidthHeight), wallDownLeftTile);
         }
         if (roomData.exits.Contains(Vector2Int.right))
         {
-            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -1), null);
+            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 1), wallDownLeftTile);
             tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 0), null);
+            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -1), null);
+            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -2), wallUpLeftTile);
         }
         if (roomData.exits.Contains(Vector2Int.down))
         {
+            tilemap.SetTile(new Vector3Int(-2, -roomHalfWidthHeight - 1), wallUpRightTile);
             tilemap.SetTile(new Vector3Int(-1, -roomHalfWidthHeight - 1), null);
             tilemap.SetTile(new Vector3Int(0, -roomHalfWidthHeight - 1), null);
+            tilemap.SetTile(new Vector3Int(1, -roomHalfWidthHeight - 1), wallUpLeftTile);
         }
         if (roomData.exits.Contains(Vector2Int.left))
         {
-            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -1), null);
+            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 1), wallDownRightTile);
             tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 0), null);
+            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -1), null);
+            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -2), wallUpRightTile);
         }
     }
 
