@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8befc1d101a9ba3eaab7bf55096d80dd, type: 3}
-  m_Name: TriangleEnemyBrain
+  m_Script: {fileID: 11500000, guid: a6e62cdfb70106f6ea757fadd970ddfc, type: 3}
+  m_Name: EnemyPlusBrain
   m_EditorClassIdentifier: 
   idleStateDurationInSeconds: 0
   moveStateDurationInSeconds: 1

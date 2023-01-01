@@ -1,5 +1,5 @@
 public enum EnemyType
 {
-    PlusEnemy,
-    TriangleEnemy
+    EnemyPlus,
+    EnemyTriangle
 }

@@ -3,8 +3,8 @@ using UnityEngine;
 public class RoomGenerator : MonoBehaviour
 {
     private static EnemyType[] EnemyTypeChoices = new EnemyType[] {
-        EnemyType.PlusEnemy,
-        EnemyType.TriangleEnemy
+        EnemyType.EnemyPlus,
+        EnemyType.EnemyTriangle
     };
 
     public Room GenerateStartRoom(Vector2Int position, GeneratorConfiguration configuration)

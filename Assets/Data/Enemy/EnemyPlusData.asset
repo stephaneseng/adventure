@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0448fd9790cde48819131ad20527e046, type: 3}
-  m_Name: TriangleEnemyData
+  m_Name: EnemyPlusData
   m_EditorClassIdentifier: 
-  enemyBrain: {fileID: 11400000, guid: 30e5b6f5976c0ca2093d97bd8c6e558a, type: 2}
+  enemyBrain: {fileID: 11400000, guid: 223c6095b19d7189e9da303446b57319, type: 2}
   health: 2
   speed: 2
   bullet: {fileID: 1070407543661715664, guid: 61f437bd4d99f2e419e03faa09d15e49, type: 3}
