@@ -88,12 +88,9 @@ public class LevelGenerator : MonoBehaviour
             });
         }
 
-        // Add keys in appropriate rooms.
-        AddKeys(level, configuration);
-
-        // Create the end room if possible.
+        // Create the end room if possible, with a dedicated section to put it behind a locked door.
         (Vector2Int endRoomPosition, Room parentToEndRoom, Vector2Int parentToEndRoomDirection) = GenerateEndRoomPosition(level);
-        Room endRoom = roomGenerator.GenerateEndRoom(endRoomPosition, level.GetHigherSection(), configuration);
+        Room endRoom = roomGenerator.GenerateEndRoom(endRoomPosition, level.GetHigherSection() + 1, configuration);
         level.AddEndRoom(endRoom);
 
         AddExitToCurrentRoom(parentToEndRoom, endRoom, parentToEndRoomDirection);
@@ -101,6 +98,9 @@ public class LevelGenerator : MonoBehaviour
 
         level.UpdateRoom(parentToEndRoom);
         level.UpdateRoom(endRoom);
+
+        // Add keys in appropriate rooms.
+        AddKeys(level, configuration);
 
         return level;
     }
