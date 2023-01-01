@@ -217,32 +217,52 @@ public class LevelGenerator : MonoBehaviour
     private void AddKeys(Level level, GeneratorConfiguration configuration)
     {
         // Sort rooms by their number of exits (lower to higher) to prioritize those with lower exits for keys addition.
+        // Also, count the number of locked doors by section to evaluate the number of keys to add in each section.
         Dictionary<int, List<Room>> roomsBySection = new Dictionary<int, List<Room>>();
+        Dictionary<int, int> numberOfLockedDoorsBySection = new Dictionary<int, int>();
 
         for (int x = 0; x < level.rooms.GetLength(0); x++)
         {
             for (int y = 0; y < level.rooms.GetLength(1); y++)
             {
-                // Avoid adding keys in the start room.
+                // Prevent adding keys in the start room.
                 if (level.rooms[x, y] == null || (x == level.startRoomPosition.x && y == level.startRoomPosition.y))
                 {
                     continue;
                 }
 
                 Room room = level.rooms[x, y];
+
                 List<Room> roomsByCurrentSection = roomsBySection.GetValueOrDefault(room.section, new List<Room>());
                 roomsByCurrentSection.Add(room);
                 roomsByCurrentSection.Sort((a, b) => a.exits.Count.CompareTo(b.exits.Count));
-
                 roomsBySection[room.section] = roomsByCurrentSection;
+
+                numberOfLockedDoorsBySection[room.section] =
+                    numberOfLockedDoorsBySection.GetValueOrDefault(room.section, 0) + room.lockedDoors.Count();
             }
         }
 
-        // Simple algorithm: Ensure that exactly 1 key is added by section.
+        // Ensure that the number of keys added by section is equal to the number of locked doors it contains.
         for (int i = 0; i < level.GetHigherSection(); i++)
         {
-            Room room = roomsBySection[i][0];
-            roomGenerator.AddKey(room, configuration);
+            int numberOfKeysToAdd;
+
+            if (i == 0)
+            {
+                numberOfKeysToAdd = numberOfLockedDoorsBySection[i];
+            }
+            else
+            {
+                // One locked door must be opened to enter into any of the non starting sections.
+                numberOfKeysToAdd = numberOfLockedDoorsBySection[i] - 1;
+            }
+
+            for (int j = 0; j < numberOfKeysToAdd; j++)
+            {
+                Room room = roomsBySection[i][j % roomsBySection.Count()];
+                roomGenerator.AddKey(room, configuration);
+            }
         }
     }
 
