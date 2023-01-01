@@ -10,19 +10,18 @@ public class PlayerMoveState : PlayerState
     {
         Vector2 inputActionMoveVector = playerController.ReadInputActionMoveVector();
 
-        if (inputActionMoveVector.magnitude > 0 && !playerController.IsMoveLocked())
+        if (inputActionMoveVector.magnitude > 0)
         {
             playerController.Move(inputActionMoveVector);
         }
         else
         {
-            playerController.StopMove();
-
             playerController.playerStateMachine.SwitchState(new PlayerIdleState());
         }
     }
 
     public override void OnExit(PlayerController playerController)
     {
+        playerController.StopMove();
     }
 }

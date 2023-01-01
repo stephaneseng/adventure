@@ -2,7 +2,6 @@ using UnityEngine;
 
 public abstract class EnemyBrain : ScriptableObject
 {
-
     /* EnemyIdleState */
 
     public virtual void OnEnter(EnemyIdleState state, EnemyController enemyController)
@@ -70,6 +69,20 @@ public abstract class EnemyBrain : ScriptableObject
     }
 
     public virtual void OnExit(EnemyDestroyState state, EnemyController enemyController)
+    {
+    }
+
+    /* EnemyFreezeState */
+
+    public virtual void OnEnter(EnemyFreezeState state, EnemyController enemyController)
+    {
+    }
+
+    public virtual void OnUpdate(EnemyFreezeState state, EnemyController enemyController)
+    {
+    }
+
+    public virtual void OnExit(EnemyFreezeState state, EnemyController enemyController)
     {
     }
 }

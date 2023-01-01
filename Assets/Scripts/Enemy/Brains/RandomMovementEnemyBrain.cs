@@ -24,8 +24,8 @@ public class RandomMovementEnemyBrain : EnemyBrain
     public override void OnEnter(EnemyMoveState state, EnemyController enemyController)
     {
         // Choose a random direction.
-        enemyController.direction = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
-        enemyController.StartMove();
+        enemyController.direction = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized;
+        enemyController.Move();
     }
 
     public override void OnUpdate(EnemyMoveState state, EnemyController enemyController)
@@ -75,5 +75,12 @@ public class RandomMovementEnemyBrain : EnemyBrain
     public override void OnUpdate(EnemyDestroyState state, EnemyController enemyController)
     {
         GameObject.Destroy(enemyController.gameObject, destroyStateDurationInSeconds);
+    }
+
+    /* EnemyFreezeState */
+
+    public override void OnEnter(EnemyFreezeState state, EnemyController enemyController)
+    {
+        enemyController.StopMove();
     }
 }

@@ -8,24 +8,19 @@ public class EnemyController : MonoBehaviour
     private Animator animator;
 
     public EnemyStateMachine enemyStateMachine;
-
-    private int health;
     public Vector2 direction;
-    public float speed;
+    private int health;
+    private bool move;
 
     void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-    }
 
-    void Start()
-    {
         enemyStateMachine = new EnemyStateMachine(this);
-
-        health = enemyData.health;
         direction = Vector2.down;
-        speed = 0.0f;
+        health = enemyData.health;
+        move = false;
 
         enemyStateMachine.Initialize(new EnemyIdleState());
     }
@@ -39,7 +34,7 @@ public class EnemyController : MonoBehaviour
     {
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
-        rigidbody2D.velocity = direction * speed * enemyData.speed;
+        rigidbody2D.velocity = (float)(move ? 1.0 : 0.0f) * enemyData.speed * direction;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -47,27 +42,28 @@ public class EnemyController : MonoBehaviour
         if (other.CompareTag("PlayerAttack"))
         {
             Destroy(other.gameObject);
-
-            health = Mathf.Max(0, health - 1);
-            if (health > 0)
-            {
-                enemyStateMachine.SwitchState(new EnemyDamageState());
-            }
-            else
-            {
-                enemyStateMachine.SwitchState(new EnemyDestroyState());
-            }
+            RemoveHealth(1);
         }
     }
 
-    public void StartMove()
+    public void Move()
     {
-        speed = 1.0f;
+        move = true;
     }
 
     public void StopMove()
     {
-        speed = 0.0f;
+        move = false;
+    }
+
+    public void Freeze()
+    {
+        enemyStateMachine.SwitchState(new EnemyFreezeState());
+    }
+
+    public void StopFreeze()
+    {
+        enemyStateMachine.SwitchState(new EnemyIdleState());
     }
 
     public void Attack()
@@ -77,6 +73,26 @@ public class EnemyController : MonoBehaviour
         enemyBullet.tag = "EnemyAttack";
         enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;
+    }
+
+    private void RemoveHealth(int delta)
+    {
+        // Prevent switching multiple times to the destroy state. 
+        if (health == 0)
+        {
+            return;
+        }
+
+        health = Mathf.Max(0, health - delta);
+
+        if (health > 0)
+        {
+            enemyStateMachine.SwitchState(new EnemyDamageState());
+        }
+        else
+        {
+            enemyStateMachine.SwitchState(new EnemyDestroyState());
+        }
     }
 
     public void Damage()
@@ -92,7 +108,7 @@ public class EnemyController : MonoBehaviour
 
     public void DropItem()
     {
-        Instantiate(enemyData.droppedItems[Random.Range(0, enemyData.droppedItems.Length)], transform.position,
+        Instantiate(enemyData.droppedItems[Random.Range(0, enemyData.droppedItems.Count)], transform.position,
             Quaternion.identity, transform.parent);
     }
 }

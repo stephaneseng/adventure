@@ -36,7 +36,7 @@ public class OrthographicMovementEnemyBrain : EnemyBrain
         if (nextDirection != Vector2.zero)
         {
             enemyController.direction = nextDirection;
-            enemyController.StartMove();
+            enemyController.Move();
         }
         else
         {
@@ -91,5 +91,12 @@ public class OrthographicMovementEnemyBrain : EnemyBrain
     public override void OnUpdate(EnemyDestroyState state, EnemyController enemyController)
     {
         GameObject.Destroy(enemyController.gameObject, destroyStateDurationInSeconds);
+    }
+
+    /* EnemyFreezeState */
+
+    public override void OnEnter(EnemyFreezeState state, EnemyController enemyController)
+    {
+        enemyController.StopMove();
     }
 }

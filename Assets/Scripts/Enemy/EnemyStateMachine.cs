@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyStateMachine
 {
-    public EnemyController enemyController;
+    private EnemyController enemyController;
 
     public float startTime;
 

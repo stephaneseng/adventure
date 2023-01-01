@@ -1,19 +1,25 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "RoomData", menuName = "ScriptableObjects/RoomData")]
 public class RoomData : ScriptableObject
 {
+    public int roomWidthHeight;
+
     public Vector2Int position;
 
-    [Header("Exits")]
-    public bool upExit;
-    public bool rightExit;
-    public bool downExit;
-    public bool leftExit;
+    public HashSet<Vector2Int> exits = new HashSet<Vector2Int>();
 
-    [Header("Doors")]
-    public bool upDoor;
-    public bool rightDoor;
-    public bool downDoor;
-    public bool leftDoor;
+    public HashSet<Vector2Int> doors = new HashSet<Vector2Int>();
+
+    public HashSet<Vector2Int> lockedDoors = new HashSet<Vector2Int>();
+
+    public void Initialize(Room room)
+    {
+        roomWidthHeight = room.spawnables.GetLength(0);
+        position = room.position;
+        exits = room.exits;
+        doors = room.doors;
+        lockedDoors = room.lockedDoors;
+    }
 }

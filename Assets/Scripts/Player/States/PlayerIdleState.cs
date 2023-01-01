@@ -6,7 +6,7 @@ public class PlayerIdleState : PlayerState
 
     public override void OnUpdate(PlayerController playerController)
     {
-        if (playerController.ReadInputActionMoveVector().magnitude > 0 && !playerController.IsMoveLocked())
+        if (playerController.ReadInputActionMoveVector().magnitude > 0)
         {
             playerController.playerStateMachine.SwitchState(new PlayerMoveState());
         }
