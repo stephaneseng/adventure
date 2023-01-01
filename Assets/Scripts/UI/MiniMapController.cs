@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MiniMapController : MonoBehaviour
 {
-    private static string MiniMapResourcesFolder = "MiniMap";
+    private static string MiniMapResourcesFolder = "UI";
     private static string MiniMapRoomResourceName = "MiniMapRoom";
     private static string MiniMapUnvisitedRoomResourceName = "MiniMapUnvisitedRoom";
     private static string MiniMapRoomExitResourceName = "MiniMapRoomExit";

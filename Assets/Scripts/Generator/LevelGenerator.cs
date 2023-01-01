@@ -58,8 +58,9 @@ public class LevelGenerator : MonoBehaviour
                 {
                     Room nextRoom = GenerateNextRoom(level, currentRoom, nextRoomPosition, configuration);
 
-                    AddExitToCurrentRoom(currentRoom, nextRoomDirection);
-                    AddExitToNextRoom(nextRoom, nextRoomDirection);
+                    AddExitToCurrentRoom(currentRoom, nextRoom, nextRoomDirection);
+                    AddExitToNextRoom(currentRoom, nextRoom, nextRoomDirection);
+
                     level.UpdateRoom(currentRoom);
                     level.AddRoom(nextRoom);
 
@@ -78,21 +79,26 @@ public class LevelGenerator : MonoBehaviour
                         return;
                     }
 
-                    AddExitToCurrentRoom(currentRoom, nextRoomDirection);
-                    AddExitToNextRoom(existingRoom, nextRoomDirection);
+                    AddExitToCurrentRoom(currentRoom, existingRoom, nextRoomDirection);
+                    AddExitToNextRoom(currentRoom, existingRoom, nextRoomDirection);
+
                     level.UpdateRoom(currentRoom);
                     level.UpdateRoom(existingRoom);
                 }
             });
         }
 
+        // Add keys in appropriate rooms.
+        AddKeys(level, configuration);
+
         // Create the end room if possible.
         (Vector2Int endRoomPosition, Room parentToEndRoom, Vector2Int parentToEndRoomDirection) = GenerateEndRoomPosition(level);
         Room endRoom = roomGenerator.GenerateEndRoom(endRoomPosition, level.GetHigherSection(), configuration);
         level.AddEndRoom(endRoom);
 
-        AddExitToCurrentRoom(parentToEndRoom, parentToEndRoomDirection);
-        AddExitToNextRoom(endRoom, parentToEndRoomDirection);
+        AddExitToCurrentRoom(parentToEndRoom, endRoom, parentToEndRoomDirection);
+        AddExitToNextRoom(parentToEndRoom, endRoom, parentToEndRoomDirection);
+
         level.UpdateRoom(parentToEndRoom);
         level.UpdateRoom(endRoom);
 
@@ -180,14 +186,64 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void AddExitToCurrentRoom(Room currentRoom, Vector2Int nextRoomDirection)
+    private void AddExitToCurrentRoom(Room currentRoom, Room nextRoom, Vector2Int nextRoomDirection)
     {
         currentRoom.exits.Add(nextRoomDirection);
+
+        if (currentRoom.section == nextRoom.section)
+        {
+            currentRoom.doors.Add(nextRoomDirection);
+        }
+        else
+        {
+            currentRoom.lockedDoors.Add(nextRoomDirection);
+        }
     }
 
-    private void AddExitToNextRoom(Room nextRoom, Vector2Int nextRoomDirection)
+    private void AddExitToNextRoom(Room currentRoom, Room nextRoom, Vector2Int nextRoomDirection)
     {
         nextRoom.exits.Add(-nextRoomDirection);
+
+        if (nextRoom.section == currentRoom.section)
+        {
+            nextRoom.doors.Add(-nextRoomDirection);
+        }
+        else
+        {
+            nextRoom.lockedDoors.Add(-nextRoomDirection);
+        }
+    }
+
+    private void AddKeys(Level level, GeneratorConfiguration configuration)
+    {
+        // Sort rooms by their number of exits (lower to higher) to prioritize those with lower exits for keys addition.
+        Dictionary<int, List<Room>> roomsBySection = new Dictionary<int, List<Room>>();
+
+        for (int x = 0; x < level.rooms.GetLength(0); x++)
+        {
+            for (int y = 0; y < level.rooms.GetLength(1); y++)
+            {
+                // Avoid adding keys in the start room.
+                if (level.rooms[x, y] == null || (x == level.startRoomPosition.x && y == level.startRoomPosition.y))
+                {
+                    continue;
+                }
+
+                Room room = level.rooms[x, y];
+                List<Room> roomsByCurrentSection = roomsBySection.GetValueOrDefault(room.section, new List<Room>());
+                roomsByCurrentSection.Add(room);
+                roomsByCurrentSection.Sort((a, b) => a.exits.Count.CompareTo(b.exits.Count));
+
+                roomsBySection[room.section] = roomsByCurrentSection;
+            }
+        }
+
+        // Simple algorithm: Ensure that exactly 1 key is added by section.
+        for (int i = 0; i < level.GetHigherSection(); i++)
+        {
+            Room room = roomsBySection[i][0];
+            roomGenerator.AddKey(room, configuration);
+        }
     }
 
     private (Vector2Int, Room, Vector2Int) GenerateEndRoomPosition(Level level)

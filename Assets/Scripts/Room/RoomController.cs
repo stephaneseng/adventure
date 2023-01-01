@@ -11,14 +11,10 @@ public class RoomController : MonoBehaviour
     private BoxCollider2D boxCollider2D;
     private Tilemap tilemap;
     public Transform spawnableOrigin;
-    private GameObject upDoor;
-    private GameObject rightDoor;
-    private GameObject downDoor;
-    private GameObject leftDoor;
 
+    private Dictionary<Vector2Int, GameObject> doors = new Dictionary<Vector2Int, GameObject>();
+    private Dictionary<Vector2Int, GameObject> lockedDoors = new Dictionary<Vector2Int, GameObject>();
     public bool visited;
-
-    private List<GameObject> doors = new List<GameObject>();
 
     void Awake()
     {
@@ -26,10 +22,6 @@ public class RoomController : MonoBehaviour
         boxCollider2D = GetComponent<BoxCollider2D>();
         tilemap = GetComponentInChildren<Tilemap>();
         spawnableOrigin = transform.Find("SpawnableOrigin");
-        upDoor = transform.Find("Door/UpDoor").gameObject;
-        rightDoor = transform.Find("Door/RightDoor").gameObject;
-        downDoor = transform.Find("Door/DownDoor").gameObject;
-        leftDoor = transform.Find("Door/LeftDoor").gameObject;
     }
 
     void Update()
@@ -39,10 +31,10 @@ public class RoomController : MonoBehaviour
             // Destroy all doors if all enemies have been destroyed.
             if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
             {
-                for (int i = doors.Count() - 1; i >= 0; i--)
+                doors.Values.ToList().ForEach(door =>
                 {
-                    Destroy(doors.ElementAt(i));
-                }
+                    Destroy(door);
+                });
 
                 doors.Clear();
             }
@@ -84,6 +76,7 @@ public class RoomController : MonoBehaviour
     {
         InitializeWalls();
         InitializeDoors();
+        InitializeLockedDoors();
     }
 
     private void InitializeWalls()
@@ -112,53 +105,50 @@ public class RoomController : MonoBehaviour
         }
     }
 
-    /// The position of the room BoxCollider2D is used, because the position of the room itself is not relevant.
     private void InitializeDoors()
     {
-        if (roomData.doors.Contains(Vector2Int.up))
-        {
-            doors.Add(upDoor);
-        }
-        else
-        {
-            Destroy(upDoor);
-        }
+        doors[Vector2Int.up] = transform.Find("Doors/DoorUp").gameObject;
+        doors[Vector2Int.right] = transform.Find("Doors/DoorRight").gameObject;
+        doors[Vector2Int.down] = transform.Find("Doors/DoorDown").gameObject;
+        doors[Vector2Int.left] = transform.Find("Doors/DoorLeft").gameObject;
 
-        if (roomData.doors.Contains(Vector2Int.right))
+        doors.Keys.ToList().ForEach(direction =>
         {
-            doors.Add(rightDoor);
-        }
-        else
-        {
-            Destroy(rightDoor);
-        }
+            if (!roomData.doors.Contains(direction))
+            {
+                Destroy(doors[direction]);
+                doors.Remove(direction);
+            }
+        });
 
-        if (roomData.doors.Contains(Vector2Int.down))
-        {
-            doors.Add(downDoor);
-        }
-        else
-        {
-            Destroy(downDoor);
-        }
+        doors.Values.ToList().ForEach(door => door.SetActive(false));
+    }
 
-        if (roomData.doors.Contains(Vector2Int.left))
-        {
-            doors.Add(leftDoor);
-        }
-        else
-        {
-            Destroy(leftDoor);
-        }
+    private void InitializeLockedDoors()
+    {
+        lockedDoors[Vector2Int.up] = transform.Find("Doors/DoorLockedUp").gameObject;
+        lockedDoors[Vector2Int.right] = transform.Find("Doors/DoorLockedRight").gameObject;
+        lockedDoors[Vector2Int.down] = transform.Find("Doors/DoorLockedDown").gameObject;
+        lockedDoors[Vector2Int.left] = transform.Find("Doors/DoorLockedLeft").gameObject;
 
-        doors.ForEach(door => door.SetActive(false));
+        lockedDoors.Keys.ToList().ForEach(direction =>
+        {
+            if (!roomData.lockedDoors.Contains(direction))
+            {
+                Destroy(lockedDoors[direction]);
+                lockedDoors.Remove(direction);
+            }
+        });
+
+        lockedDoors.Values.ToList().ForEach(lockedDoor => lockedDoor.SetActive(false));
     }
 
     public void StartEnterRoomTransition()
     {
         gameObject.SetActive(true);
         boxCollider2D.enabled = false;
-        doors.ForEach(door => door.SetActive(false));
+        doors.Values.ToList().ForEach(door => door.SetActive(false));
+        lockedDoors.Values.ToList().ForEach(lockedDoor => lockedDoor.SetActive(false));
 
         GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).ToList()
             .ForEach(transform =>
@@ -171,7 +161,8 @@ public class RoomController : MonoBehaviour
     {
         gameObject.SetActive(true);
         boxCollider2D.enabled = true;
-        doors.ForEach(door => door.SetActive(true));
+        doors.Values.ToList().ForEach(door => door.SetActive(true));
+        lockedDoors.Values.ToList().ForEach(lockedDoor => lockedDoor.SetActive(true));
 
         GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).ToList()
             .ForEach(transform =>
@@ -185,5 +176,11 @@ public class RoomController : MonoBehaviour
     public void ExitRoom()
     {
         gameObject.SetActive(false);
+    }
+
+    public void UnlockDoor(Vector2Int doorDirection)
+    {
+        Destroy(lockedDoors[doorDirection]);
+        lockedDoors.Remove(doorDirection);
     }
 }

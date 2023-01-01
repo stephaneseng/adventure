@@ -7,11 +7,13 @@ public class RoomFactory : MonoBehaviour
 
     private BlockFactory blockFactory;
     private EnemyFactory enemyFactory;
+    private ItemFactory itemFactory;
 
     void Awake()
     {
         blockFactory = GetComponentInChildren<BlockFactory>();
         enemyFactory = GetComponentInChildren<EnemyFactory>();
+        itemFactory = GetComponentInChildren<ItemFactory>();
     }
 
     public void InstantiateRooms(Room[,] rooms, GameObject levelGameObject)
@@ -48,6 +50,7 @@ public class RoomFactory : MonoBehaviour
 
         blockFactory.InstantiateBlocks(room.spawnables, roomGameObject);
         enemyFactory.InstantiateEnemies(room.spawnables, roomGameObject);
+        itemFactory.InstantiateItems(room.spawnables, roomGameObject);
 
         return roomGameObject;
     }

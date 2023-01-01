@@ -82,4 +82,13 @@ public class RoomGenerator : MonoBehaviour
 
         return spawnPosition;
     }
+
+    public void AddKey(Room room, GeneratorConfiguration configuration)
+    {
+        Item item = new Item();
+        item.position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
+            false);
+
+        room.AddSpawnable(item);
+    }
 }

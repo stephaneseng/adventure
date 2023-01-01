@@ -118,4 +118,11 @@ public class LevelController : MonoBehaviour
 
         playerController.StopFreeze();
     }
+
+    public void UnlockDoor(Vector2Int doorDirection)
+    {
+        rooms[currentRoomPosition.x, currentRoomPosition.y].GetComponent<RoomController>().UnlockDoor(doorDirection);
+        rooms[currentRoomPosition.x + doorDirection.x, currentRoomPosition.y + doorDirection.y]
+            .GetComponent<RoomController>().UnlockDoor(-doorDirection);
+    }
 }

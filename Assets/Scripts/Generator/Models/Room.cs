@@ -9,12 +9,18 @@ public class Room
 
     public HashSet<Vector2Int> exits;
 
+    public HashSet<Vector2Int> doors;
+
+    public HashSet<Vector2Int> lockedDoors;
+
     public Spawnable[,] spawnables;
 
     public Room(int roomWidthHeight)
     {
         spawnables = new Spawnable[roomWidthHeight, roomWidthHeight];
         exits = new HashSet<Vector2Int>();
+        doors = new HashSet<Vector2Int>();
+        lockedDoors = new HashSet<Vector2Int>();
     }
 
     public void AddSpawnable(Spawnable spawnable)

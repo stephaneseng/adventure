@@ -3,6 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    // FIXME: Limit the number of keys the player can have due to UI constraints.
+    public static int MaxNumberOfKeys = 6;
+
     public PlayerData playerData;
 
     private PlayerInput playerInput;
@@ -11,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     public PlayerStateMachine playerStateMachine;
     public int health;
+    public int keys;
     private Vector2 direction;
     private bool move;
 
@@ -22,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
         playerStateMachine = new PlayerStateMachine(this);
         health = playerData.health;
+        keys = 0;
         direction = Vector2.up;
         move = false;
 
@@ -53,14 +58,18 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("ItemHealth"))
         {
             Destroy(other.gameObject);
-
             AddHealth(1);
+        }
+
+        if (other.CompareTag("ItemKey") && keys < MaxNumberOfKeys)
+        {
+            Destroy(other.gameObject);
+            AddKey();
         }
 
         if (other.CompareTag("EnemyAttack"))
         {
             Destroy(other.gameObject);
-
             RemoveHealth(1);
         }
     }
@@ -118,6 +127,16 @@ public class PlayerController : MonoBehaviour
         health = Mathf.Max(0, health - delta);
 
         playerStateMachine.SwitchState(new PlayerDamageState());
+    }
+
+    private void AddKey()
+    {
+        keys++;
+    }
+
+    public void RemoveKey()
+    {
+        keys--;
     }
 
     public void Damage()

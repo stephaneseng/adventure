@@ -12,11 +12,14 @@ public class RoomData : ScriptableObject
 
     public HashSet<Vector2Int> doors = new HashSet<Vector2Int>();
 
+    public HashSet<Vector2Int> lockedDoors = new HashSet<Vector2Int>();
+
     public void Initialize(Room room)
     {
         roomWidthHeight = room.spawnables.GetLength(0);
         position = room.position;
         exits = room.exits;
-        doors = room.exits;
+        doors = room.doors;
+        lockedDoors = room.lockedDoors;
     }
 }

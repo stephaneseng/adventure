@@ -42,7 +42,6 @@ public class EnemyController : MonoBehaviour
         if (other.CompareTag("PlayerAttack"))
         {
             Destroy(other.gameObject);
-
             RemoveHealth(1);
         }
     }
