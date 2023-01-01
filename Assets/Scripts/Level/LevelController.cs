@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelController : MonoBehaviour
 {
-    private static float RoomTransitionPlayerScrollDistance = 2.0f;
+    private static float RoomTransitionPlayerScrollDistance = 1.2f;
     private static float RoomTransitionDurationInSeconds = 1.0f;
 
     public LevelData levelData;
