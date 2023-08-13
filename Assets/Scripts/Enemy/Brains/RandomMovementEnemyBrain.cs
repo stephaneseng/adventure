@@ -74,7 +74,7 @@ public class RandomMovementEnemyBrain : EnemyBrain
 
     public override void OnUpdate(EnemyDestroyState state, EnemyController enemyController)
     {
-        GameObject.Destroy(enemyController.gameObject, destroyStateDurationInSeconds);
+        Destroy(enemyController.gameObject, destroyStateDurationInSeconds);
     }
 
     /* EnemyFreezeState */

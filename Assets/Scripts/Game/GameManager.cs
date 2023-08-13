@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private static int MapWidthHeight = 10;
-    private static int StartRoomMargin = 2;
-    private static int NumberOfRoomsInSectionLowThreshold = 3;
-    private static int NumberOfRoomsInSectionHighThreshold = 8;
-    private static float NumberOfRoomsInSectionThresholdRatio = 0.9f;
+    private static readonly int MapWidthHeight = 10;
+    private static readonly int StartRoomMargin = 2;
+    private static readonly int NumberOfRoomsInSectionLowThreshold = 3;
+    private static readonly int NumberOfRoomsInSectionHighThreshold = 8;
+    private static readonly float NumberOfRoomsInSectionThresholdRatio = 0.9f;
 
-    private static int RoomWidthHeight = 10;
-    private static int BlockSpawnMargin = 1;
-    private static int MinNumberOfBlocks = 5;
-    private static int MaxNumberOfBlocks = 10;
-    private static int EnemySpawnMargin = 2;
-    private static int MinNumberOfEnemies = 0;
-    private static int MaxNumberOfEnemies = 5;
+    private static readonly int RoomWidthHeight = 10;
+    private static readonly int BlockSpawnMargin = 1;
+    private static readonly int MinNumberOfBlocks = 5;
+    private static readonly int MaxNumberOfBlocks = 10;
+    private static readonly int EnemySpawnMargin = 2;
+    private static readonly int MinNumberOfEnemies = 0;
+    private static readonly int MaxNumberOfEnemies = 5;
 
     private GameObject levelGameObject;
     private LevelGenerator levelGenerator;

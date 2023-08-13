@@ -5,15 +5,15 @@ using UnityEngine.Tilemaps;
 
 public class RoomController : MonoBehaviour
 {
-    private static string TileResourcesFolder = "Tiles";
-    private static string WallUpTileResourceName = "WallUp";
-    private static string WallUpRightTileResourceName = "WallUpRight";
-    private static string WallRightResourceName = "WallRight";
-    private static string WallDownRightTileResourceName = "WallDownRight";
-    private static string WallDownTileResourceName = "WallDown";
-    private static string WallDownLeftTileResourceName = "WallDownLeft";
-    private static string WallLeftTileResourceName = "WallLeft";
-    private static string WallUpLeftTileResourceName = "WallUpLeft";
+    private static readonly string TileResourcesFolder = "Tiles";
+    private static readonly string WallUpTileResourceName = "WallUp";
+    private static readonly string WallUpRightTileResourceName = "WallUpRight";
+    private static readonly string WallRightResourceName = "WallRight";
+    private static readonly string WallDownRightTileResourceName = "WallDownRight";
+    private static readonly string WallDownTileResourceName = "WallDown";
+    private static readonly string WallDownLeftTileResourceName = "WallDownLeft";
+    private static readonly string WallLeftTileResourceName = "WallLeft";
+    private static readonly string WallUpLeftTileResourceName = "WallUpLeft";
 
     public RoomData roomData;
 

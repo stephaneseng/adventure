@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class BlockFactory : MonoBehaviour
 {
-    private static string BlockResourcesFolder = "Room";
-    private static string BlockResourceName = "Block";
+    private static readonly string BlockResourcesFolder = "Room";
+    private static readonly string BlockResourceName = "Block";
 
     public void InstantiateBlocks(Spawnable[,] spawnables, GameObject room)
     {

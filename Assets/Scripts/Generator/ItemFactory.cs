@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ItemFactory : MonoBehaviour
 {
-    private static string ItemResourcesFolder = "Item";
+    private static readonly string ItemResourcesFolder = "Item";
 
     public void InstantiateItems(Spawnable[,] spawnables, GameObject room)
     {

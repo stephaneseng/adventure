@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    private static Vector2Int[] NextRoomDirectionChoices = new Vector2Int[] {
+    private static readonly Vector2Int[] NextRoomDirectionChoices = new Vector2Int[] {
         Vector2Int.up,
         Vector2Int.right,
         Vector2Int.down,

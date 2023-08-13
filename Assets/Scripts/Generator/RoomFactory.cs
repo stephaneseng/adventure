@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class RoomFactory : MonoBehaviour
 {
-    private static string RoomResourcesFolder = "Room";
-    private static string RoomResourceName = "Room";
+    private static readonly string RoomResourcesFolder = "Room";
+    private static readonly string RoomResourceName = "Room";
 
     private BlockFactory blockFactory;
     private EnemyFactory enemyFactory;

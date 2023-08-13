@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class LevelController : MonoBehaviour
 {
-    private static float RoomTransitionPlayerScrollDistance = 2.0f;
-    private static float RoomTransitionDurationInSeconds = 1.0f;
+    private static readonly float RoomTransitionPlayerScrollDistance = 2.0f;
+    private static readonly float RoomTransitionDurationInSeconds = 1.0f;
 
     public LevelData levelData;
 
@@ -50,7 +50,6 @@ public class LevelController : MonoBehaviour
         EnterRoom(levelData.startRoomPosition);
 
         GameObject startRoom = rooms[levelData.startRoomPosition.x, levelData.startRoomPosition.y];
-        RoomData roomData = startRoom.GetComponent<RoomController>().roomData;
 
         player.transform.position = new Vector3(startRoom.transform.position.x, startRoom.transform.position.y,
             player.transform.position.z);

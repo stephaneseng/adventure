@@ -2,37 +2,36 @@ using UnityEngine;
 
 public class RoomGenerator : MonoBehaviour
 {
-    private static EnemyType[] EnemyTypeChoices = new EnemyType[] {
+    private static readonly EnemyType[] EnemyTypeChoices = new EnemyType[] {
         EnemyType.EnemyPlus,
         EnemyType.EnemyTriangle
     };
 
     public Room GenerateStartRoom(Vector2Int position, GeneratorConfiguration configuration)
     {
-        Room startRoom = new Room(configuration.roomWidthHeight);
-
-        startRoom.position = position;
-        startRoom.section = 0;
-
-        return startRoom;
+        return new Room(configuration.roomWidthHeight)
+        {
+            position = position,
+            section = 0
+        };
     }
 
     public Room GenerateEndRoom(Vector2Int position, int section, GeneratorConfiguration configuration)
     {
-        Room endRoom = new Room(configuration.roomWidthHeight);
-
-        endRoom.position = position;
-        endRoom.section = section;
-
-        return endRoom;
+        return new Room(configuration.roomWidthHeight)
+        {
+            position = position,
+            section = section
+        };
     }
 
     public Room Generate(Vector2Int position, int section, GeneratorConfiguration configuration)
     {
-        Room room = new Room(configuration.roomWidthHeight);
-
-        room.position = position;
-        room.section = section;
+        Room room = new Room(configuration.roomWidthHeight)
+        {
+            position = position,
+            section = section
+        };
 
         GenerateBlocks(room, configuration);
         GenerateEnemies(room, configuration);
@@ -46,11 +45,11 @@ public class RoomGenerator : MonoBehaviour
 
         for (int i = 0; i < numberOfBlocks; i++)
         {
-            Block block = new Block();
-            block.position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
-                true);
-
-            room.AddSpawnable(block);
+            room.AddSpawnable(new Block()
+            {
+                position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
+                    true)
+            });
         }
     }
 
@@ -60,12 +59,12 @@ public class RoomGenerator : MonoBehaviour
 
         for (int i = 0; i < numberOfEnemies; i++)
         {
-            Enemy enemy = new Enemy();
-            enemy.position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.enemySpawnMargin,
-                false);
-            enemy.enemyType = EnemyTypeChoices[Random.Range(0, EnemyTypeChoices.Length)];
-
-            room.AddSpawnable(enemy);
+            room.AddSpawnable(new Enemy()
+            {
+                position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.enemySpawnMargin,
+                    false),
+                enemyType = EnemyTypeChoices[Random.Range(0, EnemyTypeChoices.Length)]
+            });
         }
     }
 
@@ -85,10 +84,10 @@ public class RoomGenerator : MonoBehaviour
 
     public void AddKey(Room room, GeneratorConfiguration configuration)
     {
-        Item item = new Item();
-        item.position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
-            false);
-
-        room.AddSpawnable(item);
+        room.AddSpawnable(new Item()
+        {
+            position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
+                false)
+        });
     }
 }
