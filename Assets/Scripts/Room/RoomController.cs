@@ -6,28 +6,23 @@ using UnityEngine.Tilemaps;
 public class RoomController : MonoBehaviour
 {
     private static readonly string TileResourcesFolder = "Tiles";
-    private static readonly string WallUpTileResourceName = "WallUp";
-    private static readonly string WallUpRightTileResourceName = "WallUpRight";
-    private static readonly string WallRightResourceName = "WallRight";
-    private static readonly string WallDownRightTileResourceName = "WallDownRight";
-    private static readonly string WallDownTileResourceName = "WallDown";
-    private static readonly string WallDownLeftTileResourceName = "WallDownLeft";
-    private static readonly string WallLeftTileResourceName = "WallLeft";
-    private static readonly string WallUpLeftTileResourceName = "WallUpLeft";
+    private static readonly string WallUpLeftInnerTileResourceName = "WallUpLeftInner";
+    private static readonly string WallUpRightInnerTileResourceName = "WallUpRightInner";
+    private static readonly string WallDownRightInnerTileResourceName = "WallDownRightInner";
+    private static readonly string WallDownLeftInnerTileResourceName = "WallDownLeftInner";
+    private static readonly string GroundTileResourceName = "Ground";
 
     public RoomData roomData;
 
     private LevelController levelController;
     private BoxCollider2D boxCollider2D;
-    private Tilemap tilemap;
-    private Tile wallUpTile;
-    private Tile wallUpRightTile;
-    private Tile wallRightTile;
-    private Tile wallDownRightTile;
-    private Tile wallDownTile;
-    private Tile wallDownLeftTile;
-    private Tile wallLeftTile;
-    private Tile wallUpLeftTile;
+    private Tilemap foregroundTilemap;
+    private Tilemap backgroundTilemap;
+    private Tile wallUpLeftInnerTile;
+    private Tile wallUpRightInnerTile;
+    private Tile wallDownRightInnerTile;
+    private Tile wallDownLeftInnerTile;
+    private Tile groundTile;
     public Transform spawnableOrigin;
 
     private Dictionary<Vector2Int, GameObject> doors = new Dictionary<Vector2Int, GameObject>();
@@ -38,15 +33,13 @@ public class RoomController : MonoBehaviour
     {
         levelController = GameObject.FindGameObjectWithTag("Level").GetComponent<LevelController>();
         boxCollider2D = GetComponent<BoxCollider2D>();
-        tilemap = GetComponentInChildren<Tilemap>();
-        wallUpTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpTileResourceName);
-        wallUpRightTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpRightTileResourceName);
-        wallRightTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallRightResourceName);
-        wallDownRightTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownRightTileResourceName);
-        wallDownTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownTileResourceName);
-        wallDownLeftTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownLeftTileResourceName);
-        wallLeftTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallLeftTileResourceName);
-        wallUpLeftTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpLeftTileResourceName);
+        foregroundTilemap = transform.Find("Foreground").GetComponent<Tilemap>();
+        backgroundTilemap = transform.Find("Background").GetComponent<Tilemap>();
+        wallUpLeftInnerTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpLeftInnerTileResourceName);
+        wallUpRightInnerTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpRightInnerTileResourceName);
+        wallDownRightInnerTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownRightInnerTileResourceName);
+        wallDownLeftInnerTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownLeftInnerTileResourceName);
+        groundTile = Resources.Load<Tile>(TileResourcesFolder + "/" + GroundTileResourceName);
         spawnableOrigin = transform.Find("SpawnableOrigin");
     }
 
@@ -111,31 +104,39 @@ public class RoomController : MonoBehaviour
 
         if (roomData.exits.Contains(Vector2Int.up))
         {
-            tilemap.SetTile(new Vector3Int(-2, roomHalfWidthHeight), wallDownRightTile);
-            tilemap.SetTile(new Vector3Int(-1, roomHalfWidthHeight), null);
-            tilemap.SetTile(new Vector3Int(0, roomHalfWidthHeight), null);
-            tilemap.SetTile(new Vector3Int(1, roomHalfWidthHeight), wallDownLeftTile);
+            foregroundTilemap.SetTile(new Vector3Int(-2, roomHalfWidthHeight), wallDownRightInnerTile);
+            foregroundTilemap.SetTile(new Vector3Int(-1, roomHalfWidthHeight), null);
+            foregroundTilemap.SetTile(new Vector3Int(0, roomHalfWidthHeight), null);
+            foregroundTilemap.SetTile(new Vector3Int(1, roomHalfWidthHeight), wallDownLeftInnerTile);
+            backgroundTilemap.SetTile(new Vector3Int(-1, roomHalfWidthHeight), groundTile);
+            backgroundTilemap.SetTile(new Vector3Int(0, roomHalfWidthHeight), groundTile);
         }
         if (roomData.exits.Contains(Vector2Int.right))
         {
-            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 1), wallDownLeftTile);
-            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 0), null);
-            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -1), null);
-            tilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -2), wallUpLeftTile);
+            foregroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 1), wallDownLeftInnerTile);
+            foregroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 0), null);
+            foregroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -1), null);
+            foregroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -2), wallUpLeftInnerTile);
+            backgroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 0), groundTile);
+            backgroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -1), groundTile);
         }
         if (roomData.exits.Contains(Vector2Int.down))
         {
-            tilemap.SetTile(new Vector3Int(-2, -roomHalfWidthHeight - 1), wallUpRightTile);
-            tilemap.SetTile(new Vector3Int(-1, -roomHalfWidthHeight - 1), null);
-            tilemap.SetTile(new Vector3Int(0, -roomHalfWidthHeight - 1), null);
-            tilemap.SetTile(new Vector3Int(1, -roomHalfWidthHeight - 1), wallUpLeftTile);
+            foregroundTilemap.SetTile(new Vector3Int(-2, -roomHalfWidthHeight - 1), wallUpRightInnerTile);
+            foregroundTilemap.SetTile(new Vector3Int(-1, -roomHalfWidthHeight - 1), null);
+            foregroundTilemap.SetTile(new Vector3Int(0, -roomHalfWidthHeight - 1), null);
+            foregroundTilemap.SetTile(new Vector3Int(1, -roomHalfWidthHeight - 1), wallUpLeftInnerTile);
+            backgroundTilemap.SetTile(new Vector3Int(-1, -roomHalfWidthHeight - 1), groundTile);
+            backgroundTilemap.SetTile(new Vector3Int(0, -roomHalfWidthHeight - 1), groundTile);
         }
         if (roomData.exits.Contains(Vector2Int.left))
         {
-            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 1), wallDownRightTile);
-            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 0), null);
-            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -1), null);
-            tilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -2), wallUpRightTile);
+            foregroundTilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 1), wallDownRightInnerTile);
+            foregroundTilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 0), null);
+            foregroundTilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -1), null);
+            foregroundTilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -2), wallUpRightInnerTile);
+            backgroundTilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 0), groundTile);
+            backgroundTilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, -1), groundTile);
         }
     }
 
