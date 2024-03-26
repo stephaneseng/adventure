@@ -13,8 +13,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     public PlayerStateMachine playerStateMachine;
-    public int health;
-    public int keys;
+    private int health;
+    private int keys;
     private Vector2 direction;
     private bool move;
 
@@ -110,11 +110,15 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
-        GameObject playerBullet = (GameObject)Instantiate(playerData.bullet, transform.position, transform.rotation,
-            transform);
+        GameObject playerBullet = Instantiate(playerData.bullet, transform.position, transform.rotation, transform);
         playerBullet.tag = "PlayerAttack";
         playerBullet.GetComponent<BulletController>().startPosition = transform.position;
         playerBullet.GetComponent<BulletController>().direction = direction;
+    }
+
+    public int GetHealth()
+    {
+        return health;
     }
 
     private void AddHealth(int delta)
@@ -127,6 +131,11 @@ public class PlayerController : MonoBehaviour
         health = Mathf.Max(0, health - delta);
 
         playerStateMachine.SwitchState(new PlayerDamageState());
+    }
+
+    public int GetKeys()
+    {
+        return keys;
     }
 
     private void AddKey()

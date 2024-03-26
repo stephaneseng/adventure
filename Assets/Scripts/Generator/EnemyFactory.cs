@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyFactory : MonoBehaviour
 {
-    private static string EnemyResourcesFolder = "Enemy";
+    private static readonly string EnemyResourcesFolder = "Enemy";
 
     public void InstantiateEnemies(Spawnable[,] spawnables, GameObject room)
     {

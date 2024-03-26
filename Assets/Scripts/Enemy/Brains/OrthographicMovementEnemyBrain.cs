@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "OrthographicMovementEnemyBrain", menuName = "ScriptableObjects/OrthographicMovementEnemyBrain")]
 public class OrthographicMovementEnemyBrain : EnemyBrain
 {
-    private static Vector2[] NextDirectionChoices = new Vector2[] {
+    private static readonly Vector2[] NextDirectionChoices = new Vector2[] {
         Vector2.up,
         Vector2.right,
         Vector2.down,
@@ -90,7 +90,7 @@ public class OrthographicMovementEnemyBrain : EnemyBrain
 
     public override void OnUpdate(EnemyDestroyState state, EnemyController enemyController)
     {
-        GameObject.Destroy(enemyController.gameObject, destroyStateDurationInSeconds);
+        Destroy(enemyController.gameObject, destroyStateDurationInSeconds);
     }
 
     /* EnemyFreezeState */

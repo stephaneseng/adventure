@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class MiniMapController : MonoBehaviour
 {
-    private static string MiniMapResourcesFolder = "UI";
-    private static string MiniMapRoomResourceName = "MiniMapRoom";
-    private static string MiniMapUnvisitedRoomResourceName = "MiniMapUnvisitedRoom";
-    private static string MiniMapRoomExitResourceName = "MiniMapRoomExit";
-    private static string MiniMapStartRoomMaskResourceName = "MiniMapStartRoomMask";
-    private static string MiniMapEndRoomMaskResourceName = "MiniMapEndRoomMask";
-    private static string MiniMapCurrentRoomMaskResourceName = "MiniMapCurrentRoomMask";
+    private static readonly string MiniMapResourcesFolder = "UI";
+    private static readonly string MiniMapRoomResourceName = "MiniMapRoom";
+    private static readonly string MiniMapUnvisitedRoomResourceName = "MiniMapUnvisitedRoom";
+    private static readonly string MiniMapRoomExitResourceName = "MiniMapRoomExit";
+    private static readonly string MiniMapStartRoomMaskResourceName = "MiniMapStartRoomMask";
+    private static readonly string MiniMapEndRoomMaskResourceName = "MiniMapEndRoomMask";
+    private static readonly string MiniMapCurrentRoomMaskResourceName = "MiniMapCurrentRoomMask";
 
     private GameObject miniMapRoomPrefab;
     private GameObject miniMapUnvisitedRoomPrefab;
@@ -46,7 +46,7 @@ public class MiniMapController : MonoBehaviour
     {
         miniMapRoomAndExits.ForEach(miniMapRoom =>
         {
-            GameObject.Destroy(miniMapRoom);
+            Destroy(miniMapRoom);
         });
     }
 

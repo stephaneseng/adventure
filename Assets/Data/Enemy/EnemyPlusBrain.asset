@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6e62cdfb70106f6ea757fadd970ddfc, type: 3}
   m_Name: EnemyPlusBrain
   m_EditorClassIdentifier: 
-  idleStateDurationInSeconds: 0
+  idleStateDurationInSeconds: 1
   moveStateDurationInSeconds: 1
   destroyStateDurationInSeconds: 0.15

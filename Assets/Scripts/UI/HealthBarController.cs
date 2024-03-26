@@ -14,7 +14,7 @@ public class HealthBarController : MonoBehaviour
 
     void Update()
     {
-        slider.value = player.GetComponent<PlayerController>().health;
+        slider.value = player.GetComponent<PlayerController>().GetHealth();
         slider.maxValue = player.GetComponent<PlayerController>().playerData.health;
     }
 }

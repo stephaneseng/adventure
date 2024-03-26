@@ -68,8 +68,7 @@ public class EnemyController : MonoBehaviour
 
     public void Attack()
     {
-        GameObject enemyBullet = (GameObject)Instantiate(enemyData.bullet, transform.position, transform.rotation,
-            transform);
+        GameObject enemyBullet = Instantiate(enemyData.bullet, transform.position, transform.rotation, transform);
         enemyBullet.tag = "EnemyAttack";
         enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
         enemyBullet.GetComponent<BulletController>().direction = direction;
