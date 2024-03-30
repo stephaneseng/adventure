@@ -63,7 +63,7 @@ public class LevelController : MonoBehaviour
 
         rooms[roomPosition.x, roomPosition.y].GetComponent<RoomController>().EnterRoom();
 
-        miniMap.GetComponent<MiniMapController>().UpdateMiniMap();
+        UpdateMiniMap();
     }
 
     private void StartEnterRoomTransition(Vector2Int roomPosition)
@@ -123,5 +123,10 @@ public class LevelController : MonoBehaviour
         rooms[currentRoomPosition.x, currentRoomPosition.y].GetComponent<RoomController>().UnlockDoor(doorDirection);
         rooms[currentRoomPosition.x + doorDirection.x, currentRoomPosition.y + doorDirection.y]
             .GetComponent<RoomController>().UnlockDoor(-doorDirection);
+    }
+
+    public void UpdateMiniMap()
+    {
+        miniMap.GetComponent<MiniMapController>().UpdateMiniMap();
     }
 }

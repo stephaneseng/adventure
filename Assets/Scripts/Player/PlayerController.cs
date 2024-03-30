@@ -14,10 +14,12 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
+    private GameObject level;
 
     public PlayerStateMachine playerStateMachine;
     private int health;
     private int keys;
+    private bool map;
     private Vector2 direction;
     private bool move;
     private float invincibilityCountdown;
@@ -27,10 +29,12 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        level = GameObject.FindGameObjectWithTag("Level");
 
         playerStateMachine = new PlayerStateMachine(this);
         health = playerData.health;
         keys = 0;
+        map = false;
         direction = Vector2.up;
         move = false;
         invincibilityCountdown = 0.0f;
@@ -74,6 +78,12 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(other.gameObject);
             AddKey();
+        }
+
+        if (other.CompareTag("ItemMap"))
+        {
+            Destroy(other.gameObject);
+            AddMap();
         }
 
         if (other.CompareTag("EnemyAttack"))
@@ -159,6 +169,17 @@ public class PlayerController : MonoBehaviour
     public void RemoveKey()
     {
         keys--;
+    }
+
+    public bool HasMap()
+    {
+        return map;
+    }
+
+    public void AddMap()
+    {
+        map = true;
+        level.GetComponent<LevelController>().UpdateMiniMap();
     }
 
     public void Damage()

@@ -104,6 +104,17 @@ public class RoomGenerator : MonoBehaviour
     {
         room.AddSpawnable(new Item()
         {
+            itemType = ItemType.ItemKey,
+            position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
+                false)
+        });
+    }
+
+    public void AddMap(Room room, GeneratorConfiguration configuration)
+    {
+        room.AddSpawnable(new Item()
+        {
+            itemType = ItemType.ItemMap,
             position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
                 false)
         });

@@ -18,6 +18,7 @@ public class MiniMapController : MonoBehaviour
     private GameObject miniMapEndRoomMaskPrefab;
     private GameObject miniMapCurrentRoomMaskPrefab;
     private GameObject level;
+    private GameObject player;
 
     private List<GameObject> miniMapRoomAndExits = new List<GameObject>();
 
@@ -34,6 +35,7 @@ public class MiniMapController : MonoBehaviour
         miniMapCurrentRoomMaskPrefab = Resources.Load<GameObject>(MiniMapResourcesFolder + "/"
             + MiniMapCurrentRoomMaskResourceName);
         level = GameObject.FindGameObjectWithTag("Level");
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     public void UpdateMiniMap()
@@ -78,7 +80,8 @@ public class MiniMapController : MonoBehaviour
                     miniMapRoomAndExits.Add(Instantiate(miniMapRoomPrefab, roomPosition + transform.position,
                         Quaternion.identity, transform));
                 }
-                else
+                // Else, only add the room to the mini-map if the player has the map.
+                else if (player.GetComponent<PlayerController>().HasMap())
                 {
                     miniMapRoomAndExits.Add(Instantiate(miniMapUnvisitedRoomPrefab, roomPosition + transform.position,
                         Quaternion.identity, transform));

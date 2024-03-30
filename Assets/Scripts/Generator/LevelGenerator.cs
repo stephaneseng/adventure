@@ -100,8 +100,8 @@ public class LevelGenerator : MonoBehaviour
         level.UpdateRoom(parentToEndRoom);
         level.UpdateRoom(endRoom);
 
-        // Add keys in appropriate rooms.
-        AddKeys(level, configuration);
+        // Add objects in appropriate rooms.
+        AddKeysAndMap(level, configuration);
 
         return level;
     }
@@ -220,7 +220,7 @@ public class LevelGenerator : MonoBehaviour
         endRoom.doors.Add(endRoom.exits.First());
     }
 
-    private void AddKeys(Level level, GeneratorConfiguration configuration)
+    private void AddKeysAndMap(Level level, GeneratorConfiguration configuration)
     {
         // Sort rooms by their number of exits (lower to higher) to prioritize those with lower exits for keys addition.
         // Also, count the number of locked doors by section to evaluate the number of keys to add in each section.
@@ -266,10 +266,15 @@ public class LevelGenerator : MonoBehaviour
 
             for (int j = 0; j < numberOfKeysToAdd; j++)
             {
-                Room room = roomsBySection[i][j % roomsBySection.Count()];
+                Room room = roomsBySection[i][j % roomsBySection[i].Count()];
                 roomGenerator.AddKey(room, configuration);
             }
         }
+
+        // Add a map in one of the first sections.
+        int mapRoomSection = Random.Range(0, level.GetHigherSection());
+        Room mapRoom = roomsBySection[mapRoomSection][Random.Range(0, roomsBySection[mapRoomSection].Count())];
+        roomGenerator.AddMap(mapRoom, configuration);
     }
 
     private (Vector2Int, Room, Vector2Int) GenerateEndRoomPosition(Level level)
