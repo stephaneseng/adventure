@@ -7,21 +7,16 @@ public class RoomGenerator : MonoBehaviour
         EnemyType.EnemyTriangle
     };
 
+    private static readonly EnemyType[] BossEnemyTypeChoices = new EnemyType[] {
+        EnemyType.EnemyBossTriangle
+    };
+
     public Room GenerateStartRoom(Vector2Int position, GeneratorConfiguration configuration)
     {
         return new Room(configuration.roomWidthHeight)
         {
             position = position,
             section = 0
-        };
-    }
-
-    public Room GenerateEndRoom(Vector2Int position, int section, GeneratorConfiguration configuration)
-    {
-        return new Room(configuration.roomWidthHeight)
-        {
-            position = position,
-            section = section
         };
     }
 
@@ -35,6 +30,19 @@ public class RoomGenerator : MonoBehaviour
 
         GenerateBlocks(room, configuration);
         GenerateEnemies(room, configuration);
+
+        return room;
+    }
+
+    public Room GenerateEndRoom(Vector2Int position, int section, GeneratorConfiguration configuration)
+    {
+        Room room = new Room(configuration.roomWidthHeight)
+        {
+            position = position,
+            section = section
+        };
+
+        GenerateBossEnemy(room, configuration);
 
         return room;
     }
@@ -68,6 +76,16 @@ public class RoomGenerator : MonoBehaviour
         }
     }
 
+    private void GenerateBossEnemy(Room room, GeneratorConfiguration configuration)
+    {
+        room.AddSpawnable(new Enemy()
+        {
+            position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.enemySpawnMargin,
+                false),
+            enemyType = BossEnemyTypeChoices[Random.Range(0, BossEnemyTypeChoices.Length)]
+        });
+    }
+
     private Vector2Int GenerateSpawnPosition(Room room, int roomWidthHeight, int spawnMargin, bool checkAdjacentSpawnables)
     {
         Vector2Int spawnPosition;
@@ -86,6 +104,17 @@ public class RoomGenerator : MonoBehaviour
     {
         room.AddSpawnable(new Item()
         {
+            itemType = ItemType.ItemKey,
+            position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
+                false)
+        });
+    }
+
+    public void AddMap(Room room, GeneratorConfiguration configuration)
+    {
+        room.AddSpawnable(new Item()
+        {
+            itemType = ItemType.ItemMap,
             position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
                 false)
         });

@@ -1,4 +1,5 @@
 public enum ItemType
 {
-    ItemKey
+    ItemKey,
+    ItemMap
 }

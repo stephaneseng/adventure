@@ -13,6 +13,7 @@ TagManager:
   - MiniMap
   - ItemKey
   - SpawnableOrigin
+  - ItemMap
   layers:
   - Default
   - TransparentFX
