@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,6 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     // FIXME: Limit the number of keys the player can have due to UI constraints.
     public static int MaxNumberOfKeys = 6;
+
+    private static readonly float InvincibilityDurationInSeconds = 0.5f;
 
     public PlayerData playerData;
 
@@ -17,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private int keys;
     private Vector2 direction;
     private bool move;
+    private float invincibilityCountdown;
 
     void Awake()
     {
@@ -29,6 +33,7 @@ public class PlayerController : MonoBehaviour
         keys = 0;
         direction = Vector2.up;
         move = false;
+        invincibilityCountdown = 0.0f;
 
         playerStateMachine.Initialize(new PlayerIdleState());
     }
@@ -36,6 +41,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         playerStateMachine.Update();
+
+        if (invincibilityCountdown > 0.0f) {
+            invincibilityCountdown -= Time.deltaTime;
+        }
     }
 
     void FixedUpdate()
@@ -128,6 +137,10 @@ public class PlayerController : MonoBehaviour
 
     private void RemoveHealth(int delta)
     {
+        if (invincibilityCountdown > 0.0f) {
+            return;
+        }
+
         health = Mathf.Max(0, health - delta);
 
         playerStateMachine.SwitchState(new PlayerDamageState());
@@ -151,5 +164,7 @@ public class PlayerController : MonoBehaviour
     public void Damage()
     {
         animator.Play("Damage");
+
+        invincibilityCountdown = InvincibilityDurationInSeconds;
     }
 }
