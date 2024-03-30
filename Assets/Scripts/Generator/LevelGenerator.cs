@@ -95,6 +95,7 @@ public class LevelGenerator : MonoBehaviour
 
         AddExitToCurrentRoom(parentToEndRoom, endRoom, parentToEndRoomDirection);
         AddExitToNextRoom(parentToEndRoom, endRoom, parentToEndRoomDirection);
+        AddExtraDoorToEndRoom(endRoom);
 
         level.UpdateRoom(parentToEndRoom);
         level.UpdateRoom(endRoom);
@@ -212,6 +213,11 @@ public class LevelGenerator : MonoBehaviour
         {
             nextRoom.lockedDoors.Add(-nextRoomDirection);
         }
+    }
+
+    private void AddExtraDoorToEndRoom(Room endRoom)
+    {
+        endRoom.doors.Add(endRoom.exits.First());
     }
 
     private void AddKeys(Level level, GeneratorConfiguration configuration)
