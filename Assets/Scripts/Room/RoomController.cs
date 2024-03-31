@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 public class RoomController : MonoBehaviour
@@ -50,6 +51,13 @@ public class RoomController : MonoBehaviour
             // Destroy all doors if all enemies have been destroyed.
             if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
             {
+                // End the game (victory).
+                if (levelController.IsEndRoom(roomData.position))
+                {
+                    SceneManager.LoadScene("MenuScene", LoadSceneMode.Single);
+                    return;
+                }
+
                 doors.Values.ToList().ForEach(door =>
                 {
                     Destroy(door);
