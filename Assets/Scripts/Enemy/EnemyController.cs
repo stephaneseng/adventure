@@ -107,7 +107,8 @@ public class EnemyController : MonoBehaviour
 
     public void DropItem()
     {
-        if (enemyData.droppedItems.Count == 0) {
+        if (enemyData.droppedItems.Count == 0)
+        {
             return;
         }
 

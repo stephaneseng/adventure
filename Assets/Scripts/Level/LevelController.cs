@@ -129,4 +129,9 @@ public class LevelController : MonoBehaviour
     {
         miniMap.GetComponent<MiniMapController>().UpdateMiniMap();
     }
+
+    public bool IsEndRoom(Vector2Int position)
+    {
+        return levelData.endRoomPosition == position;
+    }
 }

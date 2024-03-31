@@ -1,6 +1,6 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     public static int MaxNumberOfKeys = 6;
 
     private static readonly float InvincibilityDurationInSeconds = 0.5f;
+    private static readonly float DestroyStateDurationInSeconds = 0.15f;
 
     public PlayerData playerData;
 
@@ -46,7 +47,8 @@ public class PlayerController : MonoBehaviour
     {
         playerStateMachine.Update();
 
-        if (invincibilityCountdown > 0.0f) {
+        if (invincibilityCountdown > 0.0f)
+        {
             invincibilityCountdown -= Time.deltaTime;
         }
     }
@@ -56,6 +58,13 @@ public class PlayerController : MonoBehaviour
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
         rigidbody2D.velocity = (float)(move ? 1.0f : 0.0f) * playerData.speed * direction;
+    }
+
+    void OnDestroy()
+    {
+        // End the game (defeat).
+        Destroy(level.gameObject);
+        SceneManager.LoadScene("MenuScene", LoadSceneMode.Single);
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -147,13 +156,22 @@ public class PlayerController : MonoBehaviour
 
     private void RemoveHealth(int delta)
     {
-        if (invincibilityCountdown > 0.0f) {
+        if (invincibilityCountdown > 0.0f)
+        {
             return;
         }
 
         health = Mathf.Max(0, health - delta);
 
-        playerStateMachine.SwitchState(new PlayerDamageState());
+        // Game over.
+        if (health == 0)
+        {
+            playerStateMachine.SwitchState(new PlayerDestroyState());
+        }
+        else
+        {
+            playerStateMachine.SwitchState(new PlayerDamageState());
+        }
     }
 
     public int GetKeys()
@@ -187,5 +205,12 @@ public class PlayerController : MonoBehaviour
         animator.Play("Damage");
 
         invincibilityCountdown = InvincibilityDurationInSeconds;
+    }
+
+    public void Destroy()
+    {
+        animator.Play("Destroy");
+
+        Destroy(gameObject, DestroyStateDurationInSeconds);
     }
 }
