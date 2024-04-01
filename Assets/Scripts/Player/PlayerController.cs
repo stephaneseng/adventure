@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     public PlayerStateMachine playerStateMachine;
     private int health;
+    private Attack attack;
     private int keys;
     private bool map;
     private Vector2 direction;
@@ -34,6 +35,7 @@ public class PlayerController : MonoBehaviour
 
         playerStateMachine = new PlayerStateMachine(this);
         health = playerData.health;
+        attack = playerData.attack;
         keys = 0;
         map = false;
         direction = Vector2.up;
@@ -138,10 +140,7 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
-        GameObject playerBullet = Instantiate(playerData.bullet, transform.position, transform.rotation, transform);
-        playerBullet.tag = "PlayerAttack";
-        playerBullet.GetComponent<BulletController>().startPosition = transform.position;
-        playerBullet.GetComponent<BulletController>().direction = direction;
+        attack.Execute("PlayerAttack", transform, direction);
     }
 
     public int GetHealth()

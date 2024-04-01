@@ -16,3 +16,4 @@ Tested with Unity 2022.3.22f1 and Android 11.
 
 * Power-up items
 * More types of enemies
+* Use seeds to generate levels

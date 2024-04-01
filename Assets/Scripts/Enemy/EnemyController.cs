@@ -10,6 +10,7 @@ public class EnemyController : MonoBehaviour
     public EnemyStateMachine enemyStateMachine;
     public Vector2 direction;
     private int health;
+    private Attack attack;
     private bool move;
 
     void Awake()
@@ -20,6 +21,7 @@ public class EnemyController : MonoBehaviour
         enemyStateMachine = new EnemyStateMachine(this);
         direction = Vector2.down;
         health = enemyData.health;
+        attack = enemyData.attack;
         move = false;
 
         enemyStateMachine.Initialize(new EnemyIdleState());
@@ -68,10 +70,7 @@ public class EnemyController : MonoBehaviour
 
     public void Attack()
     {
-        GameObject enemyBullet = Instantiate(enemyData.bullet, transform.position, transform.rotation, transform);
-        enemyBullet.tag = "EnemyAttack";
-        enemyBullet.GetComponent<BulletController>().startPosition = transform.position;
-        enemyBullet.GetComponent<BulletController>().direction = direction;
+        attack.Execute("EnemyAttack", transform, direction);
     }
 
     private void RemoveHealth(int delta)
