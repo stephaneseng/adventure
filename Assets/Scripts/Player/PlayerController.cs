@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     // FIXME: Limit the number of keys the player can have due to UI constraints.
     public static int MaxNumberOfKeys = 6;
 
+    private static readonly string AttackResourcesFolder = "Data/Attack";
     private static readonly float InvincibilityDurationInSeconds = 0.5f;
     private static readonly float DestroyStateDurationInSeconds = 0.15f;
 
@@ -95,6 +96,12 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(other.gameObject);
             AddMap();
+        }
+
+        if (other.CompareTag("ItemTripleBulletAttack"))
+        {
+            Destroy(other.gameObject);
+            AddTripleBulletAttack();
         }
 
         if (other.CompareTag("EnemyAttack"))
@@ -197,6 +204,11 @@ public class PlayerController : MonoBehaviour
     {
         map = true;
         level.GetComponent<LevelController>().UpdateMiniMap();
+    }
+
+    public void AddTripleBulletAttack()
+    {
+        attack = Resources.Load<Attack>(AttackResourcesFolder + "/TripleBulletAttack");
     }
 
     public void Damage()

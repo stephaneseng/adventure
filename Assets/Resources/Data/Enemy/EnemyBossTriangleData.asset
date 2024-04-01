@@ -15,5 +15,5 @@ MonoBehaviour:
   enemyBrain: {fileID: 11400000, guid: 163711c9c3bfa17639f16fbf6520cd71, type: 2}
   health: 20
   speed: 4
-  attack: {fileID: 11400000, guid: 38a1166689330e2bba4c480c16df51f1, type: 2}
+  attack: {fileID: 11400000, guid: 6f3d41642cbc4bc6e80c7bd23da8aa93, type: 2}
   droppedItems: []

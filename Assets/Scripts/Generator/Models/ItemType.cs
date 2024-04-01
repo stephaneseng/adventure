@@ -1,5 +1,6 @@
 public enum ItemType
 {
     ItemKey,
-    ItemMap
+    ItemMap,
+    ItemTripleBulletAttack
 }

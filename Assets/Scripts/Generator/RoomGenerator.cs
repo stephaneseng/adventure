@@ -119,4 +119,14 @@ public class RoomGenerator : MonoBehaviour
                 false)
         });
     }
+
+    public void AddTripleBullet(Room room, GeneratorConfiguration configuration)
+    {
+        room.AddSpawnable(new Item()
+        {
+            itemType = ItemType.ItemTripleBulletAttack,
+            position = GenerateSpawnPosition(room, configuration.roomWidthHeight, configuration.blockSpawnMargin,
+                false)
+        });
+    }
 }
