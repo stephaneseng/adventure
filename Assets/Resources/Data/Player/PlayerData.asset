@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 5
   speed: 4
-  bullet: {fileID: 1070407543661715664, guid: 61f437bd4d99f2e419e03faa09d15e49, type: 3}
+  attack: {fileID: 11400000, guid: 38a1166689330e2bba4c480c16df51f1, type: 2}

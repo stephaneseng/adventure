@@ -271,10 +271,15 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        // Add a map in one of the first sections.
+        // Add a map item in one of the first sections.
         int mapRoomSection = Random.Range(0, level.GetHigherSection());
         Room mapRoom = roomsBySection[mapRoomSection][Random.Range(0, roomsBySection[mapRoomSection].Count())];
         roomGenerator.AddMap(mapRoom, configuration);
+
+        // Add a triple attack item in one of the first sections.
+        int tripleAttackRoomSection = Random.Range(0, level.GetHigherSection());
+        Room tripleAttackRoom = roomsBySection[tripleAttackRoomSection][Random.Range(0, roomsBySection[tripleAttackRoomSection].Count())];
+        roomGenerator.AddTripleBullet(tripleAttackRoom, configuration);
     }
 
     private (Vector2Int, Room, Vector2Int) GenerateEndRoomPosition(Level level)

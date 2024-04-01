@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     // FIXME: Limit the number of keys the player can have due to UI constraints.
     public static int MaxNumberOfKeys = 6;
 
+    private static readonly string AttackResourcesFolder = "Data/Attack";
     private static readonly float InvincibilityDurationInSeconds = 0.5f;
     private static readonly float DestroyStateDurationInSeconds = 0.15f;
 
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
     public PlayerStateMachine playerStateMachine;
     private int health;
+    private Attack attack;
     private int keys;
     private bool map;
     private Vector2 direction;
@@ -34,6 +36,7 @@ public class PlayerController : MonoBehaviour
 
         playerStateMachine = new PlayerStateMachine(this);
         health = playerData.health;
+        attack = playerData.attack;
         keys = 0;
         map = false;
         direction = Vector2.up;
@@ -95,6 +98,12 @@ public class PlayerController : MonoBehaviour
             AddMap();
         }
 
+        if (other.CompareTag("ItemTripleBulletAttack"))
+        {
+            Destroy(other.gameObject);
+            AddTripleBulletAttack();
+        }
+
         if (other.CompareTag("EnemyAttack"))
         {
             Destroy(other.gameObject);
@@ -138,10 +147,7 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
-        GameObject playerBullet = Instantiate(playerData.bullet, transform.position, transform.rotation, transform);
-        playerBullet.tag = "PlayerAttack";
-        playerBullet.GetComponent<BulletController>().startPosition = transform.position;
-        playerBullet.GetComponent<BulletController>().direction = direction;
+        attack.Execute("PlayerAttack", transform, direction);
     }
 
     public int GetHealth()
@@ -198,6 +204,11 @@ public class PlayerController : MonoBehaviour
     {
         map = true;
         level.GetComponent<LevelController>().UpdateMiniMap();
+    }
+
+    public void AddTripleBulletAttack()
+    {
+        attack = Resources.Load<Attack>(AttackResourcesFolder + "/TripleBulletAttack");
     }
 
     public void Damage()

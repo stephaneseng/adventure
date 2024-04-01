@@ -7,5 +7,5 @@ public class PlayerData : ScriptableObject
 
     public float speed = 4.0f;
 
-    public GameObject bullet;
+    public Attack attack;
 }

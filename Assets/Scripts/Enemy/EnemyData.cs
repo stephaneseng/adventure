@@ -10,7 +10,7 @@ public class EnemyData : ScriptableObject
 
     public float speed;
 
-    public GameObject bullet;
+    public Attack attack;
 
     public List<GameObject> droppedItems;
 
