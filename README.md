@@ -2,7 +2,7 @@
 
 _Adventure_ is a very simple dungeon crawler, developed with Unity and mainly targeting Android devices for the moment.
 
-![./Docs/Screenshot.png](./Docs/Screenshot.png)
+![./Docs/Capture.gif](./Docs/Capture.gif)
 
 ## Features
 
