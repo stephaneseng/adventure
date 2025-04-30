@@ -25,6 +25,6 @@ public class BulletController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rigidbody2D.velocity = direction * Speed;
+        rigidbody2D.linearVelocity = direction * Speed;
     }
 }

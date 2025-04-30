@@ -36,7 +36,7 @@ public class EnemyController : MonoBehaviour
     {
         rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
             0.0f));
-        rigidbody2D.velocity = (float)(move ? 1.0 : 0.0f) * enemyData.speed * direction;
+        rigidbody2D.linearVelocity = (float)(move ? 1.0 : 0.0f) * enemyData.speed * direction;
     }
 
     void OnTriggerEnter2D(Collider2D other)
