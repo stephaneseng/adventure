@@ -70,7 +70,7 @@ public class EnemyController : MonoBehaviour
 
     public void Attack()
     {
-        attack.Execute("EnemyAttack", transform, direction);
+        attack.Execute("EnemyAttack", transform.position, direction);
     }
 
     private void RemoveHealth(int delta)

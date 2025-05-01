@@ -147,7 +147,7 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
-        attack.Execute("PlayerAttack", transform, direction);
+        attack.Execute("PlayerAttack", transform.position, direction);
     }
 
     public int GetHealth()

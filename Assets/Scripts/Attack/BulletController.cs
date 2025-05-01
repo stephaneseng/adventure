@@ -2,29 +2,34 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour
 {
-    private static readonly float Range = 2.0f;
-    private static readonly float Speed = 16.0f;
-
-    public Vector3 startPosition;
-    public Vector2 direction;
+    [SerializeField] private BulletData bulletData;
 
     private new Rigidbody2D rigidbody2D;
 
-    void Awake()
+    private Vector3 startPosition;
+    private Vector2 direction;
+
+    private void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    public void Initialize(string tag, Vector3 startPosition, Vector2 direction)
     {
-        if (Vector3.Distance(transform.position, startPosition) > Range)
-        {
-            Destroy(gameObject);
-        }
+        this.tag = tag;
+        this.startPosition = startPosition;
+        this.direction = direction;
+
+        transform.position = this.startPosition;
     }
 
-    void FixedUpdate()
+    private void Update()
     {
-        rigidbody2D.linearVelocity = direction * Speed;
+        if (Vector3.Distance(transform.position, startPosition) > bulletData.Range) Destroy(gameObject);
+    }
+
+    private void FixedUpdate()
+    {
+        rigidbody2D.linearVelocity = direction * bulletData.Speed;
     }
 }
