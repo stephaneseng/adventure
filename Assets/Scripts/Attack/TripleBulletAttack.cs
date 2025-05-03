@@ -10,8 +10,8 @@ public class TripleBulletAttack : Attack
         for (var i = 0; i < 3; i++)
         {
             GameObject attackBullet = Instantiate(bullet);
-            attackBullet.GetComponent<BulletController>().Initialize(tag, startPosition,
-                Quaternion.AngleAxis(-20.0f + i * 20.0f, Vector3.forward) * new Vector3(direction.x, direction.y, 0.0f));
+            attackBullet.GetComponent<BulletController>()
+                .Initialize(tag, startPosition, Quaternion.AngleAxis(-20.0f + i * 20.0f, Vector3.forward) * new Vector3(direction.x, direction.y, 0.0f));
         }
     }
 }
