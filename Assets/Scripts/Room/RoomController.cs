@@ -196,7 +196,7 @@ public class RoomController : MonoBehaviour
         GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).ToList()
             .ForEach(transform =>
             {
-                transform.gameObject.GetComponent<EnemyController>().Freeze();
+                transform.gameObject.GetComponent<EnemyController>().SwitchToFreezeState();
             });
     }
 
@@ -210,7 +210,7 @@ public class RoomController : MonoBehaviour
         GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).ToList()
             .ForEach(transform =>
             {
-                transform.gameObject.GetComponent<EnemyController>().StopFreeze();
+                transform.gameObject.GetComponent<EnemyController>().SwitchToIdleState();
             });
 
         visited = true;

@@ -4,85 +4,85 @@ public abstract class EnemyBrain : ScriptableObject
 {
     /* EnemyIdleState */
 
-    public virtual void OnEnter(EnemyIdleState state, EnemyController enemyController)
+    public virtual void OnEnter(EnemyIdleState state)
     {
     }
 
-    public virtual void OnUpdate(EnemyIdleState state, EnemyController enemyController)
+    public virtual void OnUpdate(EnemyIdleState state)
     {
     }
 
-    public virtual void OnExit(EnemyIdleState state, EnemyController enemyController)
+    public virtual void OnExit(EnemyIdleState state)
     {
     }
 
     /* EnemyMoveState */
 
-    public virtual void OnEnter(EnemyMoveState state, EnemyController enemyController)
+    public virtual void OnEnter(EnemyMoveState state)
     {
     }
 
-    public virtual void OnUpdate(EnemyMoveState state, EnemyController enemyController)
+    public virtual void OnUpdate(EnemyMoveState state)
     {
     }
 
-    public virtual void OnExit(EnemyMoveState state, EnemyController enemyController)
+    public virtual void OnExit(EnemyMoveState state)
     {
     }
 
     /* EnemyAttackState */
 
-    public virtual void OnEnter(EnemyAttackState state, EnemyController enemyController)
+    public virtual void OnEnter(EnemyAttackState state)
     {
     }
 
-    public virtual void OnUpdate(EnemyAttackState state, EnemyController enemyController)
+    public virtual void OnUpdate(EnemyAttackState state)
     {
     }
 
-    public virtual void OnExit(EnemyAttackState state, EnemyController enemyController)
+    public virtual void OnExit(EnemyAttackState state)
     {
     }
 
     /* EnemyDamageState */
 
-    public virtual void OnEnter(EnemyDamageState state, EnemyController enemyController)
+    public virtual void OnEnter(EnemyDamageState state)
     {
     }
 
-    public virtual void OnUpdate(EnemyDamageState state, EnemyController enemyController)
+    public virtual void OnUpdate(EnemyDamageState state)
     {
     }
 
-    public virtual void OnExit(EnemyDamageState state, EnemyController enemyController)
+    public virtual void OnExit(EnemyDamageState state)
     {
     }
 
     /* EnemyDestroyState */
 
-    public virtual void OnEnter(EnemyDestroyState state, EnemyController enemyController)
+    public virtual void OnEnter(EnemyDestroyState state)
     {
     }
 
-    public virtual void OnUpdate(EnemyDestroyState state, EnemyController enemyController)
+    public virtual void OnUpdate(EnemyDestroyState state)
     {
     }
 
-    public virtual void OnExit(EnemyDestroyState state, EnemyController enemyController)
+    public virtual void OnExit(EnemyDestroyState state)
     {
     }
 
     /* EnemyFreezeState */
 
-    public virtual void OnEnter(EnemyFreezeState state, EnemyController enemyController)
+    public virtual void OnEnter(EnemyFreezeState state)
     {
     }
 
-    public virtual void OnUpdate(EnemyFreezeState state, EnemyController enemyController)
+    public virtual void OnUpdate(EnemyFreezeState state)
     {
     }
 
-    public virtual void OnExit(EnemyFreezeState state, EnemyController enemyController)
+    public virtual void OnExit(EnemyFreezeState state)
     {
     }
 }

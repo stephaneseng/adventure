@@ -1,17 +1,21 @@
 public class EnemyDamageState : EnemyState
 {
-    public override void OnEnter(EnemyController enemyController)
+    public EnemyDamageState(EnemyController enemyController) : base(enemyController)
     {
-        enemyController.enemyData.enemyBrain.OnEnter(this, enemyController);
     }
 
-    public override void OnUpdate(EnemyController enemyController)
+    public override void OnEnter()
     {
-        enemyController.enemyData.enemyBrain.OnUpdate(this, enemyController);
+        enemyController.EnemyBrain.OnEnter(this);
     }
 
-    public override void OnExit(EnemyController enemyController)
+    public override void OnUpdate()
     {
-        enemyController.enemyData.enemyBrain.OnExit(this, enemyController);
+        enemyController.EnemyBrain.OnUpdate(this);
+    }
+
+    public override void OnExit()
+    {
+        enemyController.EnemyBrain.OnExit(this);
     }
 }

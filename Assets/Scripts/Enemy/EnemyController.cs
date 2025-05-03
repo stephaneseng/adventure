@@ -2,44 +2,44 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public EnemyData enemyData;
+    [SerializeField] private EnemyData enemyData;
 
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
 
-    public EnemyStateMachine enemyStateMachine;
-    public Vector2 direction;
+    private EnemyStateMachine enemyStateMachine;
     private int health;
     private Attack attack;
+    private Vector2 direction;
     private bool move;
 
-    void Awake()
+    private void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
-        enemyStateMachine = new EnemyStateMachine(this);
+        enemyStateMachine = new EnemyStateMachine();
+        EnemyBrain = enemyData.EnemyBrain;
+        health = enemyData.Health;
+        attack = enemyData.Attack;
         direction = Vector2.down;
-        health = enemyData.health;
-        attack = enemyData.attack;
         move = false;
 
-        enemyStateMachine.Initialize(new EnemyIdleState());
+        enemyStateMachine.Initialize(new EnemyIdleState(this));
     }
 
-    void Update()
+    private void Update()
     {
         enemyStateMachine.Update();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
-            0.0f));
-        rigidbody2D.linearVelocity = (float)(move ? 1.0 : 0.0f) * enemyData.speed * direction;
+        rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y, 0.0f));
+        rigidbody2D.linearVelocity = (float)(move ? 1.0 : 0.0f) * enemyData.Speed * direction;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("PlayerAttack"))
         {
@@ -48,24 +48,50 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void Move()
+    public void SwitchToIdleState()
     {
+        enemyStateMachine.SwitchState(new EnemyIdleState(this));
+    }
+
+    public void SwitchToMoveState()
+    {
+        enemyStateMachine.SwitchState(new EnemyMoveState(this));
+    }
+
+    public void SwitchToAttackState()
+    {
+        enemyStateMachine.SwitchState(new EnemyAttackState(this));
+    }
+
+    public void SwitchToDamageState()
+    {
+        enemyStateMachine.SwitchState(new EnemyDamageState(this));
+    }
+
+    public void SwitchToDestroyState()
+    {
+        enemyStateMachine.SwitchState(new EnemyDestroyState(this));
+    }
+
+    public void SwitchToFreezeState()
+    {
+        enemyStateMachine.SwitchState(new EnemyFreezeState(this));
+    }
+
+    public float StateStartTime()
+    {
+        return enemyStateMachine.StartTime;
+    }
+
+    public void Move(Vector2 direction)
+    {
+        this.direction = direction;
         move = true;
     }
 
     public void StopMove()
     {
         move = false;
-    }
-
-    public void Freeze()
-    {
-        enemyStateMachine.SwitchState(new EnemyFreezeState());
-    }
-
-    public void StopFreeze()
-    {
-        enemyStateMachine.SwitchState(new EnemyIdleState());
     }
 
     public void Attack()
@@ -76,21 +102,14 @@ public class EnemyController : MonoBehaviour
     private void RemoveHealth(int delta)
     {
         // Prevent switching multiple times to the destroy state. 
-        if (health == 0)
-        {
-            return;
-        }
+        if (health == 0) return;
 
         health = Mathf.Max(0, health - delta);
 
         if (health > 0)
-        {
-            enemyStateMachine.SwitchState(new EnemyDamageState());
-        }
+            SwitchToDamageState();
         else
-        {
-            enemyStateMachine.SwitchState(new EnemyDestroyState());
-        }
+            SwitchToDestroyState();
     }
 
     public void Damage()
@@ -104,14 +123,13 @@ public class EnemyController : MonoBehaviour
         DropItem();
     }
 
-    public void DropItem()
+    private void DropItem()
     {
-        if (enemyData.droppedItems.Count == 0)
-        {
-            return;
-        }
+        if (enemyData.DroppedItems.Count == 0) return;
 
-        Instantiate(enemyData.droppedItems[Random.Range(0, enemyData.droppedItems.Count)], transform.position,
+        Instantiate(enemyData.DroppedItems[Random.Range(0, enemyData.DroppedItems.Count)], transform.position,
             Quaternion.identity, transform.parent);
     }
+
+    public EnemyBrain EnemyBrain { get; private set; }
 }
