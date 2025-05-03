@@ -17,7 +17,7 @@ public class LockedDoorController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            if (player.GetComponent<PlayerController>().GetKeys() > 0)
+            if (player.GetComponent<PlayerController>().Keys > 0)
             {
                 UnlockDoor();
             }

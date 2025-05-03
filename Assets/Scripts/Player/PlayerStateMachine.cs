@@ -2,35 +2,31 @@ using UnityEngine;
 
 public class PlayerStateMachine
 {
-    public PlayerController playerController;
-
-    public float startTime;
-
     private PlayerState currentState;
-
-    public PlayerStateMachine(PlayerController playerController)
-    {
-        this.playerController = playerController;
-    }
+    private float startTime;
 
     public void Initialize(PlayerState playerState)
     {
-        startTime = Time.time;
         currentState = playerState;
-        currentState.OnEnter(playerController);
+        startTime = Time.time;
+
+        currentState.OnEnter();
     }
 
     public void Update()
     {
-        currentState.OnUpdate(playerController);
+        currentState.OnUpdate();
     }
 
     public void SwitchState(PlayerState playerState)
     {
-        currentState.OnExit(playerController);
+        currentState.OnExit();
 
-        startTime = Time.time;
         currentState = playerState;
-        currentState.OnEnter(playerController);
+        startTime = Time.time;
+
+        currentState.OnEnter();
     }
+
+    public float StartTime => startTime;
 }

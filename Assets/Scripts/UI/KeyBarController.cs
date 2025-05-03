@@ -12,7 +12,7 @@ public class KeyBarController : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
 
-        for (int i = 0; i < PlayerController.MaxNumberOfKeys; i++)
+        for (int i = 0; i < GameConstants.GameMaxNumberOfKeys; i++)
         {
             keys.Add(i, transform.Find("Key" + i).gameObject);
         }
@@ -22,9 +22,9 @@ public class KeyBarController : MonoBehaviour
 
     void Update()
     {
-        int numberOfKeys = player.GetComponent<PlayerController>().GetKeys();
+        int numberOfKeys = player.GetComponent<PlayerController>().Keys;
 
-        for (int i = 0; i < PlayerController.MaxNumberOfKeys; i++)
+        for (int i = 0; i < GameConstants.GameMaxNumberOfKeys; i++)
         {
             keys[i].SetActive(i < numberOfKeys);
         }

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+    private static readonly float DestroyStateDurationInSeconds = 0.15f;
+
     [SerializeField] private EnemyData enemyData;
 
     private new Rigidbody2D rigidbody2D;
@@ -121,6 +123,7 @@ public class EnemyController : MonoBehaviour
     {
         animator.Play("Destroy");
         DropItem();
+        Destroy(gameObject, DestroyStateDurationInSeconds);
     }
 
     private void DropItem()

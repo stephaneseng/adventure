@@ -81,7 +81,7 @@ public class MiniMapController : MonoBehaviour
                         Quaternion.identity, transform));
                 }
                 // Else, only add the room to the mini-map if the player has the map.
-                else if (player.GetComponent<PlayerController>().HasMap())
+                else if (player.GetComponent<PlayerController>().Map)
                 {
                     miniMapRoomAndExits.Add(Instantiate(miniMapUnvisitedRoomPrefab, roomPosition + transform.position,
                         Quaternion.identity, transform));

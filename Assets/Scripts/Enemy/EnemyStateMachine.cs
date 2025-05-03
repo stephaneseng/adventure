@@ -8,7 +8,7 @@ public class EnemyStateMachine
     public void Initialize(EnemyState enemyState)
     {
         currentState = enemyState;
-        StartTime = Time.time;
+        startTime = Time.time;
 
         currentState.OnEnter();
     }
@@ -23,10 +23,10 @@ public class EnemyStateMachine
         currentState.OnExit();
 
         currentState = enemyState;
-        StartTime = Time.time;
+        startTime = Time.time;
 
         currentState.OnEnter();
     }
 
-    public float StartTime { get; private set; }
+    public float StartTime => startTime;
 }

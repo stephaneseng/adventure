@@ -2,25 +2,21 @@ using UnityEngine;
 
 public class PlayerMoveState : PlayerState
 {
-    public override void OnEnter(PlayerController playerController)
+    public PlayerMoveState(PlayerController playerController) : base(playerController)
     {
     }
 
-    public override void OnUpdate(PlayerController playerController)
+    public override void OnUpdate()
     {
         Vector2 inputActionMoveVector = playerController.ReadInputActionMoveVector();
 
         if (inputActionMoveVector.magnitude > 0)
-        {
             playerController.Move(inputActionMoveVector);
-        }
         else
-        {
-            playerController.playerStateMachine.SwitchState(new PlayerIdleState());
-        }
+            playerController.SwitchToIdleState();
     }
 
-    public override void OnExit(PlayerController playerController)
+    public override void OnExit()
     {
         playerController.StopMove();
     }

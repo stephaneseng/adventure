@@ -87,7 +87,7 @@ public class LevelController : MonoBehaviour
         GameObject targetRoom = rooms[currentRoomPosition.x + transitionDirection.x, currentRoomPosition.y + transitionDirection.y];
         Vector2Int targetRoomPosition = targetRoom.GetComponent<RoomController>().roomData.position;
 
-        playerController.Freeze();
+        playerController.SwitchToFreezeState();
 
         StartEnterRoomTransition(targetRoomPosition);
 
@@ -115,7 +115,7 @@ public class LevelController : MonoBehaviour
         ExitRoom(currentRoomPosition);
         EnterRoom(targetRoomPosition);
 
-        playerController.StopFreeze();
+        playerController.SwitchToIdleState();
     }
 
     public void UnlockDoor(Vector2Int doorDirection)

@@ -14,7 +14,6 @@ public class OrthographicMovementEnemyBrain : EnemyBrain
 
     [SerializeField] private float idleStateDurationInSeconds = 0.5f;
     [SerializeField] private float moveStateDurationInSeconds = 1.0f;
-    [SerializeField] private float destroyStateDurationInSeconds = 0.15f;
 
     /* EnemyIdleState */
 
@@ -76,11 +75,6 @@ public class OrthographicMovementEnemyBrain : EnemyBrain
     public override void OnEnter(EnemyDestroyState state)
     {
         state.EnemyController.Destroy();
-    }
-
-    public override void OnUpdate(EnemyDestroyState state)
-    {
-        Destroy(state.EnemyController.gameObject, destroyStateDurationInSeconds);
     }
 
     /* EnemyFreezeState */

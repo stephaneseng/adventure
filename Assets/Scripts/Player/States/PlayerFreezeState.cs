@@ -1,15 +1,11 @@
 public class PlayerFreezeState : PlayerState
 {
-    public override void OnEnter(PlayerController playerController)
+    public PlayerFreezeState(PlayerController playerController) : base(playerController)
+    {
+    }
+
+    public override void OnEnter()
     {
         playerController.StopMove();
-    }
-
-    public override void OnUpdate(PlayerController playerController)
-    {
-    }
-
-    public override void OnExit(PlayerController playerController)
-    {
     }
 }
