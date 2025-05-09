@@ -10,10 +10,13 @@ public class EnemyController : MonoBehaviour
     private Animator animator;
 
     private EnemyStateMachine enemyStateMachine;
+    private EnemyBrain enemyBrain;
     private int health;
     private Attack attack;
     private Vector2 direction;
     private bool move;
+
+    public EnemyBrain EnemyBrain => enemyBrain;
 
     private void Awake()
     {
@@ -21,7 +24,7 @@ public class EnemyController : MonoBehaviour
         animator = GetComponent<Animator>();
 
         enemyStateMachine = new EnemyStateMachine();
-        EnemyBrain = enemyData.EnemyBrain;
+        enemyBrain = enemyData.EnemyBrain;
         health = enemyData.Health;
         attack = enemyData.Attack;
         direction = Vector2.down;
@@ -133,6 +136,4 @@ public class EnemyController : MonoBehaviour
         Instantiate(enemyData.DroppedItems[Random.Range(0, enemyData.DroppedItems.Count)], transform.position,
             Quaternion.identity, transform.parent);
     }
-
-    public EnemyBrain EnemyBrain { get; private set; }
 }

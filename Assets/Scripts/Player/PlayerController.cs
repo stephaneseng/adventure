@@ -23,6 +23,14 @@ public class PlayerController : MonoBehaviour
     private bool move;
     private float invincibilityCountdown;
 
+    public int Health => health;
+
+    public int MaxHealth => playerData.Health;
+
+    public int Keys => keys;
+
+    public bool Map => map;
+
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
@@ -102,10 +110,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
-            attack.Execute("PlayerAttack", transform.position, direction);
-        }
+        if (context.performed) attack.Execute("PlayerAttack", transform.position, direction);
     }
 
     public void SwitchToIdleState()
@@ -200,12 +205,4 @@ public class PlayerController : MonoBehaviour
         animator.Play("Destroy");
         Destroy(gameObject, DestroyStateDurationInSeconds);
     }
-
-    public int Health => health;
-
-    public int MaxHealth => playerData.Health;
-
-    public int Keys => keys;
-
-    public bool Map => map;
 }

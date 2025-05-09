@@ -5,6 +5,8 @@ public class EnemyStateMachine
     private EnemyState currentState;
     private float startTime;
 
+    public float StartTime => startTime;
+
     public void Initialize(EnemyState enemyState)
     {
         currentState = enemyState;
@@ -27,6 +29,4 @@ public class EnemyStateMachine
 
         currentState.OnEnter();
     }
-
-    public float StartTime => startTime;
 }
