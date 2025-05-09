@@ -20,7 +20,7 @@ public class LevelGenerator : MonoBehaviour
 
     public Level Generate(GeneratorConfiguration configuration)
     {
-        Level level = new Level(configuration.mapWidthHeight);
+        Level level = new Level(configuration.LevelMapWidthHeight);
 
         // Create the start room.
         Vector2Int startRoomPosition = GenerateStartRoomPosition(level, configuration);
@@ -109,8 +109,8 @@ public class LevelGenerator : MonoBehaviour
     private Vector2Int GenerateStartRoomPosition(Level level, GeneratorConfiguration configuration)
     {
         return new Vector2Int(
-            Random.Range(configuration.startRoomMargin, level.rooms.GetLength(0) - configuration.startRoomMargin),
-            Random.Range(configuration.startRoomMargin, level.rooms.GetLength(1) - configuration.startRoomMargin));
+            Random.Range(configuration.LevelStartRoomMargin, level.rooms.GetLength(0) - configuration.LevelStartRoomMargin),
+            Random.Range(configuration.LevelStartRoomMargin, level.rooms.GetLength(1) - configuration.LevelStartRoomMargin));
     }
 
     private HashSet<Vector2Int> GenerateNextRoomDirections(Level level, Room currentRoom,
@@ -130,13 +130,13 @@ public class LevelGenerator : MonoBehaviour
             int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.section);
 
             // If there are not enough rooms in the current section, ensure that there will be at least 1 next room. 
-            if (numberOfRoomsInSection <= configuration.numberOfRoomsInSectionLowThreshold)
+            if (numberOfRoomsInSection <= configuration.LevelNumberOfRoomsInSectionLowThreshold)
             {
                 minNumberOfNextRoomDirections = 1;
                 maxNumberOfNextRoomDirections = 4;
             }
             // If there are too many rooms in the current section, reduce the probability of having a high number of next rooms.
-            else if (numberOfRoomsInSection >= configuration.numberOfRoomsInSectionHighThreshold)
+            else if (numberOfRoomsInSection >= configuration.LevelNumberOfRoomsInSectionHighThreshold)
             {
                 minNumberOfNextRoomDirections = 0;
                 maxNumberOfNextRoomDirections = 1;
@@ -172,7 +172,7 @@ public class LevelGenerator : MonoBehaviour
         int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.section);
 
         // If there are not enough rooms in the current section, do not change section.
-        if (numberOfRoomsInSection < configuration.numberOfRoomsInSectionHighThreshold * configuration.numberOfRoomsInSectionThresholdRatio)
+        if (numberOfRoomsInSection < configuration.LevelNumberOfRoomsInSectionHighThreshold * configuration.LevelNumberOfRoomsInSectionThresholdRatio)
         {
             return currentRoom.section;
         }
