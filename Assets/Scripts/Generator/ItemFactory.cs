@@ -16,7 +16,7 @@ public class ItemFactory : MonoBehaviour
     private void InstantiateItem(Item item, GameObject room)
     {
         Instantiate(Resources.Load<GameObject>(GameConstants.ResourcesItemFolder + "/" + item.ItemType),
-            room.GetComponent<RoomController>().spawnableOrigin.position + new Vector3(item.Position.x, item.Position.y, 0.0f),
+            room.GetComponent<RoomController>().SpawnableOrigin.position + new Vector3(item.Position.x, item.Position.y, 0.0f),
             Quaternion.identity, room.transform);
     }
 }

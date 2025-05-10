@@ -42,6 +42,6 @@ public class GameManager : MonoBehaviour
             roomFactory.InstantiateRooms(level.Rooms, levelGameObject);
         }
 
-        levelGameObject.GetComponent<LevelController>().InitializeRoomsAndEnterStartRoom();
+        levelGameObject.GetComponent<LevelController>().InitializeAndEnterStartRoom();
     }
 }

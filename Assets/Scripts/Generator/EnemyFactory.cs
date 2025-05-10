@@ -16,7 +16,7 @@ public class EnemyFactory : MonoBehaviour
     private void InstantiateEnemy(Enemy enemy, GameObject room)
     {
         Instantiate(Resources.Load<GameObject>(GameConstants.ResourcesEnemyFolder + "/" + enemy.EnemyType),
-            room.GetComponent<RoomController>().spawnableOrigin.position + new Vector3(enemy.Position.x, enemy.Position.y, 0.0f),
+            room.GetComponent<RoomController>().SpawnableOrigin.position + new Vector3(enemy.Position.x, enemy.Position.y, 0.0f),
             Quaternion.identity, room.transform);
     }
 }

@@ -70,12 +70,12 @@ public class MiniMapController : MonoBehaviour
                 }
 
                 RoomController roomController = rooms[x, y].GetComponent<RoomController>();
-                RoomData roomData = roomController.roomData;
+                RoomData roomData = roomController.RoomData;
 
                 Vector3 roomPosition = new Vector3(x, y, 0.0f);
 
                 // Add the room to the mini-map, if visited or if it is the end room.
-                if (roomController.visited || (x == endRoomPosition.x && y == endRoomPosition.y))
+                if (roomController.Visited || (x == endRoomPosition.x && y == endRoomPosition.y))
                 {
                     miniMapRoomAndExits.Add(Instantiate(miniMapRoomPrefab, roomPosition + transform.position,
                         Quaternion.identity, transform));
@@ -88,24 +88,24 @@ public class MiniMapController : MonoBehaviour
                 }
 
                 // Add the exits to the mini-map, if visited.
-                if (roomController.visited)
+                if (roomController.Visited)
                 {
-                    if (roomData.exits.Contains(Vector2Int.up))
+                    if (roomData.Exits.Contains(Vector2Int.up))
                     {
                         miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
                             Quaternion.identity, transform));
                     }
-                    if (roomData.exits.Contains(Vector2Int.right))
+                    if (roomData.Exits.Contains(Vector2Int.right))
                     {
                         miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
                             Quaternion.Euler(0.0f, 0.0f, 270.0f), transform));
                     }
-                    if (roomData.exits.Contains(Vector2Int.down))
+                    if (roomData.Exits.Contains(Vector2Int.down))
                     {
                         miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
                             Quaternion.Euler(0.0f, 0.0f, 180.0f), transform));
                     }
-                    if (roomData.exits.Contains(Vector2Int.left))
+                    if (roomData.Exits.Contains(Vector2Int.left))
                     {
                         miniMapRoomAndExits.Add(Instantiate(miniMapRoomExitPrefab, roomPosition + transform.position,
                             Quaternion.Euler(0.0f, 0.0f, 90.0f), transform));

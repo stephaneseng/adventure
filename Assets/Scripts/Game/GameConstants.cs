@@ -5,9 +5,15 @@ public class GameConstants
     public static readonly string ResourcesEnemyFolder = "Enemy";
     public static readonly string ResourcesItemFolder = "Item";
     public static readonly string ResourcesRoomFolder = "Room";
+    public static readonly string ResourcesTileFolder = "Tiles";
 
     public static readonly string ResourcesBlockName = "Block";
     public static readonly string ResourcesRoomName = "Room";
+    public static readonly string ResourcesWallUpLeftInnerName = "WallUpLeftInner";
+    public static readonly string ResourcesWallUpRightInnerName = "WallUpRightInner";
+    public static readonly string ResourcesWallDownRightInnerName = "WallDownRightInner";
+    public static readonly string ResourcesWallDownLeftInnerName = "WallDownLeftInner";
+    public static readonly string ResourcesGroundName = "Ground";
 
     // FIXME: Limit the number of keys the player can have due to UI constraints.
     public static readonly int GameMaxNumberOfKeys = 6;

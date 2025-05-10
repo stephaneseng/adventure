@@ -33,9 +33,7 @@ public class RoomFactory : MonoBehaviour
             new Vector3(room.Position.x * (room.Spawnables.GetLength(0) + 2), room.Position.y * (room.Spawnables.GetLength(1) + 2), 0.0f),
             Quaternion.identity, levelGameObject.transform);
 
-        RoomData roomData = ScriptableObject.CreateInstance<RoomData>();
-        roomData.Initialize(room);
-        roomGameObject.GetComponent<RoomController>().roomData = roomData;
+        roomGameObject.GetComponent<RoomController>().InitializeRoomData(room);
 
         blockFactory.InstantiateBlocks(room.Spawnables, roomGameObject);
         enemyFactory.InstantiateEnemies(room.Spawnables, roomGameObject);

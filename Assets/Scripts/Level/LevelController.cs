@@ -35,7 +35,7 @@ public class LevelController : MonoBehaviour
         levelData.Initialize(level);
     }
 
-    public void InitializeRoomsAndEnterStartRoom()
+    public void InitializeAndEnterStartRoom()
     {
         InitializeRooms();
         EnterStartRoom();
@@ -51,7 +51,7 @@ public class LevelController : MonoBehaviour
                 GameObject room = transform.gameObject;
                 RoomController roomController = room.GetComponent<RoomController>();
 
-                rooms[roomController.roomData.position.x, roomController.roomData.position.y] = room;
+                rooms[roomController.RoomData.Position.x, roomController.RoomData.Position.y] = room;
 
                 roomController.Initialize();
                 room.SetActive(false);
@@ -96,7 +96,7 @@ public class LevelController : MonoBehaviour
     private IEnumerator PlayRoomTransitionAnimation(PlayerController playerController, Vector2Int transitionDirection)
     {
         GameObject targetRoom = rooms[currentRoomPosition.x + transitionDirection.x, currentRoomPosition.y + transitionDirection.y];
-        Vector2Int targetRoomPosition = targetRoom.GetComponent<RoomController>().roomData.position;
+        Vector2Int targetRoomPosition = targetRoom.GetComponent<RoomController>().RoomData.Position;
 
         playerController.SwitchToFreezeState();
 

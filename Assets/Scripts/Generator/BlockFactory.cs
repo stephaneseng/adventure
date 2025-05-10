@@ -16,7 +16,7 @@ public class BlockFactory : MonoBehaviour
     private void InstantiateBlock(Block block, GameObject room)
     {
         Instantiate(Resources.Load<GameObject>(GameConstants.ResourcesBlockFolder + "/" + GameConstants.ResourcesBlockName),
-            room.GetComponent<RoomController>().spawnableOrigin.position + new Vector3(block.Position.x, block.Position.y, 0.0f),
+            room.GetComponent<RoomController>().SpawnableOrigin.position + new Vector3(block.Position.x, block.Position.y, 0.0f),
             Quaternion.identity, room.transform);
     }
 }
