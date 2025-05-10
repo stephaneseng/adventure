@@ -1,6 +1,13 @@
 public class GameConstants
 {
     public static readonly string ResourcesAttackFolder = "Data/Attack";
+    public static readonly string ResourcesBlockFolder = "Room";
+    public static readonly string ResourcesEnemyFolder = "Enemy";
+    public static readonly string ResourcesItemFolder = "Item";
+    public static readonly string ResourcesRoomFolder = "Room";
+
+    public static readonly string ResourcesBlockName = "Block";
+    public static readonly string ResourcesRoomName = "Room";
 
     // FIXME: Limit the number of keys the player can have due to UI constraints.
     public static readonly int GameMaxNumberOfKeys = 6;

@@ -11,8 +11,8 @@ public class LevelData : ScriptableObject
 
     public void Initialize(Level level)
     {
-        mapWidthHeight = level.rooms.GetLength(0);
-        startRoomPosition = level.startRoomPosition;
-        endRoomPosition = level.endRoomPosition;
+        mapWidthHeight = level.Rooms.GetLength(0);
+        startRoomPosition = level.StartRoomPosition;
+        endRoomPosition = level.EndRoomPosition;
     }
 }

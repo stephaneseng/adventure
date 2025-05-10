@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    private static readonly Vector2Int[] NextRoomDirectionChoices = new Vector2Int[] {
+    private static readonly Vector2Int[] NextRoomDirectionChoices =
+    {
         Vector2Int.up,
         Vector2Int.right,
         Vector2Int.down,
@@ -13,7 +14,7 @@ public class LevelGenerator : MonoBehaviour
 
     private RoomGenerator roomGenerator;
 
-    void Awake()
+    private void Awake()
     {
         roomGenerator = GetComponentInChildren<RoomGenerator>();
     }
@@ -30,7 +31,7 @@ public class LevelGenerator : MonoBehaviour
         // Initialize the agent.
         Stack<Vector2Int> roomPositionsToVisit = new Stack<Vector2Int>();
         HashSet<Vector2Int> roomPositionsVisited = new HashSet<Vector2Int>();
-        roomPositionsToVisit.Push(level.startRoomPosition);
+        roomPositionsToVisit.Push(level.StartRoomPosition);
 
         // Run the agent which will create the next rooms.
         while (roomPositionsToVisit.Count != 0)
@@ -43,14 +44,11 @@ public class LevelGenerator : MonoBehaviour
             nextRoomDirections.ToList().ForEach(nextRoomDirection =>
             {
                 Vector2Int nextRoomPosition = new Vector2Int(
-                    Mathf.Max(0, Mathf.Min(currentRoom.position.x + nextRoomDirection.x, level.rooms.GetLength(0) - 1)),
-                    Mathf.Max(0, Mathf.Min(currentRoom.position.y + nextRoomDirection.y, level.rooms.GetLength(1) - 1)));
+                    Mathf.Max(0, Mathf.Min(currentRoom.Position.x + nextRoomDirection.x, level.Rooms.GetLength(0) - 1)),
+                    Mathf.Max(0, Mathf.Min(currentRoom.Position.y + nextRoomDirection.y, level.Rooms.GetLength(1) - 1)));
 
                 // Ignore next rooms with the same position than the current one.
-                if (nextRoomPosition == currentRoom.position)
-                {
-                    return;
-                }
+                if (nextRoomPosition == currentRoom.Position) return;
 
                 Room existingRoom = level.GetRoom(nextRoomPosition);
 
@@ -66,18 +64,12 @@ public class LevelGenerator : MonoBehaviour
 
                     // Add the next room to the stack of rooms to visit, if it has not been visited yet.
                     roomPositionsVisited.Add(currentRoomPosition);
-                    if (!roomPositionsVisited.Contains(nextRoom.position))
-                    {
-                        roomPositionsToVisit.Push(nextRoom.position);
-                    }
+                    if (!roomPositionsVisited.Contains(nextRoom.Position)) roomPositionsToVisit.Push(nextRoom.Position);
                 }
                 else
                 {
                     // Ignore next rooms already existing with a different section than the current one.
-                    if (existingRoom.section != currentRoom.section)
-                    {
-                        return;
-                    }
+                    if (existingRoom.Section != currentRoom.Section) return;
 
                     AddExitToCurrentRoom(currentRoom, existingRoom, nextRoomDirection);
                     AddExitToNextRoom(currentRoom, existingRoom, nextRoomDirection);
@@ -109,8 +101,8 @@ public class LevelGenerator : MonoBehaviour
     private Vector2Int GenerateStartRoomPosition(Level level, GeneratorConfiguration configuration)
     {
         return new Vector2Int(
-            Random.Range(configuration.LevelStartRoomMargin, level.rooms.GetLength(0) - configuration.LevelStartRoomMargin),
-            Random.Range(configuration.LevelStartRoomMargin, level.rooms.GetLength(1) - configuration.LevelStartRoomMargin));
+            Random.Range(configuration.LevelStartRoomMargin, level.Rooms.GetLength(0) - configuration.LevelStartRoomMargin),
+            Random.Range(configuration.LevelStartRoomMargin, level.Rooms.GetLength(1) - configuration.LevelStartRoomMargin));
     }
 
     private HashSet<Vector2Int> GenerateNextRoomDirections(Level level, Room currentRoom,
@@ -120,14 +112,14 @@ public class LevelGenerator : MonoBehaviour
         int maxNumberOfNextRoomDirections;
 
         // For the start room, ensure that we will have exactly 1 next room.
-        if (currentRoom.position == level.startRoomPosition)
+        if (currentRoom.Position == level.StartRoomPosition)
         {
             minNumberOfNextRoomDirections = 1;
             maxNumberOfNextRoomDirections = 1;
         }
         else
         {
-            int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.section);
+            int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.Section);
 
             // If there are not enough rooms in the current section, ensure that there will be at least 1 next room. 
             if (numberOfRoomsInSection <= configuration.LevelNumberOfRoomsInSectionLowThreshold)
@@ -151,10 +143,7 @@ public class LevelGenerator : MonoBehaviour
         int numberOfNextRoomDirections = Random.Range(minNumberOfNextRoomDirections, maxNumberOfNextRoomDirections + 1);
 
         HashSet<Vector2Int> nextRoomDirections = new HashSet<Vector2Int>();
-        while (nextRoomDirections.Count != numberOfNextRoomDirections)
-        {
-            nextRoomDirections.Add(NextRoomDirectionChoices[Random.Range(0, NextRoomDirectionChoices.Length)]);
-        }
+        while (nextRoomDirections.Count != numberOfNextRoomDirections) nextRoomDirections.Add(NextRoomDirectionChoices[Random.Range(0, NextRoomDirectionChoices.Length)]);
 
         return nextRoomDirections;
     }
@@ -169,55 +158,39 @@ public class LevelGenerator : MonoBehaviour
 
     private int GenerateNextRoomSection(Level level, Room currentRoom, GeneratorConfiguration configuration)
     {
-        int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.section);
+        int numberOfRoomsInSection = level.GetNumberOfRoomsInSection(currentRoom.Section);
 
         // If there are not enough rooms in the current section, do not change section.
-        if (numberOfRoomsInSection < configuration.LevelNumberOfRoomsInSectionHighThreshold * configuration.LevelNumberOfRoomsInSectionThresholdRatio)
-        {
-            return currentRoom.section;
-        }
+        if (numberOfRoomsInSection < configuration.LevelNumberOfRoomsInSectionHighThreshold * configuration.LevelNumberOfRoomsInSectionThresholdRatio) return currentRoom.Section;
 
-        if (Random.Range(0, 1 + 1) == 1)
-        {
-            return level.GetHigherSection() + 1;
-        }
-        else
-        {
-            return currentRoom.section;
-        }
+        if (Random.Range(0, 1 + 1) == 1) return level.GetHigherSection() + 1;
+
+        return currentRoom.Section;
     }
 
     private void AddExitToCurrentRoom(Room currentRoom, Room nextRoom, Vector2Int nextRoomDirection)
     {
-        currentRoom.exits.Add(nextRoomDirection);
+        currentRoom.Exits.Add(nextRoomDirection);
 
-        if (currentRoom.section == nextRoom.section)
-        {
-            currentRoom.doors.Add(nextRoomDirection);
-        }
+        if (currentRoom.Section == nextRoom.Section)
+            currentRoom.Doors.Add(nextRoomDirection);
         else
-        {
-            currentRoom.lockedDoors.Add(nextRoomDirection);
-        }
+            currentRoom.LockedDoors.Add(nextRoomDirection);
     }
 
     private void AddExitToNextRoom(Room currentRoom, Room nextRoom, Vector2Int nextRoomDirection)
     {
-        nextRoom.exits.Add(-nextRoomDirection);
+        nextRoom.Exits.Add(-nextRoomDirection);
 
-        if (nextRoom.section == currentRoom.section)
-        {
-            nextRoom.doors.Add(-nextRoomDirection);
-        }
+        if (nextRoom.Section == currentRoom.Section)
+            nextRoom.Doors.Add(-nextRoomDirection);
         else
-        {
-            nextRoom.lockedDoors.Add(-nextRoomDirection);
-        }
+            nextRoom.LockedDoors.Add(-nextRoomDirection);
     }
 
     private void AddExtraDoorToEndRoom(Room endRoom)
     {
-        endRoom.doors.Add(endRoom.exits.First());
+        endRoom.Doors.Add(endRoom.Exits.First());
     }
 
     private void AddKeysAndMap(Level level, GeneratorConfiguration configuration)
@@ -227,26 +200,21 @@ public class LevelGenerator : MonoBehaviour
         Dictionary<int, List<Room>> roomsBySection = new Dictionary<int, List<Room>>();
         Dictionary<int, int> numberOfLockedDoorsBySection = new Dictionary<int, int>();
 
-        for (int x = 0; x < level.rooms.GetLength(0); x++)
+        for (int x = 0; x < level.Rooms.GetLength(0); x++)
+        for (int y = 0; y < level.Rooms.GetLength(1); y++)
         {
-            for (int y = 0; y < level.rooms.GetLength(1); y++)
-            {
-                // Prevent adding keys in the start room.
-                if (level.rooms[x, y] == null || (x == level.startRoomPosition.x && y == level.startRoomPosition.y))
-                {
-                    continue;
-                }
+            // Prevent adding keys in the start room.
+            if (level.Rooms[x, y] == null || (x == level.StartRoomPosition.x && y == level.StartRoomPosition.y)) continue;
 
-                Room room = level.rooms[x, y];
+            Room room = level.Rooms[x, y];
 
-                List<Room> roomsByCurrentSection = roomsBySection.GetValueOrDefault(room.section, new List<Room>());
-                roomsByCurrentSection.Add(room);
-                roomsByCurrentSection.Sort((a, b) => a.exits.Count.CompareTo(b.exits.Count));
-                roomsBySection[room.section] = roomsByCurrentSection;
+            List<Room> roomsByCurrentSection = roomsBySection.GetValueOrDefault(room.Section, new List<Room>());
+            roomsByCurrentSection.Add(room);
+            roomsByCurrentSection.Sort((a, b) => a.Exits.Count.CompareTo(b.Exits.Count));
+            roomsBySection[room.Section] = roomsByCurrentSection;
 
-                numberOfLockedDoorsBySection[room.section] =
-                    numberOfLockedDoorsBySection.GetValueOrDefault(room.section, 0) + room.lockedDoors.Count();
-            }
+            numberOfLockedDoorsBySection[room.Section] =
+                numberOfLockedDoorsBySection.GetValueOrDefault(room.Section, 0) + room.LockedDoors.Count();
         }
 
         // Ensure that the number of keys added by section is equal to the number of locked doors it contains.
@@ -255,14 +223,10 @@ public class LevelGenerator : MonoBehaviour
             int numberOfKeysToAdd;
 
             if (i == 0)
-            {
                 numberOfKeysToAdd = numberOfLockedDoorsBySection[i];
-            }
             else
-            {
                 // One locked door must be opened to enter into any of the non starting sections.
                 numberOfKeysToAdd = numberOfLockedDoorsBySection[i] - 1;
-            }
 
             for (int j = 0; j < numberOfKeysToAdd; j++)
             {
@@ -288,38 +252,24 @@ public class LevelGenerator : MonoBehaviour
 
         // Extract all rooms of the higher section.
         List<Room> higherSectionRooms = new List<Room>();
-        for (int x = 0; x < level.rooms.GetLength(0); x++)
-        {
-            for (int y = 0; y < level.rooms.GetLength(1); y++)
-            {
-                if (level.rooms[x, y] != null && level.rooms[x, y].section == higherSection)
-                {
-                    higherSectionRooms.Add(level.rooms[x, y]);
-                }
-            }
-        }
+        for (int x = 0; x < level.Rooms.GetLength(0); x++)
+        for (int y = 0; y < level.Rooms.GetLength(1); y++)
+            if (level.Rooms[x, y] != null && level.Rooms[x, y].Section == higherSection)
+                higherSectionRooms.Add(level.Rooms[x, y]);
 
         // Choose the first room with an available exit.
         for (int i = 0; i < higherSectionRooms.Count; i++)
         {
             Room room = higherSectionRooms[i];
 
-            if (!room.exits.Contains(Vector2Int.up) && level.rooms[room.position.x, Mathf.Min(room.position.y + 1, level.rooms.GetLength(1) - 1)] == null)
-            {
-                return (new Vector2Int(room.position.x, Mathf.Min(room.position.y + 1, level.rooms.GetLength(1) - 1)), room, Vector2Int.up);
-            }
-            if (!room.exits.Contains(Vector2Int.right) && level.rooms[Mathf.Min(room.position.x + 1, level.rooms.GetLength(0) - 1), room.position.y] == null)
-            {
-                return (new Vector2Int(Mathf.Min(room.position.x + 1, level.rooms.GetLength(0) - 1), room.position.y), room, Vector2Int.right);
-            }
-            if (!room.exits.Contains(Vector2Int.down) && level.rooms[room.position.x, Mathf.Max(0, room.position.y - 1)] == null)
-            {
-                return (new Vector2Int(room.position.x, Mathf.Max(0, room.position.y - 1)), room, Vector2Int.down);
-            }
-            if (!room.exits.Contains(Vector2Int.left) && level.rooms[Mathf.Max(0, room.position.x - 1), room.position.y] == null)
-            {
-                return (new Vector2Int(Mathf.Max(0, room.position.x - 1), room.position.y), room, Vector2Int.left);
-            }
+            if (!room.Exits.Contains(Vector2Int.up) && level.Rooms[room.Position.x, Mathf.Min(room.Position.y + 1, level.Rooms.GetLength(1) - 1)] == null)
+                return (new Vector2Int(room.Position.x, Mathf.Min(room.Position.y + 1, level.Rooms.GetLength(1) - 1)), room, Vector2Int.up);
+            if (!room.Exits.Contains(Vector2Int.right) && level.Rooms[Mathf.Min(room.Position.x + 1, level.Rooms.GetLength(0) - 1), room.Position.y] == null)
+                return (new Vector2Int(Mathf.Min(room.Position.x + 1, level.Rooms.GetLength(0) - 1), room.Position.y), room, Vector2Int.right);
+            if (!room.Exits.Contains(Vector2Int.down) && level.Rooms[room.Position.x, Mathf.Max(0, room.Position.y - 1)] == null)
+                return (new Vector2Int(room.Position.x, Mathf.Max(0, room.Position.y - 1)), room, Vector2Int.down);
+            if (!room.Exits.Contains(Vector2Int.left) && level.Rooms[Mathf.Max(0, room.Position.x - 1), room.Position.y] == null)
+                return (new Vector2Int(Mathf.Max(0, room.Position.x - 1), room.Position.y), room, Vector2Int.left);
         }
 
         // Throw an exception if no appropriate room has been found.

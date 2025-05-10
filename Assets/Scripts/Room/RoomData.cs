@@ -16,10 +16,10 @@ public class RoomData : ScriptableObject
 
     public void Initialize(Room room)
     {
-        roomWidthHeight = room.spawnables.GetLength(0);
-        position = room.position;
-        exits = room.exits;
-        doors = room.doors;
-        lockedDoors = room.lockedDoors;
+        roomWidthHeight = room.Spawnables.GetLength(0);
+        position = room.Position;
+        exits = room.Exits;
+        doors = room.Doors;
+        lockedDoors = room.LockedDoors;
     }
 }

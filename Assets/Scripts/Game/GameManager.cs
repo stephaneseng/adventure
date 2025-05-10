@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
             levelData.Initialize(level);
             levelGameObject.GetComponent<LevelController>().levelData = levelData;
 
-            roomFactory.InstantiateRooms(level.rooms, levelGameObject);
+            roomFactory.InstantiateRooms(level.Rooms, levelGameObject);
         }
 
         levelGameObject.GetComponent<LevelController>().Initialize();

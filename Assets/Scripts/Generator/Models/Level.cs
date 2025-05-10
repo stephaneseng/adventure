@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class Level
 {
-    public Room[,] rooms;
-
-    public Vector2Int startRoomPosition;
-
-    public Vector2Int endRoomPosition;
-
-    private Dictionary<int, int> numberOfRoomsBySection;
+    private readonly Room[,] rooms;
+    private Vector2Int startRoomPosition;
+    private Vector2Int endRoomPosition;
+    private readonly Dictionary<int, int> numberOfRoomsBySection;
 
     public Level(int mapWidthHeight)
     {
@@ -18,29 +15,35 @@ public class Level
         numberOfRoomsBySection = new Dictionary<int, int>();
     }
 
+    public Room[,] Rooms => rooms;
+
+    public Vector2Int StartRoomPosition => startRoomPosition;
+
+    public Vector2Int EndRoomPosition => endRoomPosition;
+
     public void AddStartRoom(Room startRoom)
     {
-        rooms[startRoom.position.x, startRoom.position.y] = startRoom;
-        startRoomPosition = startRoom.position;
-        numberOfRoomsBySection[startRoom.section] = 1;
+        rooms[startRoom.Position.x, startRoom.Position.y] = startRoom;
+        startRoomPosition = startRoom.Position;
+        numberOfRoomsBySection[startRoom.Section] = 1;
     }
 
     public void AddEndRoom(Room endRoom)
     {
-        rooms[endRoom.position.x, endRoom.position.y] = endRoom;
-        endRoomPosition = endRoom.position;
-        numberOfRoomsBySection[endRoom.section] = numberOfRoomsBySection.GetValueOrDefault(endRoom.section, 0) + 1;
+        rooms[endRoom.Position.x, endRoom.Position.y] = endRoom;
+        endRoomPosition = endRoom.Position;
+        numberOfRoomsBySection[endRoom.Section] = numberOfRoomsBySection.GetValueOrDefault(endRoom.Section, 0) + 1;
     }
 
     public void AddRoom(Room room)
     {
-        rooms[room.position.x, room.position.y] = room;
-        numberOfRoomsBySection[room.section] = numberOfRoomsBySection.GetValueOrDefault(room.section, 0) + 1;
+        rooms[room.Position.x, room.Position.y] = room;
+        numberOfRoomsBySection[room.Section] = numberOfRoomsBySection.GetValueOrDefault(room.Section, 0) + 1;
     }
 
     public void UpdateRoom(Room room)
     {
-        rooms[room.position.x, room.position.y] = room;
+        rooms[room.Position.x, room.Position.y] = room;
     }
 
     public Room GetRoom(Vector2Int position)
