@@ -54,11 +54,11 @@ public class MiniMapController : MonoBehaviour
 
     private void DrawMiniMap()
     {
-        Vector2Int startRoomPosition = level.GetComponent<LevelController>().levelData.startRoomPosition;
-        Vector2Int endRoomPosition = level.GetComponent<LevelController>().levelData.endRoomPosition;
-        Vector2Int currentRoomPosition = level.GetComponent<LevelController>().currentRoomPosition;
+        Vector2Int startRoomPosition = level.GetComponent<LevelController>().LevelData.StartRoomPosition;
+        Vector2Int endRoomPosition = level.GetComponent<LevelController>().LevelData.EndRoomPosition;
+        Vector2Int currentRoomPosition = level.GetComponent<LevelController>().CurrentRoomPosition;
 
-        GameObject[,] rooms = level.GetComponent<LevelController>().rooms;
+        GameObject[,] rooms = level.GetComponent<LevelController>().Rooms;
 
         for (int x = 0; x < rooms.GetLength(0); x++)
         {

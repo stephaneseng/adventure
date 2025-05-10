@@ -37,15 +37,11 @@ public class GameManager : MonoBehaviour
                 }
             } while (!(level != null && level.GetHigherSection() > 1));
 
-            LevelData levelData = ScriptableObject.CreateInstance<LevelData>();
-            levelData.Initialize(level);
-            levelGameObject.GetComponent<LevelController>().levelData = levelData;
+            levelGameObject.GetComponent<LevelController>().InitializeLevelData(level);
 
             roomFactory.InstantiateRooms(level.Rooms, levelGameObject);
         }
 
-        levelGameObject.GetComponent<LevelController>().Initialize();
-
-        levelGameObject.GetComponent<LevelController>().EnterStartRoom();
+        levelGameObject.GetComponent<LevelController>().InitializeRoomsAndEnterStartRoom();
     }
 }
