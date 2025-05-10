@@ -6,27 +6,21 @@ public class KeyBarController : MonoBehaviour
 {
     private GameObject player;
 
-    private Dictionary<int, GameObject> keys = new Dictionary<int, GameObject>();
+    private readonly Dictionary<int, GameObject> keys = new();
 
-    void Awake()
+    private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player");
 
-        for (int i = 0; i < GameConstants.GameMaxNumberOfKeys; i++)
-        {
-            keys.Add(i, transform.Find("Key" + i).gameObject);
-        }
+        for (int i = 0; i < GameConstants.GameMaxNumberOfKeys; i++) keys.Add(i, transform.Find("Key" + i).gameObject);
 
         keys.Values.ToList().ForEach(key => key.SetActive(false));
     }
 
-    void Update()
+    private void Update()
     {
         int numberOfKeys = player.GetComponent<PlayerController>().Keys;
 
-        for (int i = 0; i < GameConstants.GameMaxNumberOfKeys; i++)
-        {
-            keys[i].SetActive(i < numberOfKeys);
-        }
+        for (int i = 0; i < GameConstants.GameMaxNumberOfKeys; i++) keys[i].SetActive(i < numberOfKeys);
     }
 }

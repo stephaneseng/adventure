@@ -4,15 +4,14 @@ using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.UI;
 
 [AddComponentMenu("Input/Enter Exit On-Screen Button")]
-public class EnterExitOnScreenButton : OnScreenButton, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler,
-    IPointerExitHandler
+public class EnterExitOnScreenButton : OnScreenButton, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    [SerializeField] private Sprite sprite;
+    [SerializeField] private Sprite pressedSprite;
+
     private Image image;
 
-    public Sprite sprite;
-    public Sprite pressedSprite;
-
-    void Awake()
+    private void Awake()
     {
         image = GetComponent<Image>();
 

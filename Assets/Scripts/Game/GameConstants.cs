@@ -6,8 +6,15 @@ public class GameConstants
     public static readonly string ResourcesItemFolder = "Item";
     public static readonly string ResourcesRoomFolder = "Room";
     public static readonly string ResourcesTileFolder = "Tiles";
+    public static readonly string ResourcesUIFolder = "UI";
 
     public static readonly string ResourcesBlockName = "Block";
+    public static readonly string ResourcesMiniMapCurrentRoomMaskName = "MiniMapCurrentRoomMask";
+    public static readonly string ResourcesMiniMapEndRoomMaskName = "MiniMapEndRoomMask";
+    public static readonly string ResourcesMiniMapRoomName = "MiniMapRoom";
+    public static readonly string ResourcesMiniMapRoomExitName = "MiniMapRoomExit";
+    public static readonly string ResourcesMiniMapStartRoomMaskName = "MiniMapStartRoomMask";
+    public static readonly string ResourcesMiniMapUnvisitedRoomName = "MiniMapUnvisitedRoom";
     public static readonly string ResourcesRoomName = "Room";
     public static readonly string ResourcesWallUpLeftInnerName = "WallUpLeftInner";
     public static readonly string ResourcesWallUpRightInnerName = "WallUpRightInner";
