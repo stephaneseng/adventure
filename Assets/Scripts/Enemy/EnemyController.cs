@@ -102,6 +102,8 @@ public class EnemyController : MonoBehaviour
     public void Attack()
     {
         attack.Execute("EnemyAttack", transform.position, direction);
+
+        AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioAttackName), transform.position, 0.1f);
     }
 
     private void RemoveHealth(int delta)
@@ -127,6 +129,8 @@ public class EnemyController : MonoBehaviour
         animator.Play("Destroy");
         DropItem();
         Destroy(gameObject, DestroyStateDurationInSeconds);
+
+        AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioDestroyName), transform.position);
     }
 
     private void DropItem()

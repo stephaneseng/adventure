@@ -16,12 +16,12 @@ public class MiniMapController : MonoBehaviour
 
     private void Awake()
     {
-        miniMapRoomPrefab = Resources.Load<GameObject>(GameConstants.ResourcesUIFolder + "/" + GameConstants.ResourcesMiniMapRoomName);
-        miniMapUnvisitedRoomPrefab = Resources.Load<GameObject>(GameConstants.ResourcesUIFolder + "/" + GameConstants.ResourcesMiniMapUnvisitedRoomName);
-        miniMapRoomExitPrefab = Resources.Load<GameObject>(GameConstants.ResourcesUIFolder + "/" + GameConstants.ResourcesMiniMapRoomExitName);
-        miniMapStartRoomMaskPrefab = Resources.Load<GameObject>(GameConstants.ResourcesUIFolder + "/" + GameConstants.ResourcesMiniMapStartRoomMaskName);
-        miniMapEndRoomMaskPrefab = Resources.Load<GameObject>(GameConstants.ResourcesUIFolder + "/" + GameConstants.ResourcesMiniMapEndRoomMaskName);
-        miniMapCurrentRoomMaskPrefab = Resources.Load<GameObject>(GameConstants.ResourcesUIFolder + "/" + GameConstants.ResourcesMiniMapCurrentRoomMaskName);
+        miniMapRoomPrefab = Resources.Load<GameObject>(GameConstants.ResourceUiFolder + "/" + GameConstants.ResourceUiMiniMapRoomName);
+        miniMapUnvisitedRoomPrefab = Resources.Load<GameObject>(GameConstants.ResourceUiFolder + "/" + GameConstants.ResourceUiMiniMapUnvisitedRoomName);
+        miniMapRoomExitPrefab = Resources.Load<GameObject>(GameConstants.ResourceUiFolder + "/" + GameConstants.ResourceUiMiniMapRoomExitName);
+        miniMapStartRoomMaskPrefab = Resources.Load<GameObject>(GameConstants.ResourceUiFolder + "/" + GameConstants.ResourceUiMiniMapStartRoomMaskName);
+        miniMapEndRoomMaskPrefab = Resources.Load<GameObject>(GameConstants.ResourceUiFolder + "/" + GameConstants.ResourceUiMiniMapEndRoomMaskName);
+        miniMapCurrentRoomMaskPrefab = Resources.Load<GameObject>(GameConstants.ResourceUiFolder + "/" + GameConstants.ResourceUiMiniMapCurrentRoomMaskName);
         level = GameObject.FindGameObjectWithTag("Level");
         player = GameObject.FindGameObjectWithTag("Player");
     }

@@ -3,9 +3,9 @@ using UnityEngine;
 public class LockedDoorController : MonoBehaviour
 {
     [SerializeField] private Vector2Int direction;
-    private GameObject level;
 
     private GameObject player;
+    private GameObject level;
 
     private void Awake()
     {
@@ -24,5 +24,7 @@ public class LockedDoorController : MonoBehaviour
     {
         level.GetComponent<LevelController>().UnlockDoor(direction);
         player.GetComponent<PlayerController>().RemoveKey();
+
+        AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioDoorName), transform.position);
     }
 }

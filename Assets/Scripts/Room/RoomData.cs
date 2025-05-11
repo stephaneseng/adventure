@@ -6,6 +6,7 @@ public class RoomData : ScriptableObject
 {
     [SerializeField] private int roomWidthHeight;
     [SerializeField] private Vector2Int position;
+
     private HashSet<Vector2Int> exits = new();
     private HashSet<Vector2Int> doors = new();
     private HashSet<Vector2Int> lockedDoors = new();

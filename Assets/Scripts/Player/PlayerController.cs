@@ -81,24 +81,32 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(other.gameObject);
             AddHealth(1);
+
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioItemName), transform.position); 
         }
 
         if (other.CompareTag("ItemKey") && keys < GameConstants.GameMaxNumberOfKeys)
         {
             Destroy(other.gameObject);
             AddKey();
+
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioItemName), transform.position);
         }
 
         if (other.CompareTag("ItemMap"))
         {
             Destroy(other.gameObject);
             AddMap();
+
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioItemName), transform.position);
         }
 
         if (other.CompareTag("ItemTripleBulletAttack"))
         {
             Destroy(other.gameObject);
             AddTripleBulletAttack();
+
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioItemName), transform.position);
         }
 
         if (other.CompareTag("EnemyAttack"))
@@ -110,7 +118,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if (context.performed) attack.Execute("PlayerAttack", transform.position, direction);
+        if (context.performed)
+            Attack();
     }
 
     public void SwitchToIdleState()
@@ -154,6 +163,13 @@ public class PlayerController : MonoBehaviour
         move = false;
     }
 
+    private void Attack()
+    {
+        attack.Execute("PlayerAttack", transform.position, direction);
+
+        AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioAttackName), transform.position);
+    }
+
     private void AddHealth(int delta)
     {
         health = Mathf.Min(health + delta, playerData.Health);
@@ -190,7 +206,7 @@ public class PlayerController : MonoBehaviour
 
     public void AddTripleBulletAttack()
     {
-        attack = Resources.Load<Attack>(GameConstants.ResourcesAttackFolder + "/TripleBulletAttack");
+        attack = Resources.Load<Attack>(GameConstants.ResourceAttackFolder + "/" + GameConstants.ResourceAttackTripleBulletAttackName);
     }
 
     public void Damage()

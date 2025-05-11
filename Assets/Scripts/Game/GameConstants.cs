@@ -1,26 +1,31 @@
 public class GameConstants
 {
-    public static readonly string ResourcesAttackFolder = "Data/Attack";
-    public static readonly string ResourcesBlockFolder = "Room";
-    public static readonly string ResourcesEnemyFolder = "Enemy";
+    public static readonly string ResourceAttackFolder = "Data/Attack";
+    public static readonly string ResourceAudioFolder = "Audio";
+    public static readonly string ResourceEnemyFolder = "Enemy";
     public static readonly string ResourcesItemFolder = "Item";
-    public static readonly string ResourcesRoomFolder = "Room";
-    public static readonly string ResourcesTileFolder = "Tiles";
-    public static readonly string ResourcesUIFolder = "UI";
+    public static readonly string ResourceRoomFolder = "Room";
+    public static readonly string ResourceTileFolder = "Tiles";
+    public static readonly string ResourceUiFolder = "UI";
 
-    public static readonly string ResourcesBlockName = "Block";
-    public static readonly string ResourcesMiniMapCurrentRoomMaskName = "MiniMapCurrentRoomMask";
-    public static readonly string ResourcesMiniMapEndRoomMaskName = "MiniMapEndRoomMask";
-    public static readonly string ResourcesMiniMapRoomName = "MiniMapRoom";
-    public static readonly string ResourcesMiniMapRoomExitName = "MiniMapRoomExit";
-    public static readonly string ResourcesMiniMapStartRoomMaskName = "MiniMapStartRoomMask";
-    public static readonly string ResourcesMiniMapUnvisitedRoomName = "MiniMapUnvisitedRoom";
-    public static readonly string ResourcesRoomName = "Room";
-    public static readonly string ResourcesWallUpLeftInnerName = "WallUpLeftInner";
-    public static readonly string ResourcesWallUpRightInnerName = "WallUpRightInner";
-    public static readonly string ResourcesWallDownRightInnerName = "WallDownRightInner";
-    public static readonly string ResourcesWallDownLeftInnerName = "WallDownLeftInner";
-    public static readonly string ResourcesGroundName = "Ground";
+    public static readonly string ResourceAttackTripleBulletAttackName = "TripleBulletAttack";
+    public static readonly string ResourceAudioAttackName = "Attack";
+    public static readonly string ResourceAudioDestroyName = "Destroy";
+    public static readonly string ResourceAudioDoorName = "Door";
+    public static readonly string ResourceAudioItemName = "Item";
+    public static readonly string ResourceRoomBlockName = "Block";
+    public static readonly string ResourceRoomRoomName = "Room";
+    public static readonly string ResourceTileGroundName = "Ground";
+    public static readonly string ResourceTileWallUpLeftInnerName = "WallUpLeftInner";
+    public static readonly string ResourceTileWallUpRightInnerName = "WallUpRightInner";
+    public static readonly string ResourceTileWallDownRightInnerName = "WallDownRightInner";
+    public static readonly string ResourceTileWallDownLeftInnerName = "WallDownLeftInner";
+    public static readonly string ResourceUiMiniMapCurrentRoomMaskName = "MiniMapCurrentRoomMask";
+    public static readonly string ResourceUiMiniMapEndRoomMaskName = "MiniMapEndRoomMask";
+    public static readonly string ResourceUiMiniMapRoomName = "MiniMapRoom";
+    public static readonly string ResourceUiMiniMapRoomExitName = "MiniMapRoomExit";
+    public static readonly string ResourceUiMiniMapStartRoomMaskName = "MiniMapStartRoomMask";
+    public static readonly string ResourceUiMiniMapUnvisitedRoomName = "MiniMapUnvisitedRoom";
 
     // FIXME: Limit the number of keys the player can have due to UI constraints.
     public static readonly int GameMaxNumberOfKeys = 6;
