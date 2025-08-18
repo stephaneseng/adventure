@@ -2,35 +2,31 @@ using UnityEngine;
 
 public class EnemyStateMachine
 {
-    private EnemyController enemyController;
-
-    public float startTime;
-
     private EnemyState currentState;
+    private float startTime;
 
-    public EnemyStateMachine(EnemyController enemyController)
-    {
-        this.enemyController = enemyController;
-    }
+    public float StartTime => startTime;
 
     public void Initialize(EnemyState enemyState)
     {
-        startTime = Time.time;
         currentState = enemyState;
-        currentState.OnEnter(enemyController);
+        startTime = Time.time;
+
+        currentState.OnEnter();
     }
 
     public void Update()
     {
-        currentState.OnUpdate(enemyController);
+        currentState.OnUpdate();
     }
 
     public void SwitchState(EnemyState enemyState)
     {
-        currentState.OnExit(enemyController);
+        currentState.OnExit();
 
-        startTime = Time.time;
         currentState = enemyState;
-        currentState.OnEnter(enemyController);
+        startTime = Time.time;
+
+        currentState.OnEnter();
     }
 }

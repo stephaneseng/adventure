@@ -1,37 +1,61 @@
 public class GeneratorConfiguration
 {
     /* Level */
-    public int mapWidthHeight;
-    public int startRoomMargin;
-    public int numberOfRoomsInSectionLowThreshold;
-    public int numberOfRoomsInSectionHighThreshold;
-    public float numberOfRoomsInSectionThresholdRatio;
+    private readonly int levelMapWidthHeight;
+    private readonly int levelStartRoomMargin;
+    private readonly int levelNumberOfRoomsInSectionLowThreshold;
+    private readonly int levelNumberOfRoomsInSectionHighThreshold;
+    private readonly float levelNumberOfRoomsInSectionThresholdRatio;
 
     /* Room */
-    public int roomWidthHeight;
-    public int blockSpawnMargin;
-    public int minNumberOfBlocks;
-    public int maxNumberOfBlocks;
-    public int enemySpawnMargin;
-    public int minNumberOfEnemies;
-    public int maxNumberOfEnemies;
+    private readonly int roomWidthHeight;
+    private readonly int roomBlockSpawnMargin;
+    private readonly int roomMinNumberOfBlocks;
+    private readonly int roomMaxNumberOfBlocks;
+    private readonly int roomEnemySpawnMargin;
+    private readonly int roomMinNumberOfEnemies;
+    private readonly int roomMaxNumberOfEnemies;
 
-    public GeneratorConfiguration(int mapWidthHeight, int startRoomMargin, int numberOfRoomsInSectionLowThreshold,
-        int numberOfRoomsInSectionHighThreshold, float numberOfRoomsInSectionThresholdRatio, int roomWidthHeight,
-        int blockSpawnMargin, int minNumberOfBlocks, int maxNumberOfBlocks, int enemySpawnMargin,
-        int minNumberOfEnemies, int maxNumberOfEnemies)
+    public GeneratorConfiguration(int levelMapWidthHeight, int levelStartRoomMargin, int levelNumberOfRoomsInSectionLowThreshold,
+        int levelNumberOfRoomsInSectionHighThreshold, float levelNumberOfRoomsInSectionThresholdRatio, int roomWidthHeight,
+        int roomBlockSpawnMargin, int roomMinNumberOfBlocks, int roomMaxNumberOfBlocks, int roomEnemySpawnMargin,
+        int roomMinNumberOfEnemies, int roomMaxNumberOfEnemies)
     {
-        this.mapWidthHeight = mapWidthHeight;
-        this.startRoomMargin = startRoomMargin;
-        this.numberOfRoomsInSectionLowThreshold = numberOfRoomsInSectionLowThreshold;
-        this.numberOfRoomsInSectionHighThreshold = numberOfRoomsInSectionHighThreshold;
-        this.numberOfRoomsInSectionThresholdRatio = numberOfRoomsInSectionThresholdRatio;
+        this.levelMapWidthHeight = levelMapWidthHeight;
+        this.levelStartRoomMargin = levelStartRoomMargin;
+        this.levelNumberOfRoomsInSectionLowThreshold = levelNumberOfRoomsInSectionLowThreshold;
+        this.levelNumberOfRoomsInSectionHighThreshold = levelNumberOfRoomsInSectionHighThreshold;
+        this.levelNumberOfRoomsInSectionThresholdRatio = levelNumberOfRoomsInSectionThresholdRatio;
         this.roomWidthHeight = roomWidthHeight;
-        this.blockSpawnMargin = blockSpawnMargin;
-        this.minNumberOfBlocks = minNumberOfBlocks;
-        this.maxNumberOfBlocks = maxNumberOfBlocks;
-        this.enemySpawnMargin = enemySpawnMargin;
-        this.minNumberOfEnemies = minNumberOfEnemies;
-        this.maxNumberOfEnemies = maxNumberOfEnemies;
+        this.roomBlockSpawnMargin = roomBlockSpawnMargin;
+        this.roomMinNumberOfBlocks = roomMinNumberOfBlocks;
+        this.roomMaxNumberOfBlocks = roomMaxNumberOfBlocks;
+        this.roomEnemySpawnMargin = roomEnemySpawnMargin;
+        this.roomMinNumberOfEnemies = roomMinNumberOfEnemies;
+        this.roomMaxNumberOfEnemies = roomMaxNumberOfEnemies;
     }
+
+    public int LevelMapWidthHeight => levelMapWidthHeight;
+
+    public int LevelStartRoomMargin => levelStartRoomMargin;
+
+    public int LevelNumberOfRoomsInSectionLowThreshold => levelNumberOfRoomsInSectionLowThreshold;
+
+    public int LevelNumberOfRoomsInSectionHighThreshold => levelNumberOfRoomsInSectionHighThreshold;
+
+    public float LevelNumberOfRoomsInSectionThresholdRatio => levelNumberOfRoomsInSectionThresholdRatio;
+
+    public int RoomWidthHeight => roomWidthHeight;
+
+    public int RoomBlockSpawnMargin => roomBlockSpawnMargin;
+
+    public int RoomMinNumberOfBlocks => roomMinNumberOfBlocks;
+
+    public int RoomMaxNumberOfBlocks => roomMaxNumberOfBlocks;
+
+    public int RoomEnemySpawnMargin => roomEnemySpawnMargin;
+
+    public int RoomMinNumberOfEnemies => roomMinNumberOfEnemies;
+
+    public int RoomMaxNumberOfEnemies => roomMaxNumberOfEnemies;
 }

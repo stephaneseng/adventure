@@ -4,18 +4,19 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyData", menuName = "ScriptableObjects/EnemyData")]
 public class EnemyData : ScriptableObject
 {
-    public EnemyBrain enemyBrain;
+    [SerializeField] private EnemyBrain enemyBrain;
+    [SerializeField] private int health;
+    [SerializeField] private float speed;
+    [SerializeField] private Attack attack;
+    [SerializeField] private List<GameObject> droppedItems = new();
 
-    public int health;
+    public EnemyBrain EnemyBrain => enemyBrain;
 
-    public float speed;
+    public int Health => health;
 
-    public Attack attack;
+    public float Speed => speed;
 
-    public List<GameObject> droppedItems;
+    public Attack Attack => attack;
 
-    public EnemyData()
-    {
-        droppedItems = new List<GameObject>();
-    }
+    public List<GameObject> DroppedItems => droppedItems;
 }

@@ -6,9 +6,6 @@ public class MenuController : MonoBehaviour
 {
     public void OnStart(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
-            SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
-        }
+        if (context.performed) SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
     }
 }

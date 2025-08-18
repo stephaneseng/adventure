@@ -6,14 +6,7 @@ using UnityEngine.Tilemaps;
 
 public class RoomController : MonoBehaviour
 {
-    private static readonly string TileResourcesFolder = "Tiles";
-    private static readonly string WallUpLeftInnerTileResourceName = "WallUpLeftInner";
-    private static readonly string WallUpRightInnerTileResourceName = "WallUpRightInner";
-    private static readonly string WallDownRightInnerTileResourceName = "WallDownRightInner";
-    private static readonly string WallDownLeftInnerTileResourceName = "WallDownLeftInner";
-    private static readonly string GroundTileResourceName = "Ground";
-
-    public RoomData roomData;
+    [SerializeField] private RoomData roomData;
 
     private LevelController levelController;
     private BoxCollider2D boxCollider2D;
@@ -24,51 +17,56 @@ public class RoomController : MonoBehaviour
     private Tile wallDownRightInnerTile;
     private Tile wallDownLeftInnerTile;
     private Tile groundTile;
-    public Transform spawnableOrigin;
+    private Transform spawnableOrigin;
 
-    private Dictionary<Vector2Int, GameObject> doors = new Dictionary<Vector2Int, GameObject>();
-    private Dictionary<Vector2Int, GameObject> lockedDoors = new Dictionary<Vector2Int, GameObject>();
-    public bool visited;
+    private readonly Dictionary<Vector2Int, GameObject> doors = new();
+    private readonly Dictionary<Vector2Int, GameObject> lockedDoors = new();
+    private int initialNumberOfEnemies;
+    private bool visited;
 
-    void Awake()
+    public RoomData RoomData => roomData;
+
+    public Transform SpawnableOrigin => spawnableOrigin;
+
+    public bool Visited => visited;
+
+    private void Awake()
     {
         levelController = GameObject.FindGameObjectWithTag("Level").GetComponent<LevelController>();
         boxCollider2D = GetComponent<BoxCollider2D>();
         foregroundTilemap = transform.Find("Foreground").GetComponent<Tilemap>();
         backgroundTilemap = transform.Find("Background").GetComponent<Tilemap>();
-        wallUpLeftInnerTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpLeftInnerTileResourceName);
-        wallUpRightInnerTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallUpRightInnerTileResourceName);
-        wallDownRightInnerTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownRightInnerTileResourceName);
-        wallDownLeftInnerTile = Resources.Load<Tile>(TileResourcesFolder + "/" + WallDownLeftInnerTileResourceName);
-        groundTile = Resources.Load<Tile>(TileResourcesFolder + "/" + GroundTileResourceName);
+        wallUpLeftInnerTile = Resources.Load<Tile>(GameConstants.ResourceTileFolder + "/" + GameConstants.ResourceTileWallUpLeftInnerName);
+        wallUpRightInnerTile = Resources.Load<Tile>(GameConstants.ResourceTileFolder + "/" + GameConstants.ResourceTileWallUpRightInnerName);
+        wallDownRightInnerTile = Resources.Load<Tile>(GameConstants.ResourceTileFolder + "/" + GameConstants.ResourceTileWallDownRightInnerName);
+        wallDownLeftInnerTile = Resources.Load<Tile>(GameConstants.ResourceTileFolder + "/" + GameConstants.ResourceTileWallDownLeftInnerName);
+        groundTile = Resources.Load<Tile>(GameConstants.ResourceTileFolder + "/" + GameConstants.ResourceTileGroundName);
         spawnableOrigin = transform.Find("SpawnableOrigin");
     }
 
-    void Update()
+    private void Update()
     {
-        if (doors.Count() > 0)
-        {
+        if (doors.Any())
             // Destroy all doors if all enemies have been destroyed.
-            if (GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).Count() == 0)
+            if (!GetComponentsInChildren<Transform>().Any(transform => transform.CompareTag("Enemy")))
             {
                 // End the game (victory).
-                if (levelController.IsEndRoom(roomData.position))
+                if (levelController.IsEndRoom(roomData.Position))
                 {
                     SceneManager.LoadScene("MenuScene", LoadSceneMode.Single);
                     return;
                 }
 
-                doors.Values.ToList().ForEach(door =>
-                {
-                    Destroy(door);
-                });
+                doors.Values.ToList().ForEach(door => { Destroy(door); });
 
                 doors.Clear();
+
+                if (initialNumberOfEnemies != 0)
+                    AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioDoorName), transform.position);
             }
-        }
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
@@ -77,26 +75,28 @@ public class RoomController : MonoBehaviour
 
             PlayerController playerController = other.GetComponent<PlayerController>();
 
-            Vector2 contactVector = new Vector2(other.bounds.center.x - boxCollider2D.bounds.center.x,
-                other.bounds.center.y - boxCollider2D.bounds.center.y);
+            Vector2 contactVector = new Vector2(other.bounds.center.x - boxCollider2D.bounds.center.x, other.bounds.center.y - boxCollider2D.bounds.center.y);
 
             if (Vector2.Dot(contactVector, Vector2.up) > 1)
-            {
                 levelController.SwitchRoom(playerController, Vector2Int.up);
-            }
             else if (Vector2.Dot(contactVector, Vector2.right) > 1)
-            {
                 levelController.SwitchRoom(playerController, Vector2Int.right);
-            }
             else if (Vector2.Dot(contactVector, Vector2.down) > 1)
-            {
                 levelController.SwitchRoom(playerController, Vector2Int.down);
-            }
             else
-            {
                 levelController.SwitchRoom(playerController, Vector2Int.left);
-            }
         }
+    }
+
+    public void InitializeRoomData(Room room)
+    {
+        roomData = ScriptableObject.CreateInstance<RoomData>();
+        roomData.Initialize(room);
+    }
+
+    public void InitializeInitialNumberOfEnemies(int initialNumberOfEnemies)
+    {
+        this.initialNumberOfEnemies = initialNumberOfEnemies;
     }
 
     public void Initialize()
@@ -108,9 +108,9 @@ public class RoomController : MonoBehaviour
 
     private void InitializeWalls()
     {
-        int roomHalfWidthHeight = Mathf.FloorToInt(roomData.roomWidthHeight / 2.0f);
+        int roomHalfWidthHeight = Mathf.FloorToInt(roomData.RoomWidthHeight / 2.0f);
 
-        if (roomData.exits.Contains(Vector2Int.up))
+        if (roomData.Exits.Contains(Vector2Int.up))
         {
             foregroundTilemap.SetTile(new Vector3Int(-2, roomHalfWidthHeight), wallDownRightInnerTile);
             foregroundTilemap.SetTile(new Vector3Int(-1, roomHalfWidthHeight), null);
@@ -119,7 +119,8 @@ public class RoomController : MonoBehaviour
             backgroundTilemap.SetTile(new Vector3Int(-1, roomHalfWidthHeight), groundTile);
             backgroundTilemap.SetTile(new Vector3Int(0, roomHalfWidthHeight), groundTile);
         }
-        if (roomData.exits.Contains(Vector2Int.right))
+
+        if (roomData.Exits.Contains(Vector2Int.right))
         {
             foregroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 1), wallDownLeftInnerTile);
             foregroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 0), null);
@@ -128,7 +129,8 @@ public class RoomController : MonoBehaviour
             backgroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, 0), groundTile);
             backgroundTilemap.SetTile(new Vector3Int(roomHalfWidthHeight, -1), groundTile);
         }
-        if (roomData.exits.Contains(Vector2Int.down))
+
+        if (roomData.Exits.Contains(Vector2Int.down))
         {
             foregroundTilemap.SetTile(new Vector3Int(-2, -roomHalfWidthHeight - 1), wallUpRightInnerTile);
             foregroundTilemap.SetTile(new Vector3Int(-1, -roomHalfWidthHeight - 1), null);
@@ -137,7 +139,8 @@ public class RoomController : MonoBehaviour
             backgroundTilemap.SetTile(new Vector3Int(-1, -roomHalfWidthHeight - 1), groundTile);
             backgroundTilemap.SetTile(new Vector3Int(0, -roomHalfWidthHeight - 1), groundTile);
         }
-        if (roomData.exits.Contains(Vector2Int.left))
+
+        if (roomData.Exits.Contains(Vector2Int.left))
         {
             foregroundTilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 1), wallDownRightInnerTile);
             foregroundTilemap.SetTile(new Vector3Int(-roomHalfWidthHeight - 1, 0), null);
@@ -157,7 +160,7 @@ public class RoomController : MonoBehaviour
 
         doors.Keys.ToList().ForEach(direction =>
         {
-            if (!roomData.doors.Contains(direction))
+            if (!roomData.Doors.Contains(direction))
             {
                 Destroy(doors[direction]);
                 doors.Remove(direction);
@@ -176,7 +179,7 @@ public class RoomController : MonoBehaviour
 
         lockedDoors.Keys.ToList().ForEach(direction =>
         {
-            if (!roomData.lockedDoors.Contains(direction))
+            if (!roomData.LockedDoors.Contains(direction))
             {
                 Destroy(lockedDoors[direction]);
                 lockedDoors.Remove(direction);
@@ -194,10 +197,7 @@ public class RoomController : MonoBehaviour
         lockedDoors.Values.ToList().ForEach(lockedDoor => lockedDoor.SetActive(false));
 
         GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).ToList()
-            .ForEach(transform =>
-            {
-                transform.gameObject.GetComponent<EnemyController>().Freeze();
-            });
+            .ForEach(transform => { transform.gameObject.GetComponent<EnemyController>().SwitchToFreezeState(); });
     }
 
     public void EnterRoom()
@@ -208,12 +208,12 @@ public class RoomController : MonoBehaviour
         lockedDoors.Values.ToList().ForEach(lockedDoor => lockedDoor.SetActive(true));
 
         GetComponentsInChildren<Transform>().Where(transform => transform.CompareTag("Enemy")).ToList()
-            .ForEach(transform =>
-            {
-                transform.gameObject.GetComponent<EnemyController>().StopFreeze();
-            });
+            .ForEach(transform => { transform.gameObject.GetComponent<EnemyController>().SwitchToIdleState(); });
 
         visited = true;
+
+        if ((doors.Values.ToList().Any(door => door.activeSelf) || lockedDoors.Values.ToList().Any(door => door.activeSelf)) && initialNumberOfEnemies != 0)
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioDoorName), transform.position);
     }
 
     public void ExitRoom()

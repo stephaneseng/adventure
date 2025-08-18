@@ -4,21 +4,17 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    // FIXME: Limit the number of keys the player can have due to UI constraints.
-    public static int MaxNumberOfKeys = 6;
-
-    private static readonly string AttackResourcesFolder = "Data/Attack";
     private static readonly float InvincibilityDurationInSeconds = 0.5f;
     private static readonly float DestroyStateDurationInSeconds = 0.15f;
 
-    public PlayerData playerData;
+    [SerializeField] private PlayerData playerData;
 
     private PlayerInput playerInput;
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
     private GameObject level;
 
-    public PlayerStateMachine playerStateMachine;
+    private PlayerStateMachine playerStateMachine;
     private int health;
     private Attack attack;
     private int keys;
@@ -27,81 +23,90 @@ public class PlayerController : MonoBehaviour
     private bool move;
     private float invincibilityCountdown;
 
-    void Awake()
+    public int Health => health;
+
+    public int MaxHealth => playerData.Health;
+
+    public int Keys => keys;
+
+    public bool Map => map;
+
+    private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         level = GameObject.FindGameObjectWithTag("Level");
 
-        playerStateMachine = new PlayerStateMachine(this);
-        health = playerData.health;
-        attack = playerData.attack;
+        playerStateMachine = new PlayerStateMachine();
+        health = playerData.Health;
+        attack = playerData.Attack;
         keys = 0;
         map = false;
         direction = Vector2.up;
         move = false;
         invincibilityCountdown = 0.0f;
 
-        playerStateMachine.Initialize(new PlayerIdleState());
+        playerStateMachine.Initialize(new PlayerIdleState(this));
     }
 
-    void Update()
+    private void Update()
     {
         playerStateMachine.Update();
 
-        if (invincibilityCountdown > 0.0f)
-        {
-            invincibilityCountdown -= Time.deltaTime;
-        }
+        if (invincibilityCountdown > 0.0f) invincibilityCountdown -= Time.deltaTime;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y,
-            0.0f));
-        rigidbody2D.velocity = (float)(move ? 1.0f : 0.0f) * playerData.speed * direction;
+        rigidbody2D.transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(direction.x, direction.y, 0.0f));
+        rigidbody2D.linearVelocity = (move ? 1.0f : 0.0f) * playerData.Speed * direction;
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         // End the game (defeat).
         Destroy(level.gameObject);
         SceneManager.LoadScene("MenuScene", LoadSceneMode.Single);
     }
 
-    void OnCollisionEnter2D(Collision2D other)
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
-        {
-            RemoveHealth(1);
-        }
+        if (other.gameObject.CompareTag("Enemy")) RemoveHealth(1);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("ItemHealth"))
         {
             Destroy(other.gameObject);
             AddHealth(1);
+
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioItemName), transform.position); 
         }
 
-        if (other.CompareTag("ItemKey") && keys < MaxNumberOfKeys)
+        if (other.CompareTag("ItemKey") && keys < GameConstants.GameMaxNumberOfKeys)
         {
             Destroy(other.gameObject);
             AddKey();
+
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioItemName), transform.position);
         }
 
         if (other.CompareTag("ItemMap"))
         {
             Destroy(other.gameObject);
             AddMap();
+
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioItemName), transform.position);
         }
 
         if (other.CompareTag("ItemTripleBulletAttack"))
         {
             Destroy(other.gameObject);
             AddTripleBulletAttack();
+
+            AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioItemName), transform.position);
         }
 
         if (other.CompareTag("EnemyAttack"))
@@ -114,9 +119,32 @@ public class PlayerController : MonoBehaviour
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.performed)
-        {
             Attack();
-        }
+    }
+
+    public void SwitchToIdleState()
+    {
+        playerStateMachine.SwitchState(new PlayerIdleState(this));
+    }
+
+    public void SwitchToMoveState()
+    {
+        playerStateMachine.SwitchState(new PlayerMoveState(this));
+    }
+
+    public void SwitchToDamageState()
+    {
+        playerStateMachine.SwitchState(new PlayerDamageState(this));
+    }
+
+    public void SwitchToDestroyState()
+    {
+        playerStateMachine.SwitchState(new PlayerDestroyState(this));
+    }
+
+    public void SwitchToFreezeState()
+    {
+        playerStateMachine.SwitchState(new PlayerFreezeState(this));
     }
 
     public Vector2 ReadInputActionMoveVector()
@@ -124,9 +152,9 @@ public class PlayerController : MonoBehaviour
         return playerInput.actions["Move"].ReadValue<Vector2>();
     }
 
-    public void Move(Vector2 inputActionMoveVector)
+    public void Move(Vector2 direction)
     {
-        direction = inputActionMoveVector;
+        this.direction = direction;
         move = true;
     }
 
@@ -135,54 +163,29 @@ public class PlayerController : MonoBehaviour
         move = false;
     }
 
-    public void Freeze()
-    {
-        playerStateMachine.SwitchState(new PlayerFreezeState());
-    }
-
-    public void StopFreeze()
-    {
-        playerStateMachine.SwitchState(new PlayerIdleState());
-    }
-
     private void Attack()
     {
-        attack.Execute("PlayerAttack", transform, direction);
-    }
+        attack.Execute("PlayerAttack", transform.position, direction);
 
-    public int GetHealth()
-    {
-        return health;
+        AudioSource.PlayClipAtPoint(Resources.Load<AudioClip>(GameConstants.ResourceAudioFolder + "/" + GameConstants.ResourceAudioAttackName), transform.position);
     }
 
     private void AddHealth(int delta)
     {
-        health = Mathf.Min(health + delta, playerData.health);
+        health = Mathf.Min(health + delta, playerData.Health);
     }
 
     private void RemoveHealth(int delta)
     {
-        if (invincibilityCountdown > 0.0f)
-        {
-            return;
-        }
+        if (invincibilityCountdown > 0.0f) return;
 
         health = Mathf.Max(0, health - delta);
 
         // Game over.
         if (health == 0)
-        {
-            playerStateMachine.SwitchState(new PlayerDestroyState());
-        }
+            SwitchToDestroyState();
         else
-        {
-            playerStateMachine.SwitchState(new PlayerDamageState());
-        }
-    }
-
-    public int GetKeys()
-    {
-        return keys;
+            SwitchToDamageState();
     }
 
     private void AddKey()
@@ -195,11 +198,6 @@ public class PlayerController : MonoBehaviour
         keys--;
     }
 
-    public bool HasMap()
-    {
-        return map;
-    }
-
     public void AddMap()
     {
         map = true;
@@ -208,7 +206,7 @@ public class PlayerController : MonoBehaviour
 
     public void AddTripleBulletAttack()
     {
-        attack = Resources.Load<Attack>(AttackResourcesFolder + "/TripleBulletAttack");
+        attack = Resources.Load<Attack>(GameConstants.ResourceAttackFolder + "/" + GameConstants.ResourceAttackTripleBulletAttackName);
     }
 
     public void Damage()
@@ -221,7 +219,6 @@ public class PlayerController : MonoBehaviour
     public void Destroy()
     {
         animator.Play("Destroy");
-
         Destroy(gameObject, DestroyStateDurationInSeconds);
     }
 }

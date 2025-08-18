@@ -1,15 +1,11 @@
 public class PlayerDestroyState : PlayerState
 {
-    public override void OnEnter(PlayerController playerController)
+    public PlayerDestroyState(PlayerController playerController) : base(playerController)
+    {
+    }
+
+    public override void OnEnter()
     {
         playerController.Destroy();
-    }
-
-    public override void OnUpdate(PlayerController playerController)
-    {
-    }
-
-    public override void OnExit(PlayerController playerController)
-    {
     }
 }

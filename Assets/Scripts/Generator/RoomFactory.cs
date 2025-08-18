@@ -2,14 +2,11 @@ using UnityEngine;
 
 public class RoomFactory : MonoBehaviour
 {
-    private static readonly string RoomResourcesFolder = "Room";
-    private static readonly string RoomResourceName = "Room";
-
     private BlockFactory blockFactory;
     private EnemyFactory enemyFactory;
     private ItemFactory itemFactory;
 
-    void Awake()
+    private void Awake()
     {
         blockFactory = GetComponentInChildren<BlockFactory>();
         enemyFactory = GetComponentInChildren<EnemyFactory>();
@@ -19,38 +16,28 @@ public class RoomFactory : MonoBehaviour
     public void InstantiateRooms(Room[,] rooms, GameObject levelGameObject)
     {
         for (int x = 0; x < rooms.GetLength(0); x++)
+        for (int y = 0; y < rooms.GetLength(1); y++)
         {
-            for (int y = 0; y < rooms.GetLength(1); y++)
-            {
-                if (rooms[x, y] == null)
-                {
-                    continue;
-                }
+            if (rooms[x, y] == null) continue;
 
-                Room room = rooms[x, y];
+            Room room = rooms[x, y];
 
-                GameObject roomGameObject = InstantiateRoom(room, levelGameObject);
-                roomGameObject.name = "Room(x" + room.position.x + ",y" + room.position.y + ",s" + room.section + ")";
-            }
+            GameObject roomGameObject = InstantiateRoom(room, levelGameObject);
+            roomGameObject.name = "Room(x" + room.Position.x + ",y" + room.Position.y + ",s" + room.Section + ")";
         }
     }
 
     private GameObject InstantiateRoom(Room room, GameObject levelGameObject)
     {
-        GameObject roomGameObject = Instantiate(Resources.Load<GameObject>(RoomResourcesFolder + "/" + RoomResourceName),
-            new Vector3(
-                room.position.x * (room.spawnables.GetLength(0) + 2),
-                room.position.y * (room.spawnables.GetLength(1) + 2),
-                0.0f),
+        GameObject roomGameObject = Instantiate(Resources.Load<GameObject>(GameConstants.ResourceRoomFolder + "/" + GameConstants.ResourceRoomRoomName),
+            new Vector3(room.Position.x * (room.Spawnables.GetLength(0) + 2), room.Position.y * (room.Spawnables.GetLength(1) + 2), 0.0f),
             Quaternion.identity, levelGameObject.transform);
 
-        RoomData roomData = ScriptableObject.CreateInstance<RoomData>();
-        roomData.Initialize(room);
-        roomGameObject.GetComponent<RoomController>().roomData = roomData;
+        roomGameObject.GetComponent<RoomController>().InitializeRoomData(room);
 
-        blockFactory.InstantiateBlocks(room.spawnables, roomGameObject);
-        enemyFactory.InstantiateEnemies(room.spawnables, roomGameObject);
-        itemFactory.InstantiateItems(room.spawnables, roomGameObject);
+        blockFactory.InstantiateBlocks(room.Spawnables, roomGameObject);
+        enemyFactory.InstantiateEnemies(room.Spawnables, roomGameObject);
+        itemFactory.InstantiateItems(room.Spawnables, roomGameObject);
 
         return roomGameObject;
     }

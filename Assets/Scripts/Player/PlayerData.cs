@@ -3,9 +3,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerData", menuName = "ScriptableObjects/PlayerData")]
 public class PlayerData : ScriptableObject
 {
-    public int health = 5;
+    [SerializeField] private int health = 5;
+    [SerializeField] private float speed = 4.0f;
+    [SerializeField] private Attack attack;
 
-    public float speed = 4.0f;
+    public int Health => health;
 
-    public Attack attack;
+    public float Speed => speed;
+
+    public Attack Attack => attack;
 }

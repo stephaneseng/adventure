@@ -1,8 +1,21 @@
 public abstract class PlayerState
 {
-    public abstract void OnEnter(PlayerController playerController);
+    protected PlayerController playerController;
 
-    public abstract void OnUpdate(PlayerController playerController);
+    protected PlayerState(PlayerController playerController)
+    {
+        this.playerController = playerController;
+    }
 
-    public abstract void OnExit(PlayerController playerController);
+    public virtual void OnEnter()
+    {
+    }
+
+    public virtual void OnUpdate()
+    {
+    }
+
+    public virtual void OnExit()
+    {
+    }
 }

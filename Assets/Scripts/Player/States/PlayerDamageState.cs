@@ -1,16 +1,16 @@
 public class PlayerDamageState : PlayerState
 {
-    public override void OnEnter(PlayerController playerController)
+    public PlayerDamageState(PlayerController playerController) : base(playerController)
+    {
+    }
+
+    public override void OnEnter()
     {
         playerController.Damage();
     }
 
-    public override void OnUpdate(PlayerController playerController)
+    public override void OnUpdate()
     {
-        playerController.playerStateMachine.SwitchState(new PlayerIdleState());
-    }
-
-    public override void OnExit(PlayerController playerController)
-    {
+        playerController.SwitchToIdleState();
     }
 }

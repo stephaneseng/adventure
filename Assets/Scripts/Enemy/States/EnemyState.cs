@@ -1,8 +1,17 @@
 public abstract class EnemyState
 {
-    public abstract void OnEnter(EnemyController enemyController);
+    protected EnemyController enemyController;
 
-    public abstract void OnUpdate(EnemyController enemyController);
+    protected EnemyState(EnemyController enemyController)
+    {
+        this.enemyController = enemyController;
+    }
 
-    public abstract void OnExit(EnemyController enemyController);
+    public EnemyController EnemyController => enemyController;
+
+    public abstract void OnEnter();
+
+    public abstract void OnUpdate();
+
+    public abstract void OnExit();
 }

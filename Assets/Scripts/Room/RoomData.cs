@@ -4,22 +4,29 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "RoomData", menuName = "ScriptableObjects/RoomData")]
 public class RoomData : ScriptableObject
 {
-    public int roomWidthHeight;
+    [SerializeField] private int roomWidthHeight;
+    [SerializeField] private Vector2Int position;
 
-    public Vector2Int position;
+    private HashSet<Vector2Int> exits = new();
+    private HashSet<Vector2Int> doors = new();
+    private HashSet<Vector2Int> lockedDoors = new();
 
-    public HashSet<Vector2Int> exits = new HashSet<Vector2Int>();
+    public int RoomWidthHeight => roomWidthHeight;
 
-    public HashSet<Vector2Int> doors = new HashSet<Vector2Int>();
+    public Vector2Int Position => position;
 
-    public HashSet<Vector2Int> lockedDoors = new HashSet<Vector2Int>();
+    public HashSet<Vector2Int> Exits => exits;
+
+    public HashSet<Vector2Int> Doors => doors;
+
+    public HashSet<Vector2Int> LockedDoors => lockedDoors;
 
     public void Initialize(Room room)
     {
-        roomWidthHeight = room.spawnables.GetLength(0);
-        position = room.position;
-        exits = room.exits;
-        doors = room.doors;
-        lockedDoors = room.lockedDoors;
+        roomWidthHeight = room.Spawnables.GetLength(0);
+        position = room.Position;
+        exits = room.Exits;
+        doors = room.Doors;
+        lockedDoors = room.LockedDoors;
     }
 }
